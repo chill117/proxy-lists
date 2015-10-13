@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('isValidProxyType(type)', function() {
+describe('isValidProxyType(type)', function() {
 
 	it('should be a function', function() {
 
