@@ -27,6 +27,7 @@
     "xml2js": "0.4.12"
   },
   "devDependencies": {
+    "chai": "3.2.0",
     "grunt": "0.4.5",
     "grunt-jscs": "2.1.0",
     "grunt-mocha-test": "0.12.7",

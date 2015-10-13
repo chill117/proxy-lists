@@ -155,9 +155,19 @@ var ProxyLists = module.exports = {
 
 	isValidProxy: function(proxy) {
 
-		return proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
-				proxy.port && parseInt(proxy.port).toString() === proxy.port.toString() &&
-				proxy.type && ['http', 'https', 'socks4', 'socks5'].indexOf(proxy.type) !== -1;
+		return 	!!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
+				!!proxy.port && this.isValidPort(proxy.port) &&
+				!!proxy.type && this.isValidProxyType(proxy.type);
+	},
+
+	isValidPort: function(port) {
+
+		return parseInt(port).toString() === port.toString();
+	},
+
+	isValidProxyType: function(type) {
+
+		return ['http', 'https', 'socks4', 'socks5'].indexOf(type) !== -1;
 	},
 
 	isValidIpAddress: function(ip_address) {

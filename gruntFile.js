@@ -18,7 +18,16 @@ module.exports = function(grunt) {
 		mochaTest: {
 			unit: {
 				options: {
-					reporter: 'spec'
+					reporter: 'spec',
+					ui: 'bdd',
+					require: [
+						function() {
+							_ = require('underscore');
+							async = require('async');
+							expect = require('chai').expect;
+							ProxyLists = require('./index');
+						}
+					]
 				},
 				src: ['test/unit/**/*.js']
 			},
@@ -37,4 +46,6 @@ module.exports = function(grunt) {
 	grunt.initConfig(config);
 
 	grunt.registerTask('test', [ 'jscs', 'mochaTest' ]);
+	grunt.registerTask('test:unit', [ 'mochaTest:unit' ]);
+	grunt.registerTask('test:integration', [ 'mochaTest:integration' ]);
 };
