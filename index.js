@@ -90,9 +90,9 @@ var ProxyLists = module.exports = {
 
 		options = this.prepareOptions(options);
 
-		var fn = ProxyLists.sources[sourceName];
+		var source = ProxyLists.sources[sourceName];
 
-		fn(options, function(error, proxies) {
+		source.getProxies(options, function(error, proxies) {
 
 			if (error) {
 				return cb(error);
@@ -109,7 +109,7 @@ var ProxyLists = module.exports = {
 		var sourcesWhiteList = options.sourcesWhiteList && _.object(options.sourcesWhiteList);
 		var sourcesBlackList = options.sourcesBlackList && _.object(options.sourcesBlackList);
 
-		return _.filter(_.keys(ProxyLists.soures), function(sourceName) {
+		return _.filter(_.keys(ProxyLists.sources), function(sourceName) {
 
 			if (sourcesWhiteList) {
 				return sourcesWhiteList[sourceName];
@@ -123,14 +123,36 @@ var ProxyLists = module.exports = {
 		});
 	},
 
-	// Add a custom proxy source.
-	addSource: function(sourceName, fn) {
+	addSource: function(name, source) {
 
-		if (typeof ProxyLists.sources[sourceName] !== 'undefined') {
-			throw new Error('Proxy soure already exists: "' + sourceName + '"');
+		if (typeof name !== 'string' || name.length === 0) {
+			throw new Error('Invalid source name.');
 		}
 
-		ProxyLists.sources[sourceName] = fn;
+		if (typeof ProxyLists.sources[name] !== 'undefined') {
+			throw new Error('Source already exists: "' + name + '"');
+		}
+
+		if (!_.isObject(source) || _.isNull(source)) {
+			throw new Error('Expected "source" to be an object.');
+		}
+
+		if (typeof source.getProxies !== 'function') {
+			throw new Error('Source missing required "getProxies" method.');
+		}
+
+		ProxyLists.sources[name] = source;
+	},
+
+	getSources: function() {
+
+		return _.map(this.sources, function(source, name) {
+
+			return {
+				name: name,
+				homeUrl: source.homeUrl || ''
+			};
+		});
 	},
 
 	prepareOptions: function(options) {

@@ -17,38 +17,41 @@ var unoffocialCountryNames = {
 	'vu': 'Venezuela',
 };
 
-module.exports = function(options, cb) {
+module.exports = {
 
-	getListUrls(function(error, listUrls) {
+	getProxies: function(options, cb) {
 
-		if (error) {
-			return cb(error);
-		}
-
-		async.map(listUrls, getListData, function(error, listData) {
+		getListUrls(function(error, listUrls) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			var proxies = Array.prototype.concat.apply([], listData);
+			async.map(listUrls, getListData, function(error, listData) {
 
-			if (options.countries) {
+				if (error) {
+					return cb(error);
+				}
 
-				var countries = {};
+				var proxies = Array.prototype.concat.apply([], listData);
 
-				_.each(options.countries, function(name, code) {
-					countries[unoffocialCountryNames[code] || name] = true;
-				});
+				if (options.countries) {
 
-				proxies = _.filter(proxies, function(proxy) {
-					return countries[proxy.country];
-				});
-			}
+					var countries = {};
 
-			cb(null, proxies);
+					_.each(options.countries, function(name, code) {
+						countries[unoffocialCountryNames[code] || name] = true;
+					});
+
+					proxies = _.filter(proxies, function(proxy) {
+						return countries[proxy.country];
+					});
+				}
+
+				cb(null, proxies);
+			});
 		});
-	});
+	}
 };
 
 function getListData(listUrl, cb) {
