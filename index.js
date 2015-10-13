@@ -7,7 +7,7 @@ var defaultOptions = {
 	/*
 		Get proxies for the specified countries.
 
-		To get all proxies, regardless of country, then set this option to NULL.
+		To get all proxies, regardless of country, set this option to NULL.
 
 		See:
 		https://en.wikipedia.org/wiki/ISO_3166-1
@@ -32,8 +32,6 @@ var defaultOptions = {
 		['freeproxylists']
 	*/
 	sourcesWhiteList: null,
-
-	// Exclude sources by name.
 
 	/*
 		Exclude proxy sources by name.
