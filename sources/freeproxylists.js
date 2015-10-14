@@ -19,6 +19,8 @@ var unoffocialCountryNames = {
 
 module.exports = {
 
+	homeUrl: baseUrl,
+
 	getProxies: function(options, cb) {
 
 		getListUrls(function(error, listUrls) {
