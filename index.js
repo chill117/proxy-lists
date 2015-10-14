@@ -42,11 +42,10 @@ var defaultOptions = {
 	sourcesBlackList: null
 };
 
-var countries = require('./countries');
-
 var ProxyLists = module.exports = {
 
-	sources: require('./sources'),
+	_countries: require('./countries'),
+	_sources: require('./sources'),
 
 	// Get proxies from all sources.
 	getProxies: function(options, cb) {
@@ -58,11 +57,11 @@ var ProxyLists = module.exports = {
 
 		options = this.prepareOptions(options);
 
-		var proxySources = this.getProxySourcesFilteredByOptions(options);
+		var sources = this.listSources(options);
 
-		async.map(proxySources, _.bind(function(sourceName, next) {
+		async.map(sources, _.bind(function(source, next) {
 
-			this.getProxiesFromSource(sourceName, options, next);
+			this.getProxiesFromSource(source.name, options, next);
 
 		}, this), function(error, proxies) {
 
@@ -70,6 +69,7 @@ var ProxyLists = module.exports = {
 				return cb(error);
 			}
 
+			// Collapse the multi-dimensional array.
 			proxies = Array.prototype.concat.apply([], proxies);
 
 			cb(null, proxies);
@@ -77,50 +77,20 @@ var ProxyLists = module.exports = {
 	},
 
 	// Get proxies from a single source.
-	getProxiesFromSource: function(sourceName, options, cb) {
+	getProxiesFromSource: function(name, options, cb) {
 
 		if (_.isFunction(options)) {
 			cb = options;
 			options = null;
 		}
 
-		if (!_.has(ProxyLists.sources, name)) {
-			throw new Error('Proxy source does not exist: "' + sourceName + '"');
+		if (!_.has(this._sources, name)) {
+			throw new Error('Proxy source does not exist: "' + name + '"');
 		}
 
 		options = this.prepareOptions(options);
 
-		var source = ProxyLists.sources[sourceName];
-
-		source.getProxies(options, function(error, proxies) {
-
-			if (error) {
-				return cb(error);
-			}
-
-			cb(null, proxies);
-		});
-	},
-
-	getProxySourcesFilteredByOptions: function(options) {
-
-		options || (options = {});
-
-		var sourcesWhiteList = options.sourcesWhiteList && _.object(options.sourcesWhiteList);
-		var sourcesBlackList = options.sourcesBlackList && _.object(options.sourcesBlackList);
-
-		return _.filter(_.keys(ProxyLists.sources), function(sourceName) {
-
-			if (sourcesWhiteList) {
-				return sourcesWhiteList[sourceName];
-			}
-
-			if (sourcesBlackList) {
-				return !sourcesBlackList[sourceName];
-			}
-
-			return true;
-		});
+		this._sources[name].getProxies(options, cb);
 	},
 
 	addSource: function(name, source) {
@@ -129,7 +99,7 @@ var ProxyLists = module.exports = {
 			throw new Error('Invalid source name.');
 		}
 
-		if (_.has(ProxyLists.sources, name)) {
+		if (_.has(this._sources, name)) {
 			throw new Error('Source already exists: "' + name + '"');
 		}
 
@@ -141,18 +111,40 @@ var ProxyLists = module.exports = {
 			throw new Error('Source missing required "getProxies" method.');
 		}
 
-		ProxyLists.sources[name] = source;
+		this._sources[name] = source;
 	},
 
-	getSources: function() {
+	listSources: function(options) {
 
-		return _.map(this.sources, function(source, name) {
+		options || (options = {});
+
+		var sourcesWhiteList = options.sourcesWhiteList && _.object(options.sourcesWhiteList);
+		var sourcesBlackList = options.sourcesBlackList && _.object(options.sourcesBlackList);
+
+		// Get an array of source names filtered by the options.
+		var sourceNames = _.filter(_.keys(this._sources), function(name) {
+
+			if (sourcesWhiteList) {
+				return sourcesWhiteList[name];
+			}
+
+			if (sourcesBlackList) {
+				return !sourcesBlackList[name];
+			}
+
+			return true;
+		});
+
+		return _.map(sourceNames, function(name) {
+
+			var source = this._sources[name];
 
 			return {
 				name: name,
 				homeUrl: source.homeUrl || ''
 			};
-		});
+
+		}, this);
 	},
 
 	prepareOptions: function(options) {
@@ -167,7 +159,7 @@ var ProxyLists = module.exports = {
 				countriesOptionHash[code] = true;
 			});
 
-			options.countries = _.filter(countries, function(name, code) {
+			options.countries = _.filter(this._countries, function(name, code) {
 				return countriesOptionHash[code];
 			});
 		}

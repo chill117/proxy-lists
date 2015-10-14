@@ -34,7 +34,8 @@ describe('addSource(name, source)', function() {
 
 	it('should throw an error when a source already exists with the given name', function() {
 
-		var name = _.keys(ProxyLists.sources)[0];
+		var sources = ProxyLists.listSources();
+		var name = sources[0].name;
 		var thrownError;
 
 		try {
@@ -98,6 +99,7 @@ describe('addSource(name, source)', function() {
 
 		var name = 'some-source';
 		var source = {
+			homeUrl: 'http://some-source.com/',
 			getProxies: function() {}
 		};
 
@@ -110,7 +112,9 @@ describe('addSource(name, source)', function() {
 			return done(error);
 		}
 
-		expect(ProxyLists.sources[name]).to.deep.equal(source);
+		var sources = ProxyLists.listSources();
+
+		expect(_.findWhere(sources, { name: name })).to.deep.equal({ name: name, homeUrl: source.homeUrl });
 		done();
 	});
 });
