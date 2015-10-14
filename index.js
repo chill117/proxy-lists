@@ -51,7 +51,7 @@ var ProxyLists = module.exports = {
 	// Get proxies from all sources.
 	getProxies: function(options, cb) {
 
-		if (typeof options === 'function') {
+		if (_.isFunction(options)) {
 			cb = options;
 			options = null;
 		}
@@ -79,12 +79,12 @@ var ProxyLists = module.exports = {
 	// Get proxies from a single source.
 	getProxiesFromSource: function(sourceName, options, cb) {
 
-		if (typeof options === 'function') {
+		if (_.isFunction(options)) {
 			cb = options;
 			options = null;
 		}
 
-		if (typeof ProxyLists.sources[sourceName] === 'undefined') {
+		if (!_.has(ProxyLists.sources, name)) {
 			throw new Error('Proxy source does not exist: "' + sourceName + '"');
 		}
 
@@ -125,11 +125,11 @@ var ProxyLists = module.exports = {
 
 	addSource: function(name, source) {
 
-		if (typeof name !== 'string' || name.length === 0) {
+		if (!_.isString(name) || name.length === 0) {
 			throw new Error('Invalid source name.');
 		}
 
-		if (typeof ProxyLists.sources[name] !== 'undefined') {
+		if (_.has(ProxyLists.sources, name)) {
 			throw new Error('Source already exists: "' + name + '"');
 		}
 
@@ -137,7 +137,7 @@ var ProxyLists = module.exports = {
 			throw new Error('Expected "source" to be an object.');
 		}
 
-		if (typeof source.getProxies !== 'function') {
+		if (!_.isFunction(source.getProxies)) {
 			throw new Error('Source missing required "getProxies" method.');
 		}
 
