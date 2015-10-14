@@ -169,7 +169,7 @@ var ProxyLists = module.exports = {
 
 	isValidProxy: function(proxy) {
 
-		return 	!!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
+		return !!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
 				!!proxy.type && this.isValidProxyType(proxy.type);
 	},
