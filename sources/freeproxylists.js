@@ -17,19 +17,19 @@ var unoffocialCountryNames = {
 	'vu': 'Venezuela',
 };
 
-module.exports = {
+var Source = module.exports = {
 
 	homeUrl: baseUrl,
 
 	getProxies: function(options, cb) {
 
-		getListUrls(function(error, listUrls) {
+		Source.getListUrls(function(error, listUrls) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			async.map(listUrls, getListData, function(error, listData) {
+			async.map(Source.listUrls, Source.getListData, function(error, listData) {
 
 				if (error) {
 					return cb(error);
@@ -53,105 +53,105 @@ module.exports = {
 				cb(null, proxies);
 			});
 		});
-	}
-};
+	},
 
-function getListData(listUrl, cb) {
+	getListData: function(listUrl, cb) {
 
-	var dataUrl = listUrlToDataUrl(listUrl);
-
-	request({
-		method: 'GET',
-		url: dataUrl
-	}, function(error, response, data) {
-
-		if (error) {
-			return cb(error);
-		}
-
-		parseListData(data, cb);
-	});
-}
-
-function parseListData(data, cb) {
-
-	var proxies = [];
-
-	parseString(data, function(error, result) {
-
-		if (error) {
-			return cb(error);
-		}
-
-		var html = result.root.quote[0];
-		var $ = cheerio.load(html);
-
-		$('table tr').each(function(index, tr) {
-
-			if (index > 1) {
-
-				// Data starts at the 3rd row.
-
-				proxies.push({
-					ip_address: $('td', tr).eq(0).text().toString(),
-					port: $('td', tr).eq(1).text().toString(),
-					type: $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http',
-					country: $('td', tr).eq(5).text().toString()
-				});
-			}
-		});
-
-		cb(null, proxies);
-	});
-}
-
-function listUrlToDataUrl(listUrl) {
-
-	var parts = listUrl.split('/');
-
-	return baseUrl + '/load_' + parts[0] + '_' + parts[1];
-}
-
-function getListUrls(cb) {
-
-	var listUrls = [];
-
-	var startingPageUrls = [
-		baseUrl + '/elite.html',
-		baseUrl + '/anonymous.html'
-	];
-
-	async.each(startingPageUrls, function(url, next) {
+		var dataUrl = Source.listUrlToDataUrl(listUrl);
 
 		request({
 			method: 'GET',
-			url: url
+			url: dataUrl
 		}, function(error, response, data) {
 
 			if (error) {
-				return next(error);
+				return cb(error);
 			}
 
-			var $ = cheerio.load(data);
+			Source.parseListData(data, cb);
+		});
+	},
 
-			$('table a').each(function(index) {
+	parseListData: function(data, cb) {
 
-				var text = $(this).text();
+		var proxies = [];
 
-				if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
-					listUrls.push($(this).attr('href'));
+		parseString(data, function(error, result) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			var html = result.root.quote[0];
+			var $ = cheerio.load(html);
+
+			$('table tr').each(function(index, tr) {
+
+				if (index > 1) {
+
+					// Data starts at the 3rd row.
+
+					proxies.push({
+						ip_address: $('td', tr).eq(0).text().toString(),
+						port: $('td', tr).eq(1).text().toString(),
+						type: $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http',
+						country: $('td', tr).eq(5).text().toString()
+					});
 				}
 			});
 
-			next();
+			cb(null, proxies);
 		});
+	},
 
-	}, function(error) {
+	listUrlToDataUrl: function(listUrl) {
 
-		if (error) {
-			return cb(error);
-		}
+		var parts = listUrl.split('/');
 
-		cb(null, listUrls);
-	});
-}
+		return baseUrl + '/load_' + parts[0] + '_' + parts[1];
+	},
+
+	getListUrls: function(cb) {
+
+		var listUrls = [];
+
+		var startingPageUrls = [
+			baseUrl + '/elite.html',
+			baseUrl + '/anonymous.html'
+		];
+
+		async.each(startingPageUrls, function(url, next) {
+
+			request({
+				method: 'GET',
+				url: url
+			}, function(error, response, data) {
+
+				if (error) {
+					return next(error);
+				}
+
+				var $ = cheerio.load(data);
+
+				$('table a').each(function(index) {
+
+					var text = $(this).text();
+
+					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
+						listUrls.push($(this).attr('href'));
+					}
+				});
+
+				next();
+			});
+
+		}, function(error) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			cb(null, listUrls);
+		});
+	}
+};
