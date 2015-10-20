@@ -2,47 +2,46 @@
 
 var _ = require('underscore');
 
-var defaultOptions = {
-
-	/*
-		Get proxies for the specified countries.
-
-		To get all proxies, regardless of country, set this option to NULL.
-
-		See:
-		https://en.wikipedia.org/wiki/ISO_3166-1
-
-		Only USA and Canada:
-		['us', 'ca']
-	*/
-	countries: null,
-
-	/*
-		Types of proxies to get.
-
-		All types:
-		['http', 'https', 'socks4', 'socks5']
-	*/
-	types: ['http', 'https'],
-
-	/*
-		Include proxy sources by name.
-
-		Only 'freeproxylists':
-		['freeproxylists']
-	*/
-	sourcesWhiteList: null,
-
-	/*
-		Exclude proxy sources by name.
-
-		All proxy sources except 'freeproxylists':
-		['freeproxylists']
-	*/
-	sourcesBlackList: null
-};
-
 var ProxyLists = module.exports = {
+
+	defaultOptions: {
+		/*
+			Get proxies for the specified countries.
+
+			To get all proxies, regardless of country, set this option to NULL.
+
+			See:
+			https://en.wikipedia.org/wiki/ISO_3166-1
+
+			Only USA and Canada:
+			['us', 'ca']
+		*/
+		countries: null,
+
+		/*
+			Types of proxies to get.
+
+			All types:
+			['http', 'https', 'socks4', 'socks5']
+		*/
+		types: ['http', 'https'],
+
+		/*
+			Include proxy sources by name.
+
+			Only 'freeproxylists':
+			['freeproxylists']
+		*/
+		sourcesWhiteList: null,
+
+		/*
+			Exclude proxy sources by name.
+
+			All proxy sources except 'freeproxylists':
+			['freeproxylists']
+		*/
+		sourcesBlackList: null
+	},
 
 	_countries: require('./countries'),
 	_sources: require('./sources'),
@@ -149,15 +148,13 @@ var ProxyLists = module.exports = {
 
 	prepareOptions: function(options) {
 
-		options = _.extend({}, defaultOptions, options || {});
+		options = _.extend({}, this.defaultOptions, options || {});
 
 		if (options.countries) {
 
-			var countriesOptionHash = arrayToHash(options.countries);
-
-			options.countries = _.filter(this._countries, function(name, code) {
-				return countriesOptionHash[code];
-			});
+			options.countries = _.object(_.map(options.countries, function(code) {
+				return [code, this._countries[code]];
+			}, this));
 		}
 
 		return options;
