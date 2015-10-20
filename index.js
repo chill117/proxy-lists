@@ -118,8 +118,8 @@ var ProxyLists = module.exports = {
 
 		options || (options = {});
 
-		var sourcesWhiteList = options.sourcesWhiteList && _.object(options.sourcesWhiteList);
-		var sourcesBlackList = options.sourcesBlackList && _.object(options.sourcesBlackList);
+		var sourcesWhiteList = options.sourcesWhiteList && arrayToHash(options.sourcesWhiteList);
+		var sourcesBlackList = options.sourcesBlackList && arrayToHash(options.sourcesBlackList);
 
 		// Get an array of source names filtered by the options.
 		var sourceNames = _.filter(_.keys(this._sources), function(name) {
@@ -153,11 +153,7 @@ var ProxyLists = module.exports = {
 
 		if (options.countries) {
 
-			var countriesOptionHash = {};
-
-			_.each(options.countries, function(code) {
-				countriesOptionHash[code] = true;
-			});
+			var countriesOptionHash = arrayToHash(options.countries);
 
 			options.countries = _.filter(this._countries, function(name, code) {
 				return countriesOptionHash[code];
@@ -193,4 +189,11 @@ var ProxyLists = module.exports = {
 
 		return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_address);
 	}
+};
+
+var arrayToHash = function(array) {
+
+	return _.object(_.map(array, function(value) {
+		return [value, true];
+	}));
 };

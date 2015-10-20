@@ -115,6 +115,10 @@ describe('addSource(name, source)', function() {
 		var sources = ProxyLists.listSources();
 
 		expect(_.findWhere(sources, { name: name })).to.deep.equal({ name: name, homeUrl: source.homeUrl });
+
+		// Clean-up.
+		delete ProxyLists._sources[name];
+
 		done();
 	});
 });
