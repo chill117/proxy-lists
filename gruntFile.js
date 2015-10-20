@@ -30,12 +30,6 @@ module.exports = function(grunt) {
 					]
 				},
 				src: ['test/unit/**/*.js']
-			},
-			integration: {
-				options: {
-					reporter: 'spec'
-				},
-				src: ['test/integration/**/*.js']
 			}
 		}
 	};
@@ -47,5 +41,4 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('test', [ 'jscs', 'mochaTest' ]);
 	grunt.registerTask('test:unit', [ 'mochaTest:unit' ]);
-	grunt.registerTask('test:integration', [ 'mochaTest:integration' ]);
 };
