@@ -10,8 +10,9 @@ describe('prepareOptions([options])', function() {
 	it('should return default options when none are provided', function() {
 
 		var options = ProxyLists.prepareOptions();
+		var defaultOptions = ProxyLists.prepareOptions(ProxyLists.defaultOptions);
 
-		expect(options).to.deep.equal(ProxyLists.defaultOptions);
+		expect(options).to.deep.equal(defaultOptions);
 	});
 
 	describe('countries', function() {

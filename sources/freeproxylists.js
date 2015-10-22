@@ -23,6 +23,14 @@ var Source = module.exports = {
 
 	getProxies: function(options, cb) {
 
+		if (_.isFunction(options)) {
+			cb = options;
+			options = null;
+		}
+
+		// async.compose
+		// !!!
+
 		Source.getListUrls(function(error, listUrls) {
 
 			if (error) {
@@ -52,6 +60,65 @@ var Source = module.exports = {
 
 				cb(null, proxies);
 			});
+		});
+	},
+
+	getListUrls: function(options, cb) {
+
+		if (_.isFunction(options)) {
+			cb = options;
+			options = null;
+		}
+
+		options || (options = {});
+
+		var listUrls = [];
+		var startingPageUrls = [];
+
+		if (_.indexOf(options.anonymityLevels, 'transparent') !== -1) {
+			startingPageUrls.push(baseUrl + '/non-anonymous.html');
+		}
+
+		if (_.indexOf(options.anonymityLevels, 'anonymous') !== -1) {
+			startingPageUrls.push(baseUrl + '/anonymous.html');
+		}
+
+		if (_.indexOf(options.anonymityLevels, 'elite') !== -1) {
+			startingPageUrls.push(baseUrl + '/elite.html');
+		}
+
+		async.each(startingPageUrls, function(url, next) {
+
+			request({
+				method: 'GET',
+				url: url
+			}, function(error, response, data) {
+
+				if (error) {
+					return next(error);
+				}
+
+				var $ = cheerio.load(data);
+
+				$('table a').each(function(index) {
+
+					var text = $(this).text();
+
+					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
+						listUrls.push($(this).attr('href'));
+					}
+				});
+
+				next();
+			});
+
+		}, function(error) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			cb(null, listUrls);
 		});
 	},
 
@@ -109,49 +176,15 @@ var Source = module.exports = {
 		var parts = listUrl.split('/');
 
 		return baseUrl + '/load_' + parts[0] + '_' + parts[1];
-	},
-
-	getListUrls: function(cb) {
-
-		var listUrls = [];
-
-		var startingPageUrls = [
-			baseUrl + '/elite.html',
-			baseUrl + '/anonymous.html'
-		];
-
-		async.each(startingPageUrls, function(url, next) {
-
-			request({
-				method: 'GET',
-				url: url
-			}, function(error, response, data) {
-
-				if (error) {
-					return next(error);
-				}
-
-				var $ = cheerio.load(data);
-
-				$('table a').each(function(index) {
-
-					var text = $(this).text();
-
-					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
-						listUrls.push($(this).attr('href'));
-					}
-				});
-
-				next();
-			});
-
-		}, function(error) {
-
-			if (error) {
-				return cb(error);
-			}
-
-			cb(null, listUrls);
-		});
 	}
 };
+
+Source.getListUrls({ anonymityLevels: ['anonymous', 'elite'] }, function(error, listUrls) {
+
+	console.log(error);
+	console.log(listUrls);
+
+	_.each(listUrls, function(listUrl) {
+		console.log(Source.listUrlToDataUrl(listUrl));
+	});
+});

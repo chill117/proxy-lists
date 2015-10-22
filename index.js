@@ -21,10 +21,16 @@ var ProxyLists = module.exports = {
 		/*
 			Types of proxies to get.
 
-			All types:
-			['http', 'https', 'socks4', 'socks5']
+			To get all proxies, regardless of type, set this option to NULL.
 		*/
 		types: ['http', 'https'],
+
+		/*
+			Anonymity level.
+
+			To get all proxies, regardless of anonymity level, set this option to NULL.
+		*/
+		anonymityLevels: ['anonymous', 'elite'],
 
 		/*
 			Include proxy sources by name.
@@ -43,6 +49,8 @@ var ProxyLists = module.exports = {
 		sourcesBlackList: null
 	},
 
+	_types: ['http', 'https', 'socks4', 'socks5'],
+	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
 
@@ -150,7 +158,34 @@ var ProxyLists = module.exports = {
 
 		options = _.extend({}, this.defaultOptions, options || {});
 
-		if (options.countries) {
+		if (_.isNull(options.countries)) {
+			// Use all countries.
+			options.countries = _.keys(this._countries);
+		}
+
+		if (_.isNull(options.types)) {
+			// Use all types.
+			options.types = _.values(this._types);
+		}
+
+		if (_.isNull(options.anonymityLevels)) {
+			// Use all anonymity levels.
+			options.anonymityLevels = _.values(this._anonymityLevels);
+		}
+
+		if (!_.isArray(options.countries) && !_.isObject(options.countries)) {
+			throw new Error('Invalid option "countries": Array or object expected.');
+		}
+
+		if (!_.isArray(options.types)) {
+			throw new Error('Invalid option "types": Array expected.');
+		}
+
+		if (!_.isArray(options.anonymityLevels)) {
+			throw new Error('Invalid option "anonymityLevels": Array expected.');
+		}
+
+		if (options.countries && _.isArray(options.countries)) {
 
 			options.countries = _.object(_.map(options.countries, function(code) {
 				return [code, this._countries[code]];
