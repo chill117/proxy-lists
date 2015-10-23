@@ -99,31 +99,39 @@ describe('Source: "freeproxylists"', function() {
 
 		it('should get list data given a list URL', function(done) {
 
-			this.timeout(10000);
+			this.timeout(5000);
 
-			var listUrls = [
-				'elite/d1445543510.html'
-			];
+			var options = {
+				anonymityLevels: ['anonymous'],
+				sample: true
+			};
 
-			freeproxylists.getListData(listUrls, function(error, listData) {
+			freeproxylists.getListUrls(options, function(error, listUrls) {
 
-				try {
-
-					expect(error).to.equal(null);
-					expect(listData).to.be.an('array');
-					expect(listData.length > 0).to.equal(true);
-
-					_.each(listData, function(data) {
-						expect(data).to.be.a('string');
-						expect(data.length > 0).to.equal(true);
-						expect(data.substr(0, '<?xml'.length)).to.equal('<?xml');
-					});
-
-				} catch (error) {
+				if (error) {
 					return done(error);
 				}
 
-				done();
+				freeproxylists.getListData(listUrls.slice(0, 1), function(error, listData) {
+
+					try {
+
+						expect(error).to.equal(null);
+						expect(listData).to.be.an('array');
+						expect(listData.length > 0).to.equal(true);
+
+						_.each(listData, function(data) {
+							expect(data).to.be.a('string');
+							expect(data.length > 0).to.equal(true);
+							expect(data.substr(0, '<?xml'.length)).to.equal('<?xml');
+						});
+
+					} catch (error) {
+						return done(error);
+					}
+
+					done();
+				});
 			});
 		});
 	});
@@ -209,7 +217,7 @@ describe('Source: "freeproxylists"', function() {
 
 		it('should get proxies', function(done) {
 
-			this.timeout(10000);
+			this.timeout(5000);
 
 			var options = {
 				anonymityLevels: ['anonymous'],

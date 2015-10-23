@@ -12,6 +12,10 @@ describe('getProxies([options, ]cb)', function() {
 		var testSources = ['somewhere', 'somewhere-else'];
 		var called = [];
 
+		var sourcesBefore = _.clone(ProxyLists._sources);
+
+		ProxyLists._sources = {};
+
 		_.each(testSources, function(name) {
 			ProxyLists.addSource(name, {
 				getProxies: function() {
@@ -22,13 +26,10 @@ describe('getProxies([options, ]cb)', function() {
 
 		ProxyLists.getProxies();
 
-		_.each(testSources, function(name) {
+		_.each(_.keys(ProxyLists._sources), function(name) {
 			expect(_.contains(called, name)).to.equal(true);
 		});
 
-		// Clean-up.
-		_.each(testSources, function(name) {
-			delete ProxyLists._sources[name];
-		});
+		ProxyLists._sources = sourcesBefore;
 	});
 });
