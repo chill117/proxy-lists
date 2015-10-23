@@ -28,38 +28,28 @@ var Source = module.exports = {
 			options = null;
 		}
 
-		// async.compose
-		// !!!
+		var fn = async.seq(
+			this.getListUrls,
+			this.getListData,
+			this.parseListData
+		);
 
-		Source.getListUrls(function(error, listUrls) {
+		fn(options, function(error, proxies) {
 
-			if (error) {
-				return cb(error);
+			if (options.countries) {
+
+				var countries = {};
+
+				_.each(options.countries, function(name, code) {
+					countries[unoffocialCountryNames[code] || name] = true;
+				});
+
+				proxies = _.filter(proxies, function(proxy) {
+					return countries[proxy.country];
+				});
 			}
 
-			async.map(Source.listUrls, Source.getListData, function(error, listData) {
-
-				if (error) {
-					return cb(error);
-				}
-
-				var proxies = Array.prototype.concat.apply([], listData);
-
-				if (options.countries) {
-
-					var countries = {};
-
-					_.each(options.countries, function(name, code) {
-						countries[unoffocialCountryNames[code] || name] = true;
-					});
-
-					proxies = _.filter(proxies, function(proxy) {
-						return countries[proxy.country];
-					});
-				}
-
-				cb(null, proxies);
-			});
+			cb(null, proxies);
 		});
 	},
 
@@ -72,26 +62,30 @@ var Source = module.exports = {
 
 		options || (options = {});
 
-		var listUrls = [];
-		var startingPageUrls = [];
+		var listUrlsByType = {};
+		var startingPageUrls = {};
 
 		if (_.indexOf(options.anonymityLevels, 'transparent') !== -1) {
-			startingPageUrls.push(baseUrl + '/non-anonymous.html');
+			startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
 		}
 
 		if (_.indexOf(options.anonymityLevels, 'anonymous') !== -1) {
-			startingPageUrls.push(baseUrl + '/anonymous.html');
+			startingPageUrls.anonymous = baseUrl + '/anonymous.html';
 		}
 
 		if (_.indexOf(options.anonymityLevels, 'elite') !== -1) {
-			startingPageUrls.push(baseUrl + '/elite.html');
+			startingPageUrls.elite = baseUrl + '/elite.html';
 		}
 
-		async.each(startingPageUrls, function(url, next) {
+		async.each(_.keys(startingPageUrls), function(type, next) {
+
+			var startingPageUrl = startingPageUrls[type];
+
+			listUrlsByType[type] = [];
 
 			request({
 				method: 'GET',
-				url: url
+				url: startingPageUrl
 			}, function(error, response, data) {
 
 				if (error) {
@@ -105,7 +99,7 @@ var Source = module.exports = {
 					var text = $(this).text();
 
 					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
-						listUrls.push($(this).attr('href'));
+						listUrlsByType[type].push($(this).attr('href'));
 					}
 				});
 
@@ -118,54 +112,82 @@ var Source = module.exports = {
 				return cb(error);
 			}
 
+			if (options.sample) {
+				listUrlsByType = _.mapObject(listUrlsByType, function(listUrls) {
+					return listUrls.slice(0, 1);
+				});
+			}
+
+			var listUrls = Array.prototype.concat.apply([], _.values(listUrlsByType));
+
 			cb(null, listUrls);
 		});
 	},
 
-	getListData: function(listUrl, cb) {
+	getListData: function(listUrls, cb) {
 
-		var dataUrl = Source.listUrlToDataUrl(listUrl);
+		async.map(listUrls, function(listUrl, next) {
 
-		request({
-			method: 'GET',
-			url: dataUrl
-		}, function(error, response, data) {
+			var dataUrl = Source.listUrlToDataUrl(listUrl);
 
-			if (error) {
-				return cb(error);
-			}
+			request({
+				method: 'GET',
+				url: dataUrl
+			}, function(error, response, data) {
 
-			Source.parseListData(data, cb);
-		});
+				if (error) {
+					return next(error);
+				}
+
+				return next(null, data);
+			});
+
+		}, cb);
 	},
 
-	parseListData: function(data, cb) {
+	parseListData: function(listData, cb) {
 
-		var proxies = [];
+		if (!_.isArray(listData)) {
+			listData = [listData];
+		}
 
-		parseString(data, function(error, result) {
+		async.map(listData, function(data, next) {
+
+			parseString(data, function(error, result) {
+
+				if (error) {
+					return next(error);
+				}
+
+				var proxies = [];
+				var html = result.root.quote[0];
+				var $ = cheerio.load(html);
+
+				$('table tr').each(function(index, tr) {
+
+					if (index > 1) {
+
+						// Data starts at the 3rd row.
+
+						proxies.push({
+							ip_address: $('td', tr).eq(0).text().toString(),
+							port: $('td', tr).eq(1).text().toString(),
+							type: $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http',
+							country: $('td', tr).eq(5).text().toString()
+						});
+					}
+				});
+
+				next(null, proxies);
+			});
+
+		}, function(error, parsed) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			var html = result.root.quote[0];
-			var $ = cheerio.load(html);
-
-			$('table tr').each(function(index, tr) {
-
-				if (index > 1) {
-
-					// Data starts at the 3rd row.
-
-					proxies.push({
-						ip_address: $('td', tr).eq(0).text().toString(),
-						port: $('td', tr).eq(1).text().toString(),
-						type: $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http',
-						country: $('td', tr).eq(5).text().toString()
-					});
-				}
-			});
+			var proxies = Array.prototype.concat.apply([], parsed);
 
 			cb(null, proxies);
 		});
@@ -178,13 +200,3 @@ var Source = module.exports = {
 		return baseUrl + '/load_' + parts[0] + '_' + parts[1];
 	}
 };
-
-Source.getListUrls({ anonymityLevels: ['anonymous', 'elite'] }, function(error, listUrls) {
-
-	console.log(error);
-	console.log(listUrls);
-
-	_.each(listUrls, function(listUrl) {
-		console.log(Source.listUrlToDataUrl(listUrl));
-	});
-});
