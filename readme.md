@@ -14,9 +14,9 @@ This will install `proxy-lists` and add it to your application's `package.json` 
 
 ## How to Use
 
-* [getProxies](#getProxies)
-* [getProxiesFromSource](#getProxiesFromSource)
-* [addSource](#addSource)
+* [getProxies](#getproxies)
+* [getProxiesFromSource](#getproxiesfromsource)
+* [addSource](#addsource)
 
 ### getProxies
 
