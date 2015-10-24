@@ -37,6 +37,18 @@ describe('isValidProxy(proxy)', function() {
 				ip_address: '',
 				port: 4040,
 				type: 'socks4'
+			},
+			{
+				ip_address: '127.0.0.1',
+				port: 80,
+				type: 'http',
+				country: null
+			},
+			{
+				ip_address: '127.0.0.1',
+				port: 80,
+				type: 'http',
+				country: 'invalid country'
 			}
 		];
 
@@ -62,24 +74,29 @@ describe('isValidProxy(proxy)', function() {
 		];
 		var validPorts = [ 80, 8080, 443 ];
 		var validTypes = [ 'http', 'https', 'socks4', 'socks5' ];
+		var validCountries = [ 'ca', 'us' ];
 
 		_.each(validIpAddresses, function(validIpAddress) {
 			_.each(validPorts, function(validPort) {
 				_.each(validTypes, function(validType) {
-					var validExample = {
-						ip_address: validIpAddress,
-						port: validPort,
-						type: validType
-					};
+					_.each(validCountries, function(validCountry) {
 
-					try {
+						var validExample = {
+							ip_address: validIpAddress,
+							port: validPort,
+							type: validType,
+							country: validCountry
+						};
 
-						expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
+						try {
 
-					} catch (error) {
+							expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
 
-						throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
-					}
+						} catch (error) {
+
+							throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
+						}
+					});
 				});
 			});
 		});

@@ -199,12 +199,13 @@ var ProxyLists = module.exports = {
 
 		return !!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.type && this.isValidProxyType(proxy.type);
+				!!proxy.type && this.isValidProxyType(proxy.type) &&
+				!!proxy.country && _.has(this._countries, proxy.country);
 	},
 
 	isValidPort: function(port) {
 
-		return parseInt(port).toString() === port.toString();
+		return _.isNumber(port) && parseInt(port).toString() === port.toString();
 	},
 
 	isValidProxyType: function(type) {
