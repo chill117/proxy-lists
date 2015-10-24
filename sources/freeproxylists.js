@@ -12,11 +12,21 @@ var countries = require('../countries');
 
 // freeproxylists uses unofficial names for some countries.
 var unoffocialCountryNames = {
+	'bo': 'Bolivia',
+	'ci': 'Cote D\'Ivoire (Ivory Coast)',
+	'hr': 'Croatia (Hrvatska)',
 	'gb': 'Great Britain (UK)',
 	'ir': 'Iran',
 	'kr': 'Korea (South)',
+	'la': 'Laos',
+	'mk': 'Macedonia',
 	'md': 'Moldova',
+	'nz': 'New Zealand (Aotearoa)',
+	'ps': 'Palestine',
+	'sk': 'Slovak Republic',
+	'sy': 'Syria',
 	'tw': 'Taiwan',
+	'tz': 'Tanzania',
 	'us': 'United States',
 	'vu': 'Venezuela',
 };
@@ -41,19 +51,6 @@ var Source = module.exports = {
 		);
 
 		fn(options, function(error, proxies) {
-
-			if (options.countries) {
-
-				var countries = {};
-
-				_.each(options.countries, function(name, code) {
-					countries[unoffocialCountryNames[code] || name] = code;
-				});
-
-				proxies = _.filter(proxies, function(proxy) {
-					return !!countries[proxy.country];
-				});
-			}
 
 			proxies = _.map(proxies, function(proxy) {
 				proxy.port = parseInt(proxy.port);
@@ -179,9 +176,17 @@ var Source = module.exports = {
 		async.map(listData, function(list, next) {
 
 			var type;
+			var anonymityLevel;
 
 			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
 				type = 'socks4/5';
+				anonymityLevel = 'anonymous';
+			} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
+				anonymityLevel = 'transparent';
+			} else if (list.url.substr(0, 'anon/'.length) === 'anon/') {
+				anonymityLevel = 'anonymous';
+			} else if (list.url.substr(0, 'elite/'.length) === 'elite/') {
+				anonymityLevel = 'elite';
 			}
 
 			parseString(list.data, function(error, result) {
@@ -204,7 +209,8 @@ var Source = module.exports = {
 							ip_address: $('td', tr).eq(0).text().toString(),
 							port: $('td', tr).eq(1).text().toString(),
 							type: type || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
-							country: $('td', tr).eq(5).text().toString()
+							country: $('td', tr).eq(5).text().toString(),
+							anonymityLevel: anonymityLevel
 						});
 					}
 				});

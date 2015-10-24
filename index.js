@@ -97,7 +97,17 @@ var ProxyLists = module.exports = {
 
 		options = this.prepareOptions(options);
 
-		this._sources[name].getProxies(options, cb);
+		this._sources[name].getProxies(options, function(error, proxies) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			// Filter the proxies.
+			proxies = ProxyLists.filterProxies(proxies, options);
+
+			cb(null, proxies);
+		});
 	},
 
 	addSource: function(name, source) {
@@ -152,6 +162,44 @@ var ProxyLists = module.exports = {
 			};
 
 		}, this);
+	},
+
+	filterProxies: function(proxies, options) {
+
+		options || (options = {});
+
+		if (options.countries) {
+
+			var countries = arrayToHash(options.countries);
+
+			proxies = _.filter(proxies, function(proxy) {
+				return countries[proxy.country];
+			});
+		}
+
+		if (options.types) {
+
+			var types = arrayToHash(options.types);
+
+			if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+				types['socks4/5'] = true;
+			}
+
+			proxies = _.filter(proxies, function(proxy) {
+				return types[proxy.type];
+			});
+		}
+
+		if (options.anonymityLevels) {
+
+			var anonymityLevels = arrayToHash(options.anonymityLevels);
+
+			proxies = _.filter(proxies, function(proxy) {
+				return anonymityLevels[proxy.anonymityLevel];
+			});
+		}
+
+		return proxies;
 	},
 
 	prepareOptions: function(options) {

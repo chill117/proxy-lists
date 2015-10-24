@@ -72,6 +72,7 @@ module.exports = {
 	'er': 'Eritrea',
 	'ee': 'Estonia',
 	'et': 'Ethiopia',
+	'eu': 'European Union',
 	'fk': 'Falkland Islands (Malvinas)',
 	'fo': 'Faroe Islands',
 	'fj': 'Fiji',
