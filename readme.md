@@ -40,15 +40,17 @@ Sample `proxies`:
 [
 	{
 		ip_address: '123.123.2.42',
-		port: '8080',
+		port: 8080,
 		type: 'http',
-		country: 'Somewhere'
+		country: 'us',
+		anonymityLevel: 'transparent'
 	},
 	{
 		ip_address: '234.221.233.142',
-		port: '3128',
+		port: 3128,
 		type: 'https',
-		country: 'Somewhere Else'
+		country: 'cz',
+		anonymityLevel: 'elite'
 	}
 ]
 ```
