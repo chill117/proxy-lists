@@ -25,6 +25,68 @@ describe('source.freeproxylists', function() {
 		});
 	});
 
+	describe('getStartingPageUrls([options, ]cb)', function() {
+
+		it('should be a function', function() {
+
+			expect(freeproxylists.getStartingPageUrls).to.be.a('function');
+		});
+
+		describe('options', function() {
+
+			describe('anonymityLevels', function() {
+
+				it('should return transparent starting page URL', function() {
+
+					var options = {
+						anonymityLevels: ['transparent'],
+						types: ['https']
+					};
+
+					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+
+					expect(startingPageUrls).to.be.an('object');
+					expect(startingPageUrls.transparent).to.not.equal(undefined);
+					expect(startingPageUrls.transparent).to.be.a('string');
+					expect(_.values(startingPageUrls)).to.have.length(1);
+				});
+
+				it('"socks4/5": should return only socks starting page URL', function() {
+
+					var options = {
+						anonymityLevels: [],
+						types: ['socks4', 'socks5']
+					};
+
+					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+
+					expect(startingPageUrls).to.be.an('object');
+					expect(startingPageUrls.socks).to.not.equal(undefined);
+					expect(startingPageUrls.socks).to.be.a('string');
+					expect(_.values(startingPageUrls)).to.have.length(1);
+				});
+			});
+
+			describe('sample', function() {
+
+				it('should return only a few starting page URLs', function() {
+
+					var options = {
+						anonymityLevels: ['transparent', 'anonymous', 'elite'],
+						types: ['https', 'http', 'socks4', 'socks5'],
+						sample: true
+					};
+
+					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+
+					expect(startingPageUrls).to.be.an('object');
+					expect(_.values(startingPageUrls).length > 0).to.equal(true);
+					expect(_.values(startingPageUrls).length < 5).to.equal(true);
+				});
+			});
+		});
+	});
+
 	describe('getListUrls([options, ]cb)', function() {
 
 		it('should be a function', function() {
@@ -33,6 +95,8 @@ describe('source.freeproxylists', function() {
 		});
 
 		it('should return all proxy list URLs', function(done) {
+
+			this.timeout(5000);
 
 			var options = {
 				anonymityLevels: ['transparent', 'anonymous', 'elite'],
@@ -57,98 +121,6 @@ describe('source.freeproxylists', function() {
 				}
 
 				done();
-			});
-		});
-
-		describe('options', function() {
-
-			describe('anonymityLevels', function() {
-
-				it('"transparent": should return only transparent proxy list URLs', function(done) {
-
-					var options = {
-						anonymityLevels: ['transparent'],
-						types: ['https']
-					};
-
-					freeproxylists.getListUrls(options, function(error, listUrls) {
-
-						try {
-
-							expect(error).to.equal(null);
-							expect(listUrls).to.be.an('array');
-							expect(listUrls.length > 0).to.equal(true);
-
-							_.each(listUrls, function(listUrl) {
-								expect(listUrl).to.be.a('string');
-								expect(listUrl.length > 0).to.equal(true);
-								expect(listUrl.substr(0, 'nonanon/'.length)).to.equal('nonanon/');
-							});
-
-						} catch (error) {
-							return done(error);
-						}
-
-						done();
-					});
-				});
-
-				it('"socks4/5": should return only socks proxy list URLs', function(done) {
-
-					var options = {
-						anonymityLevels: [],
-						types: ['socks4', 'socks5']
-					};
-
-					freeproxylists.getListUrls(options, function(error, listUrls) {
-
-						try {
-
-							expect(error).to.equal(null);
-							expect(listUrls).to.be.an('array');
-							expect(listUrls.length > 0).to.equal(true);
-
-							_.each(listUrls, function(listUrl) {
-								expect(listUrl).to.be.a('string');
-								expect(listUrl.length > 0).to.equal(true);
-								expect(listUrl.substr(0, 'socks/'.length)).to.equal('socks/');
-							});
-
-						} catch (error) {
-							return done(error);
-						}
-
-						done();
-					});
-				});
-			});
-
-			describe('sample', function() {
-
-				it('should return a few proxy list URLs', function(done) {
-
-					var options = {
-						anonymityLevels: ['transparent', 'anonymous', 'elite'],
-						types: ['https', 'http', 'socks4', 'socks5'],
-						sample: true
-					};
-
-					freeproxylists.getListUrls(options, function(error, listUrls) {
-
-						try {
-
-							expect(error).to.equal(null);
-							expect(listUrls).to.be.an('array');
-							expect(listUrls.length > 0).to.equal(true);
-							expect(listUrls.length < 5).to.equal(true);
-
-						} catch (error) {
-							return done(error);
-						}
-
-						done();
-					});
-				});
 			});
 		});
 	});

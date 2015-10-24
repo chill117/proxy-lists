@@ -72,26 +72,7 @@ var Source = module.exports = {
 		options || (options = {});
 
 		var listUrlsByPage = {};
-		var startingPageUrls = {};
-
-		if (_.contains(options.types, 'http') || _.contains(options.types, 'https')) {
-
-			if (_.contains(options.anonymityLevels, 'transparent')) {
-				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'anonymous')) {
-				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'elite')) {
-				startingPageUrls.elite = baseUrl + '/elite.html';
-			}
-		}
-
-		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
-			startingPageUrls.socks = baseUrl + '/socks.html';
-		}
+		var startingPageUrls = Source.getStartingPageUrls(options);
 
 		async.each(_.keys(startingPageUrls), function(page, next) {
 
@@ -139,6 +120,32 @@ var Source = module.exports = {
 
 			cb(null, listUrls);
 		});
+	},
+
+	getStartingPageUrls: function(options) {
+
+		var startingPageUrls = {};
+
+		if (_.contains(options.types, 'http') || _.contains(options.types, 'https')) {
+
+			if (_.contains(options.anonymityLevels, 'transparent')) {
+				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'anonymous')) {
+				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'elite')) {
+				startingPageUrls.elite = baseUrl + '/elite.html';
+			}
+		}
+
+		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+			startingPageUrls.socks = baseUrl + '/socks.html';
+		}
+
+		return startingPageUrls;
 	},
 
 	getListData: function(listUrls, cb) {
