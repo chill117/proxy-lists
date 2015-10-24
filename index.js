@@ -209,7 +209,7 @@ var ProxyLists = module.exports = {
 
 	isValidProxyType: function(type) {
 
-		return ['http', 'https', 'socks4', 'socks5'].indexOf(type) !== -1;
+		return ['http', 'https', 'socks4', 'socks5', 'socks4/5'].indexOf(type) !== -1;
 	},
 
 	isValidIpAddress: function(ip_address) {

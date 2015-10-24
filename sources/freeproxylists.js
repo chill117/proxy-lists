@@ -8,14 +8,20 @@ var request = require('request');
 
 var baseUrl = 'http://www.freeproxylists.com';
 
+var countries = require('../countries');
+
 // freeproxylists uses unofficial names for some countries.
 var unoffocialCountryNames = {
 	'gb': 'Great Britain (UK)',
+	'ir': 'Iran',
 	'kr': 'Korea (South)',
+	'md': 'Moldova',
 	'tw': 'Taiwan',
-	'us': 'United Sates',
+	'us': 'United States',
 	'vu': 'Venezuela',
 };
+
+var countryNameToCode = _.invert(_.extend({}, countries, unoffocialCountryNames));
 
 var Source = module.exports = {
 
@@ -41,13 +47,19 @@ var Source = module.exports = {
 				var countries = {};
 
 				_.each(options.countries, function(name, code) {
-					countries[unoffocialCountryNames[code] || name] = true;
+					countries[unoffocialCountryNames[code] || name] = code;
 				});
 
 				proxies = _.filter(proxies, function(proxy) {
-					return countries[proxy.country];
+					return !!countries[proxy.country];
 				});
 			}
+
+			proxies = _.map(proxies, function(proxy) {
+				proxy.port = parseInt(proxy.port);
+				proxy.country = countryNameToCode[proxy.country] || proxy.country;
+				return proxy;
+			});
 
 			cb(null, proxies);
 		});
@@ -62,26 +74,33 @@ var Source = module.exports = {
 
 		options || (options = {});
 
-		var listUrlsByType = {};
+		var listUrlsByPage = {};
 		var startingPageUrls = {};
 
-		if (_.indexOf(options.anonymityLevels, 'transparent') !== -1) {
-			startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
+		if (_.contains(options.types, 'http') || _.contains(options.types, 'https')) {
+
+			if (_.contains(options.anonymityLevels, 'transparent')) {
+				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'anonymous')) {
+				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'elite')) {
+				startingPageUrls.elite = baseUrl + '/elite.html';
+			}
 		}
 
-		if (_.indexOf(options.anonymityLevels, 'anonymous') !== -1) {
-			startingPageUrls.anonymous = baseUrl + '/anonymous.html';
+		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+			startingPageUrls.socks = baseUrl + '/socks.html';
 		}
 
-		if (_.indexOf(options.anonymityLevels, 'elite') !== -1) {
-			startingPageUrls.elite = baseUrl + '/elite.html';
-		}
+		async.each(_.keys(startingPageUrls), function(page, next) {
 
-		async.each(_.keys(startingPageUrls), function(type, next) {
+			var startingPageUrl = startingPageUrls[page];
 
-			var startingPageUrl = startingPageUrls[type];
-
-			listUrlsByType[type] = [];
+			listUrlsByPage[page] = [];
 
 			request({
 				method: 'GET',
@@ -99,7 +118,7 @@ var Source = module.exports = {
 					var text = $(this).text();
 
 					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
-						listUrlsByType[type].push($(this).attr('href'));
+						listUrlsByPage[page].push($(this).attr('href'));
 					}
 				});
 
@@ -113,12 +132,13 @@ var Source = module.exports = {
 			}
 
 			if (options.sample) {
-				listUrlsByType = _.mapObject(listUrlsByType, function(listUrls) {
+				// When sampling, get keep one list URL for each starting page.
+				listUrlsByPage = _.mapObject(listUrlsByPage, function(listUrls) {
 					return listUrls.slice(0, 1);
 				});
 			}
 
-			var listUrls = Array.prototype.concat.apply([], _.values(listUrlsByType));
+			var listUrls = Array.prototype.concat.apply([], _.values(listUrlsByPage));
 
 			cb(null, listUrls);
 		});
@@ -139,7 +159,12 @@ var Source = module.exports = {
 					return next(error);
 				}
 
-				return next(null, data);
+				var list = {
+					url: listUrl,
+					data: data
+				};
+
+				return next(null, list);
 			});
 
 		}, cb);
@@ -151,9 +176,15 @@ var Source = module.exports = {
 			listData = [listData];
 		}
 
-		async.map(listData, function(data, next) {
+		async.map(listData, function(list, next) {
 
-			parseString(data, function(error, result) {
+			var type;
+
+			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
+				type = 'socks4/5';
+			}
+
+			parseString(list.data, function(error, result) {
 
 				if (error) {
 					return next(error);
@@ -172,7 +203,7 @@ var Source = module.exports = {
 						proxies.push({
 							ip_address: $('td', tr).eq(0).text().toString(),
 							port: $('td', tr).eq(1).text().toString(),
-							type: $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http',
+							type: type || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
 							country: $('td', tr).eq(5).text().toString()
 						});
 					}
