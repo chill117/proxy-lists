@@ -2,6 +2,8 @@
 
 Get proxies from publicly available proxy lists.
 
+[![Build Status](https://travis-ci.org/chill117/proxy-lists.svg?branch=master)](https://travis-ci.org/chill117/proxy-lists) [![Status of Dependencies](https://david-dm.org/chill117/proxy-lists.svg)](https://david-dm.org/chill117/proxy-lists)
+
 
 ## Installation
 
