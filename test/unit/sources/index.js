@@ -21,11 +21,12 @@ describe('sources', function() {
 
 				it('should return valid proxies', function(done) {
 
-					this.timeout(60000);
+					this.timeout(30000);
 
 					var options = {
 						anonymityLevels: ['anonymous', 'elite', 'transparent'],
-						types: ['http', 'https', 'socks4', 'socks5']
+						types: ['http', 'https', 'socks4', 'socks5'],
+						sample: true
 					};
 
 					source.getProxies(options, function(error, proxies) {
