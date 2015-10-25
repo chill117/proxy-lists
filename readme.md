@@ -25,6 +25,7 @@ This will install `proxy-lists` and add it to your application's `package.json` 
 * [getProxies](#getproxies)
 * [getProxiesFromSource](#getproxiesfromsource)
 * [addSource](#addsource)
+* [listSources](#listsources)
 
 ### getProxies
 
@@ -177,6 +178,54 @@ ProxyLists.addSource('my-custom-source', {
     cb(null, proxies);
   }
 });
+```
+
+### listSources
+
+`listSources([options])`
+
+Get list of all available proxy sources.
+
+Usage:
+```js
+var ProxyLists = require('proxy-lists');
+
+var sources = ProxyLists.listSources();
+```
+
+Sample `sources`:
+```js
+[
+	{
+		name: 'freeproxylists',
+		homeUrl: 'http://www.freeproxylists.com'
+	},
+	{
+		name: 'hidemyass',
+		homeUrl: 'http://proxylist.hidemyass.com/'
+	}
+]
+```
+
+All available options:
+```js
+var options = {
+	/*
+		Include proxy sources by name.
+
+		Only 'freeproxylists':
+		['freeproxylists']
+	*/
+	sourcesWhiteList: null,
+
+	/*
+		Exclude proxy sources by name.
+
+		All proxy sources except 'freeproxylists':
+		['freeproxylists']
+	*/
+	sourcesBlackList: null
+};
 ```
 
 
