@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-	'freeproxylists': require('./freeproxylists')
+	'freeproxylists': require('./freeproxylists'),
+	'hidemyass': require('./hidemyass')
 };

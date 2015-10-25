@@ -28,14 +28,22 @@ describe('listSources([options])', function() {
 
 			it('should return an array of only the sources in the "sourcesWhiteList"', function() {
 
-				var sources;
+				var sourcesWhiteLists = [
+					[],
+					['freeproxylists']
+				];
 
-				sources = ProxyLists.listSources({ sourcesWhiteList: [] });
-				expect( sources ).to.have.length(0);
+				_.each(sourcesWhiteLists, function(sourcesWhiteList) {
 
-				sources = ProxyLists.listSources({ sourcesWhiteList: ['freeproxylists'] });
-				expect(sources).to.have.length(1);
-				expect(sources[0].name).to.equal('freeproxylists');
+					var sources = ProxyLists.listSources({ sourcesWhiteList: sourcesWhiteList });
+
+					expect(sources).to.be.an('array');
+					expect(sources).to.have.length(sourcesWhiteList.length);
+
+					_.each(sources, function(source) {
+						expect(_.contains(sourcesWhiteList, source.name)).to.equal(true);
+					});
+				});
 			});
 		});
 
@@ -43,14 +51,22 @@ describe('listSources([options])', function() {
 
 			it('should return an array of only the sources not in the "sourcesBlackList"', function() {
 
-				var sources;
+				var sourcesBlackLists = [
+					[],
+					['freeproxylists']
+				];
 
-				sources = ProxyLists.listSources({ sourcesBlackList: [] });
-				expect( sources ).to.have.length(1);
-				expect(sources[0].name).to.equal('freeproxylists');
+				_.each(sourcesBlackLists, function(sourcesBlackList) {
 
-				sources = ProxyLists.listSources({ sourcesBlackList: ['freeproxylists'] });
-				expect(sources).to.have.length(0);
+					var sources = ProxyLists.listSources({ sourcesBlackList: sourcesBlackList });
+
+					expect(sources).to.be.an('array');
+					expect(sources).to.have.length(_.keys(ProxyLists._sources).length - sourcesBlackList.length);
+
+					_.each(sources, function(source) {
+						expect(!_.contains(sourcesBlackList, source.name)).to.equal(true);
+					});
+				});
 			});
 		});
 	});
