@@ -73,8 +73,14 @@ var Source = module.exports = {
 
 		var listUrlsByPage = {};
 		var startingPageUrls = Source.getStartingPageUrls(options);
+		var pages = _.keys(startingPageUrls);
 
-		async.each(_.keys(startingPageUrls), function(page, next) {
+		if (options.sample) {
+			// When sampling, only use one of the starting pages.
+			pages = [_.first(pages)];
+		}
+
+		async.each(pages, function(page, next) {
 
 			var startingPageUrl = startingPageUrls[page];
 
