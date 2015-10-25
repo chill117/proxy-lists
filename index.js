@@ -68,7 +68,14 @@ var ProxyLists = module.exports = {
 
 		async.map(sources, _.bind(function(source, next) {
 
-			this.getProxiesFromSource(source.name, options, next);
+			this.getProxiesFromSource(source.name, options, function(error, proxies) {
+
+				if (error) {
+					console.error(error.message || error);
+				}
+
+				next(null, proxies || []);
+			});
 
 		}, this), function(error, proxies) {
 
@@ -170,10 +177,12 @@ var ProxyLists = module.exports = {
 
 		if (options.countries) {
 
-			var countries = arrayToHash(options.countries);
+			if (_.isArray(options.countries) || !_.isObject(options.countries)) {
+				throw new Error('Invalid option "countries": Object expected.');
+			}
 
 			proxies = _.filter(proxies, function(proxy) {
-				return countries[proxy.country];
+				return !!options.countries[proxy.country];
 			});
 		}
 

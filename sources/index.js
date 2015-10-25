@@ -2,5 +2,5 @@
 
 module.exports = {
 	'freeproxylists': require('./freeproxylists'),
-	'hidemyass': require('./hidemyass')
+	'hidemyass': require('./hidemyass'),
 };

@@ -15,12 +15,15 @@ describe('filterProxies([options, ]cb)', function() {
 				it('should return only proxies from ' + ProxyLists._countries[country], function() {
 
 					var options = {
-						countries: [country]
+						countries: {}
 					};
+
+					options.countries[country] = true;
 
 					var filtered = ProxyLists.filterProxies(proxies, options);
 
 					expect(filtered).to.be.an('array');
+					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
 						expect(proxy.country).to.equal(country);
@@ -57,6 +60,7 @@ describe('filterProxies([options, ]cb)', function() {
 					var filtered = ProxyLists.filterProxies(proxies, options);
 
 					expect(filtered).to.be.an('array');
+					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
 						expect(test(proxy.type)).to.equal(true);
@@ -84,6 +88,7 @@ describe('filterProxies([options, ]cb)', function() {
 					var filtered = ProxyLists.filterProxies(proxies, options);
 
 					expect(filtered).to.be.an('array');
+					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
 						expect(proxy.anonymityLevel).to.equal(anonymityLevel);
