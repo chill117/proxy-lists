@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Get proxies from publicly available proxy lists.",
   "main": "index.js",
   "scripts": {
