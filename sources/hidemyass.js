@@ -162,9 +162,11 @@ var Source = module.exports = {
 
 		proxies = _.map(proxies, function(proxy) {
 
+			var anonymityLevel = proxy.anonymityLevel.toLowerCase();
+
 			proxy.port = parseInt(proxy.port);
 			proxy.type = proxy.type.toLowerCase();
-			proxy.anonymityLevel = anonymityLevels[proxy.anonymityLevel.toLowerCase()] || null;
+			proxy.anonymityLevel = anonymityLevel && anonymityLevels[anonymityLevel] || null;
 
 			return proxy;
 		});
