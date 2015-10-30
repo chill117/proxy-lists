@@ -7,8 +7,10 @@ Get proxies from publicly available proxy lists.
 
 ## Supported Proxy Lists
 
+* [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
 * [hidemyass](http://proxylist.hidemyass.com/)
+* [kingproxies](http://kingproxies.com/)
 
 
 ## Installation
