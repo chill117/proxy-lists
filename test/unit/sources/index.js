@@ -1,64 +1,68 @@
 'use strict';
 
-describe('sources', function() {
+var sources = ProxyLists.listSources({
+	sourcesBlackList: ['kingproxies']
+});
 
-	var sources = ProxyLists.listSources();
+_.each(sources, function(source) {
 
-	_.each(sources, function(source) {
+	var name = source.name;
 
-		var name = source.name;
+	source = ProxyLists._sources[name];
 
-		source = ProxyLists._sources[name];
+	describe('source.' + name, function() {
 
-		describe('"' + name + '"', function() {
+		describe('getProxies([options, ]cb)', function() {
 
-			describe('getProxies([options, ]cb)', function() {
+			it('should be a function', function() {
 
-				it('should be a function', function() {
+				expect(source.getProxies).to.be.a('function');
+			});
 
-					expect(source.getProxies).to.be.a('function');
-				});
+			it('should return valid proxies', function(done) {
 
-				it('should return valid proxies', function(done) {
+				this.timeout(30000);
 
-					this.timeout(30000);
+				var options = {
+					anonymityLevels: ['anonymous', 'elite', 'transparent'],
+					types: ['http', 'https', 'socks4', 'socks5'],
+					sample: true
+				};
 
-					var options = {
-						anonymityLevels: ['anonymous', 'elite', 'transparent'],
-						types: ['http', 'https', 'socks4', 'socks5'],
-						sample: true
-					};
+				options.kingproxies = {};
+				options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
 
-					source.getProxies(options, function(error, proxies) {
+				options = ProxyLists.prepareOptions(options);
 
-						var invalidProxies = [];
+				source.getProxies(options, function(error, proxies) {
 
-						try {
+					var invalidProxies = [];
 
-							expect(error).to.equal(null);
-							expect(proxies).to.be.an('array');
-							expect(proxies.length > 0).to.equal(true);
+					try {
 
-							_.each(proxies, function(proxy) {
+						expect(error).to.equal(null);
+						expect(proxies).to.be.an('array');
+						expect(proxies.length > 0).to.equal(true);
 
-								try {
+						_.each(proxies, function(proxy) {
 
-									expect(ProxyLists.isValidProxy(proxy)).to.equal(true);
+							try {
 
-								} catch (error) {
+								expect(ProxyLists.isValidProxy(proxy)).to.equal(true);
 
-									invalidProxies.push(proxy);
-								}
-							});
+							} catch (error) {
 
-							expect(invalidProxies).to.deep.equal([]);
+								invalidProxies.push(proxy);
+							}
+						});
 
-						} catch (error) {
-							return done(error);
-						}
+						expect(invalidProxies).to.deep.equal([]);
 
-						done();
-					});
+					} catch (error) {
+						return done(error);
+					}
+
+					done();
 				});
 			});
 		});
