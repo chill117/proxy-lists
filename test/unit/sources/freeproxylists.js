@@ -40,7 +40,7 @@ describe('source.freeproxylists', function() {
 
 					var options = {
 						anonymityLevels: ['transparent'],
-						types: ['https']
+						protocols: ['https']
 					};
 
 					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
@@ -55,7 +55,7 @@ describe('source.freeproxylists', function() {
 
 					var options = {
 						anonymityLevels: [],
-						types: ['socks4', 'socks5']
+						protocols: ['socks4', 'socks5']
 					};
 
 					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
@@ -73,7 +73,7 @@ describe('source.freeproxylists', function() {
 
 					var options = {
 						anonymityLevels: ['transparent', 'anonymous', 'elite'],
-						types: ['https', 'http', 'socks4', 'socks5'],
+						protocols: ['https', 'http', 'socks4', 'socks5'],
 						sample: true
 					};
 
@@ -100,7 +100,7 @@ describe('source.freeproxylists', function() {
 
 			var options = {
 				anonymityLevels: ['transparent', 'anonymous', 'elite'],
-				types: ['https', 'http', 'socks4', 'socks5']
+				protocols: ['https', 'http', 'socks4', 'socks5']
 			};
 
 			freeproxylists.getListUrls(options, function(error, listUrls) {
@@ -138,7 +138,7 @@ describe('source.freeproxylists', function() {
 
 			var options = {
 				anonymityLevels: ['anonymous'],
-				types: ['http'],
+				protocols: ['http'],
 				sample: true
 			};
 
@@ -199,56 +199,56 @@ describe('source.freeproxylists', function() {
 						{
 							ip_address: '123.123.2.42',
 							port: '8080',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.209.64.13',
 							port: '8118',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '234.221.233.142',
 							port: '3128',
-							type: 'https',
+							protocol: 'https',
 							country: 'Another Place',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.124.179',
 							port: '80',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.114.49',
 							port: '80',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.114.36',
 							port: '80',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.112.71',
 							port: '80',
-							type: 'http',
+							protocol: 'http',
 							country: 'Somewhere',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '234.123.45.21',
 							port: '8081',
-							type: 'https',
+							protocol: 'https',
 							country: 'Austria',
 							anonymityLevel: 'anonymous'
 						}

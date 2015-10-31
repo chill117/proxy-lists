@@ -76,7 +76,7 @@ describe('getProxies([options, ]cb)', function() {
 
 		ProxyLists.getProxies({
 			countries: null,
-			types: null,
+			protocols: null,
 			anonymityLevels: null
 		}, function(error, proxies) {
 

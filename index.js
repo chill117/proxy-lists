@@ -19,11 +19,11 @@ var ProxyLists = module.exports = {
 		countries: null,
 
 		/*
-			Types of proxies to get.
+			Get proxies that use the specified protocols.
 
-			To get all proxies, regardless of type, set this option to NULL.
+			To get all proxies, regardless of protocol, set this option to NULL.
 		*/
-		types: ['http', 'https'],
+		protocols: ['http', 'https'],
 
 		/*
 			Anonymity level.
@@ -49,7 +49,7 @@ var ProxyLists = module.exports = {
 		sourcesBlackList: null
 	},
 
-	_types: ['http', 'https', 'socks4', 'socks5'],
+	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
@@ -186,16 +186,16 @@ var ProxyLists = module.exports = {
 			});
 		}
 
-		if (options.types) {
+		if (options.protocols) {
 
-			var types = arrayToHash(options.types);
+			var protocols = arrayToHash(options.protocols);
 
-			if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
-				types['socks4/5'] = true;
+			if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
+				protocols['socks4/5'] = true;
 			}
 
 			proxies = _.filter(proxies, function(proxy) {
-				return types[proxy.type];
+				return protocols[proxy.protocol];
 			});
 		}
 
@@ -220,9 +220,9 @@ var ProxyLists = module.exports = {
 			options.countries = _.keys(this._countries);
 		}
 
-		if (_.isNull(options.types)) {
-			// Use all types.
-			options.types = _.values(this._types);
+		if (_.isNull(options.protocols)) {
+			// Use all protocols.
+			options.protocols = _.values(this._protocols);
 		}
 
 		if (_.isNull(options.anonymityLevels)) {
@@ -234,8 +234,8 @@ var ProxyLists = module.exports = {
 			throw new Error('Invalid option "countries": Array or object expected.');
 		}
 
-		if (!_.isArray(options.types)) {
-			throw new Error('Invalid option "types": Array expected.');
+		if (!_.isArray(options.protocols)) {
+			throw new Error('Invalid option "protocols": Array expected.');
 		}
 
 		if (!_.isArray(options.anonymityLevels)) {
@@ -256,7 +256,7 @@ var ProxyLists = module.exports = {
 
 		return !!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.type && this.isValidProxyType(proxy.type) &&
+				!!proxy.protocol && this.isValidProxyProtocol(proxy.protocol) &&
 				!!proxy.country && _.has(this._countries, proxy.country);
 	},
 
@@ -265,9 +265,9 @@ var ProxyLists = module.exports = {
 		return _.isNumber(port) && parseInt(port).toString() === port.toString();
 	},
 
-	isValidProxyType: function(type) {
+	isValidProxyProtocol: function(protocol) {
 
-		return ['http', 'https', 'socks4', 'socks5', 'socks4/5'].indexOf(type) !== -1;
+		return ['http', 'https', 'socks4', 'socks5', 'socks4/5'].indexOf(protocol) !== -1;
 	},
 
 	isValidIpAddress: function(ip_address) {

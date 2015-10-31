@@ -25,7 +25,7 @@ _.each(sources, function(source) {
 
 				var options = {
 					anonymityLevels: ['anonymous', 'elite', 'transparent'],
-					types: ['http', 'https', 'socks4', 'socks5'],
+					protocols: ['http', 'https', 'socks4', 'socks5'],
 					sample: true
 				};
 

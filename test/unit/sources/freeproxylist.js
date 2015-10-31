@@ -61,7 +61,7 @@ describe('source.freeproxylist', function() {
 		it('should return an array of list URLs', function(done) {
 
 			var options = {
-				types: ['http', 'https'],
+				protocols: ['http', 'https'],
 				anonymityLevels: ['transparent']
 			};
 

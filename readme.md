@@ -50,14 +50,14 @@ Sample `proxies`:
 	{
 		ip_address: '123.123.2.42',
 		port: 8080,
-		type: 'http',
+		protocol: 'http',
 		country: 'us',
 		anonymityLevel: 'transparent'
 	},
 	{
 		ip_address: '234.221.233.142',
 		port: 3128,
-		type: 'https',
+		protocol: 'https',
 		country: 'cz',
 		anonymityLevel: 'elite'
 	}
@@ -81,11 +81,11 @@ var options = {
 	countries: null,
 
 	/*
-		Types of proxies to get.
+		Get proxies that use the specified protocols.
 
-		To get all proxies, regardless of type, set this option to NULL.
+		To get all proxies, regardless of protocol, set this option to NULL.
 	*/
-	types: ['http', 'https'],
+	protocols: ['http', 'https'],
 
 	/*
 		Anonymity level.
@@ -144,11 +144,11 @@ var options = {
 	countries: null,
 
 	/*
-		Types of proxies to get.
+		Get proxies that use the specified protocols.
 
-		To get all proxies, regardless of type, set this option to NULL.
+		To get all proxies, regardless of protocol, set this option to NULL.
 	*/
-	types: ['http', 'https'],
+	protocols: ['http', 'https'],
 
 	/*
 		Anonymity level.

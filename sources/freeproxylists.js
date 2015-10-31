@@ -132,7 +132,7 @@ var Source = module.exports = {
 
 		var startingPageUrls = {};
 
-		if (_.contains(options.types, 'http') || _.contains(options.types, 'https')) {
+		if (_.contains(options.protocols, 'http') || _.contains(options.protocols, 'https')) {
 
 			if (_.contains(options.anonymityLevels, 'transparent')) {
 				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
@@ -147,7 +147,7 @@ var Source = module.exports = {
 			}
 		}
 
-		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
 			startingPageUrls.socks = baseUrl + '/socks.html';
 		}
 
@@ -188,11 +188,11 @@ var Source = module.exports = {
 
 		async.map(listData, function(list, next) {
 
-			var type;
+			var protocol;
 			var anonymityLevel;
 
 			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
-				type = 'socks4/5';
+				protocol = 'socks4/5';
 				anonymityLevel = 'anonymous';
 			} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
 				anonymityLevel = 'transparent';
@@ -221,7 +221,7 @@ var Source = module.exports = {
 						proxies.push({
 							ip_address: $('td', tr).eq(0).text().toString(),
 							port: $('td', tr).eq(1).text().toString(),
-							type: type || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
+							protocol: protocol || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
 							country: $('td', tr).eq(5).text().toString(),
 							anonymityLevel: anonymityLevel
 						});

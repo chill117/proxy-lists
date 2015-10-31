@@ -33,15 +33,15 @@ var Source = module.exports = {
 
 		var listUrls = [];
 
-		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
 			listUrls.push('http://www.socks-proxy.net/');
 		}
 
-		if (_.contains(options.types, 'https')) {
+		if (_.contains(options.protocols, 'https')) {
 			listUrls.push('http://www.sslproxies.org/');
 		}
 
-		if (_.contains(options.anonymityLevels, 'transparent') || _.contains(options.types, 'http')) {
+		if (_.contains(options.anonymityLevels, 'transparent') || _.contains(options.protocols, 'http')) {
 			listUrls.push('http://free-proxy-list.net/');
 		}
 
@@ -96,19 +96,19 @@ var Source = module.exports = {
 			});
 
 			if (!_.isUndefined(columnIndexes['version'])) {
-				columnIndexes['type'] = columnIndexes['version'];
+				columnIndexes['protocol'] = columnIndexes['version'];
 			} else {
 				columnIndexes['https'] = columnIndexes['version'];
 			}
 
 			$('table tbody tr').each(function(index, tr) {
 
-				var type;
+				var protocol;
 
 				if (!_.isUndefined(columnIndexes['version'])) {
-					type = $('td', tr).eq(columnIndexes['version']).text().toString().toLowerCase();
+					protocol = $('td', tr).eq(columnIndexes['version']).text().toString().toLowerCase();
 				} else {
-					type = $('td', tr).eq(columnIndexes['https']).text().toString().toLowerCase() === 'yes' ? 'https' : 'http';
+					protocol = $('td', tr).eq(columnIndexes['https']).text().toString().toLowerCase() === 'yes' ? 'https' : 'http';
 				}
 
 				var anonymityLevel = $('td', tr).eq(columnIndexes['anonymity']).text().toString().toLowerCase();
@@ -120,7 +120,7 @@ var Source = module.exports = {
 				proxies.push({
 					ip_address: $('td', tr).eq(columnIndexes['ip_address']).text().toString(),
 					port: parseInt($('td', tr).eq(columnIndexes['port']).text().toString()),
-					type: type,
+					protocol: protocol,
 					country: $('td', tr).eq(columnIndexes['code']).text().toString().toLowerCase(),
 					anonymityLevel: anonymityLevel
 				});

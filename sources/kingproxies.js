@@ -21,7 +21,7 @@ module.exports = {
 			qs: {
 				key: options.kingproxies.apiKey,
 				type: options.anonymityLevels.join(','),
-				protocols: options.types.join(','),
+				protocols: options.protocols.join(','),
 				alive: 'true',
 				country_code: _.keys(options.countries).join(',').toUpperCase(),
 			}
@@ -59,24 +59,24 @@ module.exports = {
 		return _.map(data.data.proxies, function(proxy) {
 
 			var supportedProtocols = proxy.protocols;
-			var type;
+			var protocol;
 
 			if (_.contains(supportedProtocols, 'socks4') && _.contains(supportedProtocols, 'socks5')) {
-				type = 'socks4/5';
+				protocol = 'socks4/5';
 			} else if (_.contains(supportedProtocols, 'socks4')) {
-				type = 'socks4';
+				protocol = 'socks4';
 			} else if (_.contains(supportedProtocols, 'socks5')) {
-				type = 'socks5';
+				protocol = 'socks5';
 			} else if (_.contains(supportedProtocols, 'https')) {
-				type = 'https';
+				protocol = 'https';
 			} else if (_.contains(supportedProtocols, 'http')) {
-				type = 'http';
+				protocol = 'http';
 			}
 
 			return {
 				ip_address: proxy.ip,
 				port: parseInt(proxy.port),
-				type: type,
+				protocol: protocol,
 				anonymityLevel: proxy.type,
 				country: proxy.country_code.toLowerCase()
 			};

@@ -13,16 +13,16 @@ describe('isValidProxy(proxy)', function() {
 			{},
 			{
 				port: 4040,
-				type: 'http'
+				protocol: 'http'
 			},
 			{
 				ip_address: '12312123',
 				port: 4040,
-				type: 'http'
+				protocol: 'http'
 			},
 			{
 				ip_address: '127.0.0.1',
-				type: 'https'
+				protocol: 'https'
 			},
 			{
 				ip_address: '127.0.0.1',
@@ -31,23 +31,23 @@ describe('isValidProxy(proxy)', function() {
 			{
 				ip_address: '127.0.0.1',
 				port: 4040,
-				type: 'invalid'
+				protocol: 'invalid'
 			},
 			{
 				ip_address: '',
 				port: 4040,
-				type: 'socks4'
+				protocol: 'socks4'
 			},
 			{
 				ip_address: '127.0.0.1',
 				port: 80,
-				type: 'http',
+				protocol: 'http',
 				country: null
 			},
 			{
 				ip_address: '127.0.0.1',
 				port: 80,
-				type: 'http',
+				protocol: 'http',
 				country: 'invalid country'
 			}
 		];
@@ -73,18 +73,18 @@ describe('isValidProxy(proxy)', function() {
 			'255.255.255.255'
 		];
 		var validPorts = [ 80, 8080, 443 ];
-		var validTypes = [ 'http', 'https', 'socks4', 'socks5' ];
+		var validProtocols = [ 'http', 'https', 'socks4', 'socks5' ];
 		var validCountries = [ 'ca', 'us' ];
 
 		_.each(validIpAddresses, function(validIpAddress) {
 			_.each(validPorts, function(validPort) {
-				_.each(validTypes, function(validType) {
+				_.each(validProtocols, function(validProtocol) {
 					_.each(validCountries, function(validCountry) {
 
 						var validExample = {
 							ip_address: validIpAddress,
 							port: validPort,
-							type: validType,
+							protocol: validProtocol,
 							country: validCountry
 						};
 

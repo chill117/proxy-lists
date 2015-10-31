@@ -32,29 +32,29 @@ describe('filterProxies([options, ]cb)', function() {
 			});
 		});
 
-		describe('types', function() {
+		describe('protocols', function() {
 
-			var types = {
-				http: function(type) {
-					return type === 'http';
+			var protocols = {
+				http: function(protocol) {
+					return protocol === 'http';
 				},
-				https: function(type) {
-					return type === 'https';
+				https: function(protocol) {
+					return protocol === 'https';
 				},
-				socks4: function(type) {
-					return _.contains(['socks4', 'socks4/5'], type);
+				socks4: function(protocol) {
+					return _.contains(['socks4', 'socks4/5'], protocol);
 				},
-				socks5: function(type) {
-					return _.contains(['socks5', 'socks4/5'], type);
+				socks5: function(protocol) {
+					return _.contains(['socks5', 'socks4/5'], protocol);
 				}
 			};
 
-			_.each(types, function(test, type) {
+			_.each(protocols, function(test, protocol) {
 
-				it('should return only proxies of type "' + type + '"', function() {
+				it('should return only proxies of protocol "' + protocol + '"', function() {
 
 					var options = {
-						types: [type]
+						protocols: [protocol]
 					};
 
 					var filtered = ProxyLists.filterProxies(proxies, options);
@@ -63,7 +63,7 @@ describe('filterProxies([options, ]cb)', function() {
 					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
-						expect(test(proxy.type)).to.equal(true);
+						expect(test(proxy.protocol)).to.equal(true);
 					});
 				});
 			});

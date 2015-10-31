@@ -30,7 +30,7 @@ var Source = module.exports = {
 				c: _.values(options.countries),
 				allPorts: 1,
 				pl: 'on',// "Planet Labs"?
-				pr: [],// types
+				pr: [],// protocols
 				a: [],// anonymityLevels
 				sp: [
 					2,// Medium (speed)
@@ -51,15 +51,15 @@ var Source = module.exports = {
 			requestOptions.form.pp = 0;
 		}
 
-		if (_.contains(options.types, 'http')) {
+		if (_.contains(options.protocols, 'http')) {
 			requestOptions.form.pr.push(0);
 		}
 
-		if (_.contains(options.types, 'https')) {
+		if (_.contains(options.protocols, 'https')) {
 			requestOptions.form.pr.push(1);
 		}
 
-		if (_.contains(options.types, 'socks4') || _.contains(options.types, 'socks5')) {
+		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
 			requestOptions.form.pr.push(2);
 		}
 
@@ -107,7 +107,7 @@ var Source = module.exports = {
 			var styles = css.parse(ipEl.find('style').text());
 
 			proxy.port = $('td', tr).eq(2).text().toString();
-			proxy.type = $('td', tr).eq(6).text().toString();
+			proxy.protocol = $('td', tr).eq(6).text().toString();
 			proxy.country = $('td', tr).eq(3).attr('rel').toString();
 			proxy.anonymityLevel = $('td', tr).eq(7).text().toString();
 
@@ -165,7 +165,7 @@ var Source = module.exports = {
 			var anonymityLevel = proxy.anonymityLevel.toLowerCase();
 
 			proxy.port = parseInt(proxy.port);
-			proxy.type = proxy.type.toLowerCase();
+			proxy.protocol = proxy.protocol.toLowerCase();
 			proxy.anonymityLevel = anonymityLevel && anonymityLevels[anonymityLevel] || null;
 
 			return proxy;
