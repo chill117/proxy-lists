@@ -1,8 +1,13 @@
 'use strict';
 
-describe('source.kingproxies', function() {
+var _ = require('underscore');
+var async = require('async');
+var expect = require('chai').expect;
 
-	var kingproxies = ProxyLists._sources.kingproxies;
+var ProxyLists = require('../../../index');
+var kingproxies = require('../../../sources/kingproxies');
+
+describe('source.kingproxies', function() {
 
 	describe('parseResponseData(data, cb)', function() {
 

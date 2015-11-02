@@ -1,8 +1,13 @@
 'use strict';
 
-describe('source.hidemyass', function() {
+var _ = require('underscore');
+var async = require('async');
+var expect = require('chai').expect;
 
-	var hidemyass = ProxyLists._sources.hidemyass;
+var ProxyLists = require('../../../index');
+var hidemyass = require('../../../sources/hidemyass');
+
+describe('source.hidemyass', function() {
 
 	describe('parseResponseData(data)', function() {
 

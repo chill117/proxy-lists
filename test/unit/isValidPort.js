@@ -1,5 +1,11 @@
 'use strict';
 
+var _ = require('underscore');
+var async = require('async');
+var expect = require('chai').expect;
+
+var ProxyLists = require('../../index');
+
 describe('isValidPort(port)', function() {
 
 	it('should be a function', function() {

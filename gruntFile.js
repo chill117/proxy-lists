@@ -19,15 +19,7 @@ module.exports = function(grunt) {
 			unit: {
 				options: {
 					reporter: 'spec',
-					ui: 'bdd',
-					require: [
-						function() {
-							_ = require('underscore');
-							async = require('async');
-							expect = require('chai').expect;
-							ProxyLists = require('./index');
-						}
-					]
+					ui: 'bdd'
 				},
 				src: ['test/unit/**/*.js']
 			}

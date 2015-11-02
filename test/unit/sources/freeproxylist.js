@@ -1,8 +1,13 @@
 'use strict';
 
-describe('source.freeproxylist', function() {
+var _ = require('underscore');
+var async = require('async');
+var expect = require('chai').expect;
 
-	var freeproxylist = ProxyLists._sources.freeproxylist;
+var ProxyLists = require('../../../index');
+var freeproxylist = require('../../../sources/freeproxylist');
+
+describe('source.freeproxylist', function() {
 
 	describe('parseListData(listData, cb)', function() {
 
