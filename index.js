@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var async = require('async');
+var net = require('net');
 
 var ProxyLists = module.exports = {
 
@@ -273,12 +274,7 @@ var ProxyLists = module.exports = {
 
 	isValidIpAddress: function(ip_address) {
 
-		return this.isValidIpv4Address(ip_address);
-	},
-
-	isValidIpv4Address: function(ip_address) {
-
-		return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_address);
+		return net.isIP(ip_address) !== 0;
 	}
 };
 
