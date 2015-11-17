@@ -1,0 +1,13 @@
+{
+	"default": ["test"],
+	"test": [
+		"test:code-style",
+		"test:unit"
+	],
+	"test:code-style": [
+		"jscs"
+	],
+	"test:unit": [
+		"mochaTest:unit"
+	]
+}
