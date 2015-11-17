@@ -177,40 +177,38 @@ var ProxyLists = module.exports = {
 
 		options || (options = {});
 
+		var countries;
+		var protocols;
+		var anonymityLevels;
+
 		if (options.countries) {
 
 			if (_.isArray(options.countries) || !_.isObject(options.countries)) {
 				throw new Error('Invalid option "countries": Object expected.');
 			}
 
-			proxies = _.filter(proxies, function(proxy) {
-				return !!options.countries[proxy.country];
-			});
+			countries = options.countries;
 		}
 
 		if (options.protocols) {
 
-			var protocols = arrayToHash(options.protocols);
+			protocols = arrayToHash(options.protocols);
 
 			if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
 				protocols['socks4/5'] = true;
 			}
-
-			proxies = _.filter(proxies, function(proxy) {
-				return protocols[proxy.protocol];
-			});
 		}
 
 		if (options.anonymityLevels) {
 
-			var anonymityLevels = arrayToHash(options.anonymityLevels);
-
-			proxies = _.filter(proxies, function(proxy) {
-				return anonymityLevels[proxy.anonymityLevel];
-			});
+			anonymityLevels = arrayToHash(options.anonymityLevels);
 		}
 
-		return proxies;
+		return _.filter(proxies, function(proxy) {
+			return (!countries || countries[proxy.country]) &&
+					(!protocols || protocols[proxy.protocol]) &&
+					(!anonymityLevels || anonymityLevels[proxy.anonymityLevel]);
+		});
 	},
 
 	prepareOptions: function(options) {

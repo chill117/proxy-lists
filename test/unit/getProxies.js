@@ -6,9 +6,9 @@ var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
 
-var fixtures = require('./fixtures');
-
 describe('getProxies([options, ]cb)', function() {
+
+	var fixtures = require('../fixtures');
 
 	var sourcesBefore;
 

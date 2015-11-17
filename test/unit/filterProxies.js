@@ -5,9 +5,10 @@ var async = require('async');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
-var proxies = require('./fixtures/proxies');
 
 describe('filterProxies([options, ]cb)', function() {
+
+	var proxies = require('../fixtures/proxies');
 
 	describe('options', function() {
 
