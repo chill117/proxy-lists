@@ -51,7 +51,7 @@ var ProxyLists = module.exports = {
 		sourcesBlackList: null
 	},
 
-	_protocols: ['http', 'https', 'socks4', 'socks5'],
+	_protocols: ['http', 'https', 'socks4', 'socks5', 'socks4/5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
@@ -267,7 +267,7 @@ var ProxyLists = module.exports = {
 
 	isValidProxyProtocol: function(protocol) {
 
-		return ['http', 'https', 'socks4', 'socks5', 'socks4/5'].indexOf(protocol) !== -1;
+		return _.contains(this._protocols, protocol);
 	},
 
 	isValidIpAddress: function(ip_address) {
