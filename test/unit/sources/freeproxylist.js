@@ -101,6 +101,8 @@ describe('source.freeproxylist', function() {
 
 		it('should return a list data for each list URL provided', function(done) {
 
+			this.timeout(15000);
+
 			var listUrls = [
 				'http://www.socks-proxy.net/'
 			];
