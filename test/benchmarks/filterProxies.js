@@ -16,19 +16,17 @@ describe('benchmark: filterProxies', function() {
 	};
 
 	var preparedOptions = ProxyLists.prepareOptions(options);
-
 	var proxiesToFilter = [];
+	var targetNumProxies = 1000;
 
 	before(function() {
 
-		while (proxiesToFilter.length < 1000) {
+		while (proxiesToFilter.length < targetNumProxies) {
 			proxiesToFilter.push.apply(proxiesToFilter, proxies);
 		}
 	});
 
-	var minHz = 2500;
-
-	it('should run at least ' + minHz + ' ops/second', function(done) {
+	it('filtering an array of ' + targetNumProxies + ' proxies', function(done) {
 
 		this.timeout(15000);
 
@@ -45,11 +43,6 @@ describe('benchmark: filterProxies', function() {
 			}
 
 			console.log(result.target.toString());
-
-			if (!(result.target.hz >= minHz)) {
-				return done(new Error('Expected at least ' + minHz + ' ops/second'));
-			}
-
 			done();
 		});
 
