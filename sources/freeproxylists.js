@@ -50,16 +50,7 @@ var Source = module.exports = {
 			this.parseListData
 		);
 
-		fn(options, function(error, proxies) {
-
-			proxies = _.map(proxies, function(proxy) {
-				proxy.port = parseInt(proxy.port);
-				proxy.country = countryNameToCode[proxy.country] || proxy.country;
-				return proxy;
-			});
-
-			cb(null, proxies);
-		});
+		fn(options, cb);
 	},
 
 	getListUrls: function(options, cb) {
@@ -218,13 +209,19 @@ var Source = module.exports = {
 
 						// Data starts at the 3rd row.
 
-						proxies.push({
-							ip_address: $('td', tr).eq(0).text().toString(),
-							port: $('td', tr).eq(1).text().toString(),
-							protocol: protocol || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
-							country: $('td', tr).eq(5).text().toString(),
-							anonymityLevel: anonymityLevel
-						});
+						var countryName = $('td', tr).eq(5).text().toString();
+						var countryCode = countryNameToCode[countryName] || null;
+
+						if (countryCode) {
+
+							proxies.push({
+								ip_address: $('td', tr).eq(0).text().toString(),
+								port: parseInt($('td', tr).eq(1).text().toString()),
+								protocol: protocol || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
+								country: countryCode,
+								anonymityLevel: anonymityLevel
+							});
+						}
 					}
 				});
 
