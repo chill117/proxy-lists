@@ -28,6 +28,7 @@ This will install `proxy-lists` and add it to your application's `package.json` 
 * [getProxiesFromSource](#getproxiesfromsource)
 * [addSource](#addsource)
 * [listSources](#listsources)
+* [Proxy Object](#proxy-object)
 
 ### getProxies
 
@@ -229,6 +230,28 @@ var options = {
 	sourcesBlackList: null
 };
 ```
+
+
+### Proxy Object
+
+The proxy object has the following properties:
+* __ip_address__ - `string` The IP address of the proxy.
+* __port__ - `integer` The port number of the proxy.
+* __protocol__ `string` The default protocol the proxy uses. Can be any one of the following:
+  * __http__ - The proxy server can handle only HTTP requests.
+  * __https__ - The proxy server supports tunneling. Can handle both HTTP and HTTPS requests.
+  * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol. Can handle both HTTP and HTTPS requests.
+  * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol. Can handle both HTTP and HTTPS requests.
+* __protocols__ - `array` An array of protocols that the proxy supports.
+* __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel).
+* __anonymityLevel__ - `string` The anonymity level of the proxy. Can be any one of the following:
+  * __transparent__ - The proxy does not hide the requester's IP address.
+  * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
+  * __elite__ - The proxy hides the requester's IP address and does not add any proxy-related headers to the request.
+* __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
+
+It's important to note that this module does __NOT__ verify any of the information provided by the proxy lists from which the proxies are gathered. If you need to test proxies, verify their anonymity level, or confirm their geo-location; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
+
 
 
 ## Contributing
