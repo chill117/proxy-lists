@@ -4,9 +4,10 @@ var _ = require('underscore');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../../index');
-var freeproxylist = require('../../../sources/freeproxylist');
 
 describe('source.freeproxylist', function() {
+
+	var freeproxylist = require('../../../sources/freeproxylist');
 
 	describe('parseListData(listData, cb)', function() {
 

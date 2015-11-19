@@ -4,9 +4,10 @@ var _ = require('underscore');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../../index');
-var hidemyass = require('../../../sources/hidemyass');
 
 describe('source.hidemyass', function() {
+
+	var hidemyass = require('../../../sources/hidemyass');
 
 	describe('parseResponseData(data)', function() {
 

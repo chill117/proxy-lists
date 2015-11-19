@@ -1,6 +1,7 @@
 {
 	"default": ["test"],
 	"test": [
+		"test:benchmarks",
 		"test:code-style",
 		"test:unit"
 	],
