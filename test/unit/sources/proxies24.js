@@ -108,7 +108,7 @@ describe('source.proxies24', function() {
 							expect(proxy.port).to.not.equal(undefined);
 							expect(proxy.port).to.be.a('number');
 							expect(proxy.port).to.equal(parseInt(proxy.port));
-							expect(proxy.protocol).to.equal(protocol);
+							expect(_.contains(proxy.protocols, protocol)).to.equal(true);
 						});
 					} catch (error) {
 						return next(error);

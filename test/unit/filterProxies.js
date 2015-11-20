@@ -53,7 +53,7 @@ describe('filterProxies([options, ]cb)', function() {
 					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
-						expect(proxy.protocol).to.equal(protocol);
+						expect(_.contains(proxy.protocols, protocol)).to.equal(true);
 					});
 				});
 			});

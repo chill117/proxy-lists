@@ -182,9 +182,9 @@ var ProxyLists = module.exports = {
 
 		options || (options = {});
 
-		var countries;
-		var protocols;
-		var anonymityLevels;
+		var countriesTest;
+		var protocolsTest;
+		var anonymityLevelsTest;
 
 		if (options.countries) {
 
@@ -192,23 +192,41 @@ var ProxyLists = module.exports = {
 				throw new Error('Invalid option "countries": Object expected.');
 			}
 
-			countries = options.countries;
+			countriesTest = options.countries;
 		}
 
 		if (options.protocols) {
 
-			protocols = arrayToHash(options.protocols);
+			protocolsTest = arrayToHash(options.protocols);
 		}
 
 		if (options.anonymityLevels) {
 
-			anonymityLevels = arrayToHash(options.anonymityLevels);
+			anonymityLevelsTest = arrayToHash(options.anonymityLevels);
 		}
 
 		return _.filter(proxies, function(proxy) {
-			return (!countries || countries[proxy.country]) &&
-					(!protocols || protocols[proxy.protocol]) &&
-					(!anonymityLevels || anonymityLevels[proxy.anonymityLevel]);
+
+			if (countriesTest && !countriesTest[proxy.country]) {
+				return false;
+			}
+
+			if (anonymityLevelsTest && !anonymityLevelsTest[proxy.anonymityLevel]) {
+				return false;
+			}
+
+			if (protocolsTest) {
+
+				var hasAtLeastOnePassingProtocol = _.some(proxy.protocols, function(protocol) {
+					return protocolsTest[protocol];
+				});
+
+				if (!hasAtLeastOnePassingProtocol) {
+					return false;
+				}
+			}
+
+			return true;
 		});
 	},
 
@@ -257,13 +275,20 @@ var ProxyLists = module.exports = {
 
 		return !!proxy.ip_address && this.isValidIpAddress(proxy.ip_address) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.protocol && this.isValidProxyProtocol(proxy.protocol) &&
+				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols) &&
 				!!proxy.country && _.has(this._countries, proxy.country);
 	},
 
 	isValidPort: function(port) {
 
 		return _.isNumber(port) && parseInt(port).toString() === port.toString();
+	},
+
+	isValidProxyProtocols: function(protocols) {
+
+		return _.every(protocols, function(protocol) {
+			return ProxyLists.isValidProxyProtocol(protocol);
+		});
 	},
 
 	isValidProxyProtocol: function(protocol) {

@@ -103,6 +103,10 @@ var Source = module.exports = {
 
 			$('table tbody tr').each(function(index, tr) {
 
+				var ip_address = $('td', tr).eq(columnIndexes['ip_address']).text().toString();
+				var port = parseInt($('td', tr).eq(columnIndexes['port']).text().toString());
+				var country = $('td', tr).eq(columnIndexes['code']).text().toString().toLowerCase();
+
 				var protocol;
 
 				if (!_.isUndefined(columnIndexes['version'])) {
@@ -118,10 +122,10 @@ var Source = module.exports = {
 				}
 
 				proxies.push({
-					ip_address: $('td', tr).eq(columnIndexes['ip_address']).text().toString(),
-					port: parseInt($('td', tr).eq(columnIndexes['port']).text().toString()),
-					protocol: protocol,
-					country: $('td', tr).eq(columnIndexes['code']).text().toString().toLowerCase(),
+					ip_address: ip_address,
+					port: port,
+					protocols: [protocol],
+					country: country,
 					anonymityLevel: anonymityLevel
 				});
 			});

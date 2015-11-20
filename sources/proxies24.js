@@ -227,7 +227,7 @@ var proxies24 = module.exports = {
 					proxies.push({
 						ip_address: host[0],
 						port: parseInt(host[1]),
-						protocol: protocol
+						protocols: [protocol]
 					});
 				}
 			});

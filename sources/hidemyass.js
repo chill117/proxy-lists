@@ -109,12 +109,28 @@ var Source = module.exports = {
 			var proxy = {};
 			var ipEl = $('td', tr).eq(1);
 			var styles = css.parse(ipEl.find('style').text());
+			var protocol = $('td', tr).eq(6).text().toString().toLowerCase();
+			var port = parseInt($('td', tr).eq(2).text().toString());
+			var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase();
+			var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase();
 
-			proxy.port = $('td', tr).eq(2).text().toString();
-			proxy.protocol = $('td', tr).eq(6).text().toString();
-			proxy.country = $('td', tr).eq(3).attr('rel').toString();
-			proxy.anonymityLevel = $('td', tr).eq(7).text().toString();
+			if (protocolFixes[protocol]) {
+				protocol = protocolFixes[protocol];
+			}
 
+			if (protocol === 'socks4/5') {
+				proxy.protocols = ['socks5', 'socks4'];
+			} else {
+				proxy.protocols = [protocol];
+			}
+
+			if (anonymityLevelFixes[anonymityLevel]) {
+				anonymityLevel = anonymityLevelFixes[anonymityLevel];
+			}
+
+			proxy.port = port;
+			proxy.country = country;
+			proxy.anonymityLevel = anonymityLevel;
 			proxy.ip_address = '';
 
 			_.each(styles.stylesheet.rules, function(rule) {
@@ -162,24 +178,6 @@ var Source = module.exports = {
 			});
 
 			proxies.push(proxy);
-		});
-
-		proxies = _.map(proxies, function(proxy) {
-
-			var anonymityLevel = proxy.anonymityLevel.toLowerCase();
-			var protocol = proxy.protocol.toLowerCase();
-
-			proxy.port = parseInt(proxy.port);
-			proxy.protocol = protocolFixes[protocol] || protocol;
-			proxy.anonymityLevel = anonymityLevel && anonymityLevelFixes[anonymityLevel] || null;
-
-			if (protocol === 'socks4/5') {
-				proxy.protocols = ['socks5', 'socks4'];
-			} else {
-				proxy.protocols = [proxy.protocol];
-			}
-
-			return proxy;
 		});
 
 		return proxies;

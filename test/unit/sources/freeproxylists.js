@@ -204,56 +204,56 @@ describe('source.freeproxylists', function() {
 						{
 							ip_address: '123.123.2.42',
 							port: 8080,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.209.64.13',
 							port: 8118,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '234.221.233.142',
 							port: 3128,
-							protocol: 'https',
+							protocols: ['https'],
 							country: 'sk',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.124.179',
 							port: 80,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.114.49',
 							port: 80,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.114.36',
 							port: 80,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '123.123.112.71',
 							port: 80,
-							protocol: 'http',
+							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
 							ip_address: '234.123.45.21',
 							port: 8081,
-							protocol: 'https',
+							protocols: ['https'],
 							country: 'at',
 							anonymityLevel: 'anonymous'
 						}

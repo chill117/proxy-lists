@@ -13,7 +13,7 @@ module.exports = {
 
 		if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
 			options.kingproxies || (options.kingproxies = {});
-			options.kingproxies = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
+			options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
 		}
 
 		if (!options.kingproxies || !options.kingproxies.apiKey) {
@@ -63,24 +63,11 @@ module.exports = {
 
 		return _.map(data.data.proxies, function(proxy) {
 
-			var protocol;
-
-			if (_.contains(proxy.protocols, 'socks5')) {
-				protocol = 'socks5';
-			} else if (_.contains(proxy.protocols, 'socks4')) {
-				protocol = 'socks4';
-			} else if (_.contains(proxy.protocols, 'https')) {
-				protocol = 'https';
-			} else if (_.contains(proxy.protocols, 'http')) {
-				protocol = 'http';
-			}
-
 			return {
 				ip_address: proxy.ip,
 				port: parseInt(proxy.port),
-				protocol: protocol,
 				protocols: proxy.protocols,
-				anonymityLevel: proxy.type,
+				anonymityLevel: proxy.type.toLowerCase(),
 				country: proxy.country_code.toLowerCase()
 			};
 		});

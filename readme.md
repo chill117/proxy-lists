@@ -52,14 +52,14 @@ Sample `proxies`:
 	{
 		ip_address: '123.123.2.42',
 		port: 8080,
-		protocol: 'http',
+		protocols: ['http'],
 		country: 'us',
 		anonymityLevel: 'transparent'
 	},
 	{
 		ip_address: '234.221.233.142',
 		port: 3128,
-		protocol: 'https',
+		protocols: ['https'],
 		country: 'cz',
 		anonymityLevel: 'elite'
 	}
@@ -238,12 +238,11 @@ var options = {
 The proxy object has the following properties:
 * __ip_address__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
-* __protocol__ `string` The default protocol the proxy uses. Can be any one of the following:
+* __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
   * __http__ - The proxy server can handle only HTTP requests.
   * __https__ - The proxy server supports tunneling. Can handle both HTTP and HTTPS requests.
   * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol. Can handle both HTTP and HTTPS requests.
   * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol. Can handle both HTTP and HTTPS requests.
-* __protocols__ - `array` An array of protocols that the proxy supports.
 * __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel).
 * __anonymityLevel__ - `string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.

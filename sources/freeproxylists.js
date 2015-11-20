@@ -179,18 +179,15 @@ var Source = module.exports = {
 
 		async.map(listData, function(list, next) {
 
-			var protocol;
-			var anonymityLevel;
-
 			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
-				protocol = 'socks5';
-				anonymityLevel = 'anonymous';
+				list.protocol = 'socks5';
+				list.anonymityLevel = 'anonymous';
 			} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
-				anonymityLevel = 'transparent';
+				list.anonymityLevel = 'transparent';
 			} else if (list.url.substr(0, 'anon/'.length) === 'anon/') {
-				anonymityLevel = 'anonymous';
+				list.anonymityLevel = 'anonymous';
 			} else if (list.url.substr(0, 'elite/'.length) === 'elite/') {
-				anonymityLevel = 'elite';
+				list.anonymityLevel = 'elite';
 			}
 
 			parseString(list.data, function(error, result) {
@@ -214,12 +211,18 @@ var Source = module.exports = {
 
 						if (countryCode) {
 
+							var protocol = list.protocol;
+
+							if (!protocol) {
+								protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
+							}
+
 							proxies.push({
 								ip_address: $('td', tr).eq(0).text().toString(),
 								port: parseInt($('td', tr).eq(1).text().toString()),
-								protocol: protocol || ($('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http'),
+								protocols: [protocol],
 								country: countryCode,
-								anonymityLevel: anonymityLevel
+								anonymityLevel: list.anonymityLevel
 							});
 						}
 					}
