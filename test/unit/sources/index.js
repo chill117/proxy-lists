@@ -34,9 +34,6 @@ _.each(sources, function(source) {
 					sample: true
 				};
 
-				options.kingproxies = {};
-				options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
-
 				options = ProxyLists.prepareOptions(options);
 
 				source.getProxies(options, function(error, proxies) {

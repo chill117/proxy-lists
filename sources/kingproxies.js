@@ -11,6 +11,11 @@ module.exports = {
 
 		options || (options = {});
 
+		if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
+			options.kingproxies || (options.kingproxies = {});
+			options.kingproxies = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
+		}
+
 		if (!options.kingproxies || !options.kingproxies.apiKey) {
 			return cb(new Error('Missing API key for kingproxies. Provide API key via `options.kingproxies.apiKey`.'));
 		}
