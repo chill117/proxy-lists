@@ -99,34 +99,5 @@ describe('source.freeproxylist', function() {
 
 			expect(freeproxylist.getListData).to.be.a('function');
 		});
-
-		it('should return a list data for each list URL provided', function(done) {
-
-			this.timeout(15000);
-
-			var listUrls = [
-				'http://www.socks-proxy.net/'
-			];
-
-			freeproxylist.getListData(listUrls, function(error, listData) {
-
-				try {
-
-					expect(error).to.equal(null);
-					expect(listData).to.be.an('array');
-					expect(listData).to.have.length(1);
-
-					_.each(listData, function(data) {
-						expect(data).to.be.a('string');
-						expect(data.length > 0).to.equal(true);
-					});
-
-				} catch (error) {
-					return done(error);
-				}
-
-				done();
-			});
-		});
 	});
 });
