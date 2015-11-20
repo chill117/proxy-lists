@@ -239,11 +239,11 @@ The proxy object has the following properties:
 * __ip_address__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
 * __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
-  * __http__ - The proxy server can handle only HTTP requests.
-  * __https__ - The proxy server supports tunneling. Can handle both HTTP and HTTPS requests.
-  * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol. Can handle both HTTP and HTTPS requests.
-  * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol. Can handle both HTTP and HTTPS requests.
-* __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel).
+  * __http__ - The proxy uses HTTP.
+  * __https__ - The proxy uses HTTPS.
+  * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol.
+  * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol.
+* __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
 * __anonymityLevel__ - `string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.
   * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
