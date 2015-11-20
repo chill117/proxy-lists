@@ -56,7 +56,7 @@ describe('source.freeproxylists', function() {
 					expect(_.values(startingPageUrls)).to.have.length(1);
 				});
 
-				it('"socks4/5": should return only socks starting page URL', function() {
+				it('"socks": should return only socks starting page URL', function() {
 
 					var options = {
 						anonymityLevels: [],

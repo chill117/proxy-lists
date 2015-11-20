@@ -183,7 +183,7 @@ var Source = module.exports = {
 			var anonymityLevel;
 
 			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
-				protocol = 'socks4/5';
+				protocol = 'socks5';
 				anonymityLevel = 'anonymous';
 			} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
 				anonymityLevel = 'transparent';

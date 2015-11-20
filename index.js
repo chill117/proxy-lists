@@ -51,7 +51,7 @@ var ProxyLists = module.exports = {
 		sourcesBlackList: null
 	},
 
-	_protocols: ['http', 'https', 'socks4', 'socks5', 'socks4/5'],
+	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
@@ -198,10 +198,6 @@ var ProxyLists = module.exports = {
 		if (options.protocols) {
 
 			protocols = arrayToHash(options.protocols);
-
-			if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
-				protocols['socks4/5'] = true;
-			}
 		}
 
 		if (options.anonymityLevels) {

@@ -63,18 +63,15 @@ module.exports = {
 
 		return _.map(data.data.proxies, function(proxy) {
 
-			var supportedProtocols = proxy.protocols;
 			var protocol;
 
-			if (_.contains(supportedProtocols, 'socks4') && _.contains(supportedProtocols, 'socks5')) {
-				protocol = 'socks4/5';
-			} else if (_.contains(supportedProtocols, 'socks4')) {
-				protocol = 'socks4';
-			} else if (_.contains(supportedProtocols, 'socks5')) {
+			if (_.contains(proxy.protocols, 'socks5')) {
 				protocol = 'socks5';
-			} else if (_.contains(supportedProtocols, 'https')) {
+			} else if (_.contains(proxy.protocols, 'socks4')) {
+				protocol = 'socks4';
+			} else if (_.contains(proxy.protocols, 'https')) {
 				protocol = 'https';
-			} else if (_.contains(supportedProtocols, 'http')) {
+			} else if (_.contains(proxy.protocols, 'http')) {
 				protocol = 'http';
 			}
 
@@ -82,6 +79,7 @@ module.exports = {
 				ip_address: proxy.ip,
 				port: parseInt(proxy.port),
 				protocol: protocol,
+				protocols: proxy.protocols,
 				anonymityLevel: proxy.type,
 				country: proxy.country_code.toLowerCase()
 			};

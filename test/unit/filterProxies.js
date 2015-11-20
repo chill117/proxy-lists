@@ -39,22 +39,7 @@ describe('filterProxies([options, ]cb)', function() {
 
 		describe('protocols', function() {
 
-			var protocols = {
-				http: function(protocol) {
-					return protocol === 'http';
-				},
-				https: function(protocol) {
-					return protocol === 'https';
-				},
-				socks4: function(protocol) {
-					return _.contains(['socks4', 'socks4/5'], protocol);
-				},
-				socks5: function(protocol) {
-					return _.contains(['socks5', 'socks4/5'], protocol);
-				}
-			};
-
-			_.each(protocols, function(test, protocol) {
+			_.each(ProxyLists._protocols, function(protocol) {
 
 				it('should return only proxies of protocol "' + protocol + '"', function() {
 
@@ -68,7 +53,7 @@ describe('filterProxies([options, ]cb)', function() {
 					expect(filtered.length > 0).to.equal(true);
 
 					_.each(filtered, function(proxy) {
-						expect(test(proxy.protocol)).to.equal(true);
+						expect(proxy.protocol).to.equal(protocol);
 					});
 				});
 			});

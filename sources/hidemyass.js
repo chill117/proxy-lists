@@ -5,12 +5,16 @@ var cheerio = require('cheerio');
 var css = require('css');
 var request = require('request');
 
-var anonymityLevels = {
+var anonymityLevelFixes = {
 	'none': 'transparent',
 	'low': 'transparent',
 	'medium': 'transparent',
 	'high': 'anonymous',
 	'high +ka': 'elite',
+};
+
+var protocolFixes = {
+	'socks4/5': 'socks5'
 };
 
 var Source = module.exports = {
@@ -163,10 +167,17 @@ var Source = module.exports = {
 		proxies = _.map(proxies, function(proxy) {
 
 			var anonymityLevel = proxy.anonymityLevel.toLowerCase();
+			var protocol = proxy.protocol.toLowerCase();
 
 			proxy.port = parseInt(proxy.port);
-			proxy.protocol = proxy.protocol.toLowerCase();
-			proxy.anonymityLevel = anonymityLevel && anonymityLevels[anonymityLevel] || null;
+			proxy.protocol = protocolFixes[protocol] || protocol;
+			proxy.anonymityLevel = anonymityLevel && anonymityLevelFixes[anonymityLevel] || null;
+
+			if (protocol === 'socks4/5') {
+				proxy.protocols = ['socks5', 'socks4'];
+			} else {
+				proxy.protocols = [proxy.protocol];
+			}
 
 			return proxy;
 		});
