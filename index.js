@@ -115,6 +115,11 @@ var ProxyLists = module.exports = {
 			// Filter the proxies.
 			proxies = ProxyLists.filterProxies(proxies, options);
 
+			proxies = _.map(proxies, function(proxy) {
+				proxy.source = name;
+				return proxy;
+			});
+
 			cb(null, proxies);
 		});
 	},
