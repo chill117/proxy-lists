@@ -225,7 +225,7 @@ var proxies24 = module.exports = {
 
 				if (host[0] && host[1]) {
 					proxies.push({
-						ip_address: host[0],
+						ipAddress: host[0],
 						port: parseInt(host[1]),
 						protocols: [protocol]
 					});
@@ -251,7 +251,7 @@ var proxies24 = module.exports = {
 
 			_.each(proxies, function(proxy) {
 
-				var country = GeoIpNativeLite.lookup(proxy.ip_address);
+				var country = GeoIpNativeLite.lookup(proxy.ipAddress);
 
 				if (country) {
 					proxy.country = country;

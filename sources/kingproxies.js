@@ -64,7 +64,7 @@ module.exports = {
 		return _.map(data.data.proxies, function(proxy) {
 
 			return {
-				ip_address: proxy.ip,
+				ipAddress: proxy.ip,
 				port: parseInt(proxy.port),
 				protocols: proxy.protocols,
 				anonymityLevel: proxy.type.toLowerCase(),

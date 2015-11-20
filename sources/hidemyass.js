@@ -131,7 +131,7 @@ var Source = module.exports = {
 			proxy.port = port;
 			proxy.country = country;
 			proxy.anonymityLevel = anonymityLevel;
-			proxy.ip_address = '';
+			proxy.ipAddress = '';
 
 			_.each(styles.stylesheet.rules, function(rule) {
 
@@ -151,7 +151,7 @@ var Source = module.exports = {
 				switch (node.type) {
 
 					case 'text':
-						proxy.ip_address += node.data;
+						proxy.ipAddress += node.data;
 					break;
 
 					case 'tag':
@@ -168,7 +168,7 @@ var Source = module.exports = {
 								var isNonEmpty = contentText !== '';
 
 								if (isTextOnly && isNonEmpty) {
-									proxy.ip_address += contentText;
+									proxy.ipAddress += contentText;
 								}
 							}
 						}

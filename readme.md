@@ -50,14 +50,14 @@ Sample `proxies`:
 ```js
 [
 	{
-		ip_address: '123.123.2.42',
+		ipAddress: '123.123.2.42',
 		port: 8080,
 		protocols: ['http'],
 		country: 'us',
 		anonymityLevel: 'transparent'
 	},
 	{
-		ip_address: '234.221.233.142',
+		ipAddress: '234.221.233.142',
 		port: 3128,
 		protocols: ['https'],
 		country: 'cz',
@@ -236,7 +236,7 @@ var options = {
 ### Proxy Object
 
 The proxy object has the following properties:
-* __ip_address__ - `string` The IP address of the proxy.
+* __ipAddress__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
 * __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
   * __http__ - The proxy uses HTTP.
@@ -280,3 +280,10 @@ To run only code-style checks:
 ```
 grunt test:code-style
 ```
+
+## Changelog
+
+* v1.3.0:
+  * Removed attribute `proxy.protocol` in favor of `proxy.protocols` (an array of all supported protocols).
+  * Renamed attribute `proxy.ip_address` to `proxy.ipAddress` for consistency.
+  * Added attribute `proxy.source`.

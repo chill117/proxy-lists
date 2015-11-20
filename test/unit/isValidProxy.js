@@ -21,36 +21,36 @@ describe('isValidProxy(proxy)', function() {
 				protocols: ['http']
 			},
 			{
-				ip_address: '12312123',
+				ipAddress: '12312123',
 				port: 4040,
 				protocols: ['http']
 			},
 			{
-				ip_address: '127.0.0.1',
+				ipAddress: '127.0.0.1',
 				protocols: ['https']
 			},
 			{
-				ip_address: '127.0.0.1',
+				ipAddress: '127.0.0.1',
 				port: 4040
 			},
 			{
-				ip_address: '127.0.0.1',
+				ipAddress: '127.0.0.1',
 				port: 4040,
 				protocols: ['invalid']
 			},
 			{
-				ip_address: '',
+				ipAddress: '',
 				port: 4040,
 				protocols: ['socks4']
 			},
 			{
-				ip_address: '127.0.0.1',
+				ipAddress: '127.0.0.1',
 				port: 80,
 				protocols: ['http'],
 				country: null
 			},
 			{
-				ip_address: '127.0.0.1',
+				ipAddress: '127.0.0.1',
 				port: 80,
 				protocols: ['http'],
 				country: 'invalid country'
@@ -87,7 +87,7 @@ describe('isValidProxy(proxy)', function() {
 					_.each(validCountries, function(validCountry) {
 
 						var validExample = {
-							ip_address: validIpAddress,
+							ipAddress: validIpAddress,
 							port: validPort,
 							protocols: [validProtocol],
 							country: validCountry

@@ -202,56 +202,56 @@ describe('source.freeproxylists', function() {
 					expect(proxies).to.be.an('array');
 					expect(proxies).to.deep.equal([
 						{
-							ip_address: '123.123.2.42',
+							ipAddress: '123.123.2.42',
 							port: 8080,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '123.209.64.13',
+							ipAddress: '123.209.64.13',
 							port: 8118,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '234.221.233.142',
+							ipAddress: '234.221.233.142',
 							port: 3128,
 							protocols: ['https'],
 							country: 'sk',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '123.123.124.179',
+							ipAddress: '123.123.124.179',
 							port: 80,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '123.123.114.49',
+							ipAddress: '123.123.114.49',
 							port: 80,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '123.123.114.36',
+							ipAddress: '123.123.114.36',
 							port: 80,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '123.123.112.71',
+							ipAddress: '123.123.112.71',
 							port: 80,
 							protocols: ['http'],
 							country: 'cz',
 							anonymityLevel: 'anonymous'
 						},
 						{
-							ip_address: '234.123.45.21',
+							ipAddress: '234.123.45.21',
 							port: 8081,
 							protocols: ['https'],
 							country: 'at',

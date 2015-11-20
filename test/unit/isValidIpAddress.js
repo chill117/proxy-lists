@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
 
-describe('isValidIpAddress(ip_address)', function() {
+describe('isValidIpAddress(ipAddress)', function() {
 
 	it('should be a function', function() {
 

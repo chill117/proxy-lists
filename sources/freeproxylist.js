@@ -103,7 +103,7 @@ var Source = module.exports = {
 
 			$('table tbody tr').each(function(index, tr) {
 
-				var ip_address = $('td', tr).eq(columnIndexes['ip_address']).text().toString();
+				var ipAddress = $('td', tr).eq(columnIndexes['ip_address']).text().toString();
 				var port = parseInt($('td', tr).eq(columnIndexes['port']).text().toString());
 				var country = $('td', tr).eq(columnIndexes['code']).text().toString().toLowerCase();
 
@@ -122,7 +122,7 @@ var Source = module.exports = {
 				}
 
 				proxies.push({
-					ip_address: ip_address,
+					ipAddress: ipAddress,
 					port: port,
 					protocols: [protocol],
 					country: country,

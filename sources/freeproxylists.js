@@ -218,7 +218,7 @@ var Source = module.exports = {
 							}
 
 							proxies.push({
-								ip_address: $('td', tr).eq(0).text().toString(),
+								ipAddress: $('td', tr).eq(0).text().toString(),
 								port: parseInt($('td', tr).eq(1).text().toString()),
 								protocols: [protocol],
 								country: countryCode,
