@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var EventEmitter = require('events');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
@@ -39,6 +40,8 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 		ProxyLists.addSource(name, {
 			getProxies: function() {
 				called = true;
+				var emitter = new EventEmitter();
+				return emitter;
 			}
 		});
 

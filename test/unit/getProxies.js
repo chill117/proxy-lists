@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var async = require('async');
+var EventEmitter = require('events');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
@@ -25,7 +26,7 @@ describe('getProxies([options, ]cb)', function() {
 		expect(ProxyLists.getProxies).to.be.a('function');
 	});
 
-	it('should call getProxies() for all sources', function(done) {
+	it('should call getProxies() for all sources', function() {
 
 		var testSources = ['somewhere', 'somewhere-else'];
 		var called = [];
@@ -34,67 +35,18 @@ describe('getProxies([options, ]cb)', function() {
 
 		_.each(testSources, function(name) {
 			ProxyLists.addSource(name, {
-				getProxies: function(options, cb) {
+				getProxies: function() {
 					called.push(name);
-					cb();
+					var emitter = new EventEmitter();
+					return emitter;
 				}
 			});
 		});
 
-		ProxyLists.getProxies(function() {
+		ProxyLists.getProxies();
 
-			try {
-
-				_.each(_.keys(ProxyLists._sources), function(name) {
-					expect(_.contains(called, name)).to.equal(true);
-				});
-
-			} catch (error) {
-				return done(error);
-			}
-
-			done();
-		});
-	});
-
-	it('should not fail completely when an error occurs in one proxy source', function(done) {
-
-		var sampleProxies = fixtures.proxies;
-
-		var testSources = {
-			'successful-source': {
-				getProxies: function(options, cb) {
-					cb(null, sampleProxies);
-				}
-			},
-			'failing-source': {
-				getProxies: function(options, cb) {
-					cb(new Error('Some error.'));
-				}
-			}
-		};
-
-		ProxyLists._sources = {};
-
-		_.each(testSources, function(source, name) {
-			ProxyLists.addSource(name, source);
-		});
-
-		ProxyLists.getProxies({
-			countries: null,
-			protocols: null,
-			anonymityLevels: null
-		}, function(error, proxies) {
-
-			try {
-				expect(error).to.equal(null);
-				expect(proxies).to.be.an('array');
-				expect(proxies).to.deep.equal(sampleProxies);
-			} catch (error) {
-				return done(error);
-			}
-
-			done();
+		_.each(_.keys(ProxyLists._sources), function(name) {
+			expect(_.contains(called, name)).to.equal(true);
 		});
 	});
 });

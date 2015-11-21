@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
+var EventEmitter = require('events');
 var GeoIpNativeLite = require('geoip-native-lite');
 var request = require('request');
 
@@ -16,25 +17,35 @@ var proxies24 = module.exports = {
 
 	homeUrl: 'http://proxyserverlist-24.blogspot.com/',
 
-	getProxies: function(options, cb) {
+	getProxies: function(options) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
-		}
+		options || (options = {});
+
+		var emitter = new EventEmitter();
 
 		var fn = async.seq(
-			proxies24.getStartingPages,
-			proxies24.getLists,
-			proxies24.getListPagesHtml,
-			proxies24.parseListPagesHtml,
-			proxies24.geoLocate
+			this.prepareStartingPages,
+			this.getLists,
+			this.getListPagesHtml,
+			this.parseListPagesHtml,
+			this.geoLocate
 		);
 
-		fn(options, cb);
+		fn(options, function(error, proxies) {
+
+			if (error) {
+				emitter.emit('error', error);
+			} else {
+				emitter.emit('data', proxies);
+			}
+
+			emitter.emit('end');
+		});
+
+		return emitter;
 	},
 
-	getStartingPages: function(options, cb) {
+	prepareStartingPages: function(options, cb) {
 
 		var startingPages = [];
 

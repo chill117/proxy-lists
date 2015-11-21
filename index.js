@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
-var async = require('async');
+var EventEmitter = require('events');
 var net = require('net');
 
 var ProxyLists = module.exports = {
@@ -57,71 +57,79 @@ var ProxyLists = module.exports = {
 	_sources: require('./sources'),
 
 	// Get proxies from all sources.
-	getProxies: function(options, cb) {
+	getProxies: function(options) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
-		}
+		options = this.prepareOptions(options || {});
 
-		options = this.prepareOptions(options);
-
+		var emitter = new EventEmitter();
 		var sources = this.listSources(options);
+		var ended = {};
+		var endEmitted = false;
 
-		async.map(sources, _.bind(function(source, next) {
+		var end = function(name) {
 
-			this.getProxiesFromSource(source.name, options, function(error, proxies) {
-
-				if (error) {
-					console.error(error.message || error);
-				}
-
-				next(null, proxies || []);
-			});
-
-		}, this), function(error, proxies) {
-
-			if (error) {
-				return cb(error);
+			if (endEmitted) {
+				// Already emitted the 'end' event.
+				return;
 			}
 
-			// Collapse the multi-dimensional array.
-			proxies = Array.prototype.concat.apply([], proxies);
+			ended[name] = true;
 
-			cb(null, proxies);
-		});
+			var allEnded = _.every(sources, function(source) {
+				return ended[source.name];
+			});
+
+			if (allEnded) {
+				endEmitted = true;
+				emitter.emit('end');
+			}
+		};
+
+		_.each(sources, function(source) {
+
+			var gettingProxies = this.getProxiesFromSource(source.name, options);
+
+			gettingProxies.on('data', _.bind(emitter.emit, emitter, 'data'));
+			gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
+			gettingProxies.on('end', _.bind(end, undefined, source.name));
+
+		}, this);
+
+		return emitter;
 	},
 
 	// Get proxies from a single source.
-	getProxiesFromSource: function(name, options, cb) {
+	getProxiesFromSource: function(name, options) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
-		}
-
-		if (!_.has(this._sources, name)) {
+		if (!this.sourceExists(name)) {
 			throw new Error('Proxy source does not exist: "' + name + '"');
 		}
 
-		options = this.prepareOptions(options);
+		options = this.prepareOptions(options || {});
 
-		this._sources[name].getProxies(options, function(error, proxies) {
+		var emitter = new EventEmitter();
 
-			if (error) {
-				return cb(error);
-			}
+		var gettingProxies = this._sources[name].getProxies(options);
 
-			// Filter the proxies.
+		gettingProxies.on('data', function(proxies) {
+
+			proxies || (proxies = []);
+
 			proxies = ProxyLists.filterProxies(proxies, options);
 
+			// Add the 'source' attribute to every proxy.
 			proxies = _.map(proxies, function(proxy) {
 				proxy.source = name;
 				return proxy;
 			});
 
-			cb(null, proxies);
+			emitter.emit('data', proxies);
 		});
+
+		gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
+		gettingProxies.once('end', _.bind(emitter.emit, emitter, 'end'));
+
+		return emitter;
 	},
 
 	addSource: function(name, source) {
@@ -130,7 +138,7 @@ var ProxyLists = module.exports = {
 			throw new Error('Invalid source name.');
 		}
 
-		if (_.has(this._sources, name)) {
+		if (this.sourceExists(name)) {
 			throw new Error('Source already exists: "' + name + '"');
 		}
 
@@ -143,6 +151,11 @@ var ProxyLists = module.exports = {
 		}
 
 		this._sources[name] = source;
+	},
+
+	sourceExists: function(name) {
+
+		return _.has(this._sources, name);
 	},
 
 	listSources: function(options) {

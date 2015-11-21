@@ -3,33 +3,44 @@
 var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
+var EventEmitter = require('events');
 var request = require('request');
 
 var anonymityLevels = {
 	'elite proxy': 'elite',
 };
 
-var Source = module.exports = {
+module.exports = {
 
 	homeUrl: 'http://free-proxy-list.net/',
 
-	getProxies: function(options, cb) {
+	getProxies: function(options) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
-		}
+		options || (options = {});
+
+		var emitter = new EventEmitter();
 
 		var fn = async.seq(
-			this.getListUrls,
+			this.prepareListUrls,
 			this.getListData,
 			this.parseListData
 		);
 
-		fn(options, cb);
+		fn(options, function(error, proxies) {
+
+			if (error) {
+				emitter.emit('error', error);
+			} else {
+				emitter.emit('data', proxies);
+			}
+
+			emitter.emit('end');
+		});
+
+		return emitter;
 	},
 
-	getListUrls: function(options, cb) {
+	prepareListUrls: function(options, cb) {
 
 		var listUrls = [];
 

@@ -41,8 +41,24 @@ Usage:
 ```js
 var ProxyLists = require('proxy-lists');
 
-ProxyLists.getProxies({ countries: ['us', 'ca'] }, function(error, proxies) {
-	// ..
+var options = {
+	countries: ['us', 'ca']
+};
+
+// `gettingProxies` is an event emitter object.
+var gettingProxies = ProxyLists.getProxies(options);
+
+gettingProxies.on('data', function(proxies) {
+	// Received some proxies.
+});
+
+gettingProxies.on('error', function(error) {
+	// Some error has occurred.
+	console.error(error);
+});
+
+gettingProxies.once('end', function() {
+	// Done getting proxies.
 });
 ```
 
@@ -124,8 +140,24 @@ Usage:
 ```js
 var ProxyLists = require('proxy-lists');
 
-ProxyLists.getProxiesFromSource('freeproxylists', { anonymityLevels: ['elite'] }, function(error, proxies) {
-	// ..
+var options = {
+	anonymityLevels: ['elite']
+};
+
+// `gettingProxies` is an event emitter object.
+var gettingProxies = ProxyLists.getProxiesFromSource('freeproxylists', options);
+
+gettingProxies.on('data', function(proxies) {
+	// Received some proxies.
+});
+
+gettingProxies.on('error', function(error) {
+	// Some error has occurred.
+	console.error(error);
+});
+
+gettingProxies.once('end', function() {
+	// Done getting proxies.
 });
 ```
 
@@ -169,18 +201,33 @@ Add a custom proxy source to the list of available proxies. The new proxy source
 
 Usage:
 ```js
+// Core nodejs module.
+// See https://nodejs.org/api/events.html
+var EventEmitter = require('events');
+
 var ProxyLists = require('proxy-lists');
 
 ProxyLists.addSource('my-custom-source', {
-  homeUrl: 'https://somewhere.com',
-  getProxies: function(options, cb) {
-  
-    // If an error occurs, call `cb` with the error as the first argument:
-    cb(new Error('Something bad happened!'));
+	homeUrl: 'https://somewhere.com',
+	getProxies: function(options) {
 
-    // For success, call `cb` with NULL as the first argument and an array of proxies as the second:
-    cb(null, proxies);
-  }
+		var emitter = new EventEmitter();
+
+		// When an error occurs, use the 'error' event.
+		// The 'error' event can be emitted more than once.
+		emitter.emit('error', new Error('Something bad happened!'));
+
+		// When proxies are ready, use the 'data' event.
+		// The 'data' event can be emitted more than once.
+		emitter.emit('data', proxies);
+
+		// When done getting proxies, emit the 'end' event.
+		// The 'end' event should be emitted once.
+		emitter.emit('end');
+
+		// Must return an event emitter.
+		return emitter;
+	}
 });
 ```
 
@@ -285,6 +332,7 @@ grunt test:code-style
 
 * v1.4.0:
   * `isValidProxy` no longer checks the `proxy.country` attribute.
+  * `ProxyLists.getProxies()`, `ProxyLists.getProxiesFromSource()`, and `getProxies()` for all sources now using event emitter interface.
 * v1.3.0:
   * Removed attribute `proxy.protocol` in favor of `proxy.protocols` (an array of all supported protocols).
   * Renamed attribute `proxy.ip_address` to `proxy.ipAddress` for consistency.

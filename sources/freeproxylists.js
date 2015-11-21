@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
+var EventEmitter = require('events');
 var parseString = require('xml2js').parseString;
 var request = require('request');
 
@@ -33,37 +34,66 @@ var unoffocialCountryNames = {
 
 var countryNameToCode = _.invert(_.extend({}, countries, unoffocialCountryNames));
 
-var Source = module.exports = {
+var freeproxylists = module.exports = {
 
 	homeUrl: baseUrl,
 
-	getProxies: function(options, cb) {
+	getProxies: function(options) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
-		}
+		options || (options = {});
+
+		var emitter = new EventEmitter();
 
 		var fn = async.seq(
+			this.prepareStartingPageUrls,
 			this.getListUrls,
 			this.getListData,
 			this.parseListData
 		);
 
-		fn(options, cb);
+		fn(options, function(error, proxies) {
+
+			if (error) {
+				emitter.emit('error', error);
+			} else {
+				emitter.emit('data', proxies);
+			}
+
+			emitter.emit('end');
+		});
+
+		return emitter;
 	},
 
-	getListUrls: function(options, cb) {
+	prepareStartingPageUrls: function(options, cb) {
 
-		if (_.isFunction(options)) {
-			cb = options;
-			options = null;
+		var startingPageUrls = {};
+
+		if (_.contains(options.protocols, 'http') || _.contains(options.protocols, 'https')) {
+
+			if (_.contains(options.anonymityLevels, 'transparent')) {
+				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'anonymous')) {
+				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
+			}
+
+			if (_.contains(options.anonymityLevels, 'elite')) {
+				startingPageUrls.elite = baseUrl + '/elite.html';
+			}
 		}
 
-		options || (options = {});
+		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
+			startingPageUrls.socks = baseUrl + '/socks.html';
+		}
+
+		cb(null, startingPageUrls, options);
+	},
+
+	getListUrls: function(startingPageUrls, options, cb) {
 
 		var listUrlsByPage = {};
-		var startingPageUrls = Source.getStartingPageUrls(options);
 		var pages = _.keys(startingPageUrls);
 
 		if (options.sample) {
@@ -119,37 +149,11 @@ var Source = module.exports = {
 		});
 	},
 
-	getStartingPageUrls: function(options) {
-
-		var startingPageUrls = {};
-
-		if (_.contains(options.protocols, 'http') || _.contains(options.protocols, 'https')) {
-
-			if (_.contains(options.anonymityLevels, 'transparent')) {
-				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'anonymous')) {
-				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'elite')) {
-				startingPageUrls.elite = baseUrl + '/elite.html';
-			}
-		}
-
-		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
-			startingPageUrls.socks = baseUrl + '/socks.html';
-		}
-
-		return startingPageUrls;
-	},
-
 	getListData: function(listUrls, cb) {
 
 		async.map(listUrls, function(listUrl, next) {
 
-			var dataUrl = Source.listUrlToDataUrl(listUrl);
+			var dataUrl = freeproxylists.listUrlToDataUrl(listUrl);
 
 			request({
 				method: 'GET',

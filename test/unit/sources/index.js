@@ -28,6 +28,18 @@ _.each(sources, function(source) {
 
 				this.timeout(30000);
 
+				var doneCalled = false;
+				var cb = function(error) {
+
+					if (doneCalled) {
+						// Already called done().
+						return;
+					}
+
+					doneCalled = true;
+					done(error);
+				};
+
 				var options = {
 					anonymityLevels: ['anonymous', 'elite', 'transparent'],
 					protocols: ['http', 'https', 'socks4', 'socks5'],
@@ -36,13 +48,16 @@ _.each(sources, function(source) {
 
 				options = ProxyLists.prepareOptions(options);
 
-				source.getProxies(options, function(error, proxies) {
+				var gettingProxies = source.getProxies(options);
+
+				gettingProxies.on('error', cb);
+
+				gettingProxies.on('data', function(proxies) {
 
 					var invalidProxies = [];
 
 					try {
 
-						expect(error).to.equal(null);
 						expect(proxies).to.be.an('array');
 						expect(proxies.length > 0).to.equal(true);
 
@@ -61,11 +76,11 @@ _.each(sources, function(source) {
 						expect(invalidProxies).to.deep.equal([]);
 
 					} catch (error) {
-						return done(error);
+						return cb(error);
 					}
-
-					done();
 				});
+
+				gettingProxies.on('end', cb);
 			});
 		});
 	});

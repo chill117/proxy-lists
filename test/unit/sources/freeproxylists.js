@@ -30,51 +30,71 @@ describe('source.freeproxylists', function() {
 		});
 	});
 
-	describe('getStartingPageUrls([options, ]cb)', function() {
+	describe('prepareStartingPageUrls(options, cb)', function() {
 
 		it('should be a function', function() {
 
-			expect(freeproxylists.getStartingPageUrls).to.be.a('function');
+			expect(freeproxylists.prepareStartingPageUrls).to.be.a('function');
 		});
 
 		describe('options', function() {
 
 			describe('anonymityLevels', function() {
 
-				it('should return transparent starting page URL', function() {
+				it('should return transparent starting page URL', function(done) {
 
 					var options = {
 						anonymityLevels: ['transparent'],
 						protocols: ['https']
 					};
 
-					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+					freeproxylists.prepareStartingPageUrls(options, function(error, startingPageUrls) {
 
-					expect(startingPageUrls).to.be.an('object');
-					expect(startingPageUrls.transparent).to.not.equal(undefined);
-					expect(startingPageUrls.transparent).to.be.a('string');
-					expect(_.values(startingPageUrls)).to.have.length(1);
+						try {
+
+							expect(error).to.equal(null);
+							expect(startingPageUrls).to.be.an('object');
+							expect(startingPageUrls.transparent).to.not.equal(undefined);
+							expect(startingPageUrls.transparent).to.be.a('string');
+							expect(_.values(startingPageUrls)).to.have.length(1);
+
+						} catch (error) {
+							return done(error);
+						}
+
+						done();
+					});
 				});
 
-				it('"socks": should return only socks starting page URL', function() {
+				it('"socks": should return only socks starting page URL', function(done) {
 
 					var options = {
 						anonymityLevels: [],
 						protocols: ['socks4', 'socks5']
 					};
 
-					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+					freeproxylists.prepareStartingPageUrls(options, function(error, startingPageUrls) {
 
-					expect(startingPageUrls).to.be.an('object');
-					expect(startingPageUrls.socks).to.not.equal(undefined);
-					expect(startingPageUrls.socks).to.be.a('string');
-					expect(_.values(startingPageUrls)).to.have.length(1);
+						try {
+
+							expect(error).to.equal(null);
+							expect(startingPageUrls).to.be.an('object');
+							expect(startingPageUrls.socks).to.not.equal(undefined);
+							expect(startingPageUrls.socks).to.be.a('string');
+							expect(_.values(startingPageUrls)).to.have.length(1);
+
+						} catch (error) {
+							return done(error);
+						}
+
+						done();
+					});
 				});
 			});
 
 			describe('sample', function() {
 
-				it('should return only a few starting page URLs', function() {
+				it('should return only a few starting page URLs', function(done) {
 
 					var options = {
 						anonymityLevels: ['transparent', 'anonymous', 'elite'],
@@ -82,33 +102,44 @@ describe('source.freeproxylists', function() {
 						sample: true
 					};
 
-					var startingPageUrls = freeproxylists.getStartingPageUrls(options);
+					freeproxylists.prepareStartingPageUrls(options, function(error, startingPageUrls) {
 
-					expect(startingPageUrls).to.be.an('object');
-					expect(_.values(startingPageUrls).length > 0).to.equal(true);
-					expect(_.values(startingPageUrls).length < 5).to.equal(true);
+						try {
+
+							expect(error).to.equal(null);
+							expect(startingPageUrls).to.be.an('object');
+							expect(_.values(startingPageUrls).length > 0).to.equal(true);
+							expect(_.values(startingPageUrls).length < 5).to.equal(true);
+
+						} catch (error) {
+							return done(error);
+						}
+
+						done();
+					});
 				});
 			});
 		});
 	});
 
-	describe('getListUrls([options, ]cb)', function() {
+	describe('getListUrls(startingPageUrls, options, cb)', function() {
 
 		it('should be a function', function() {
 
 			expect(freeproxylists.getListUrls).to.be.a('function');
 		});
 
-		it('should return all proxy list URLs', function(done) {
+		it('should return all proxy list URLs for the given starting page(s)', function(done) {
 
 			this.timeout(5000);
 
-			var options = {
-				anonymityLevels: ['transparent', 'anonymous', 'elite'],
-				protocols: ['https', 'http', 'socks4', 'socks5']
+			var startingPageUrls = {
+				socks: 'http://www.freeproxylists.com/socks.html'
 			};
 
-			freeproxylists.getListUrls(options, function(error, listUrls) {
+			var options = {};
+
+			freeproxylists.getListUrls(startingPageUrls, options, function(error, listUrls) {
 
 				try {
 
@@ -141,13 +172,15 @@ describe('source.freeproxylists', function() {
 
 			this.timeout(5000);
 
+			var startingPageUrls = {
+				socks: 'http://www.freeproxylists.com/socks.html'
+			};
+
 			var options = {
-				anonymityLevels: ['anonymous'],
-				protocols: ['http'],
 				sample: true
 			};
 
-			freeproxylists.getListUrls(options, function(error, listUrls) {
+			freeproxylists.getListUrls(startingPageUrls, options, function(error, listUrls) {
 
 				if (error) {
 					return done(error);

@@ -56,11 +56,11 @@ describe('source.freeproxylist', function() {
 		});
 	});
 
-	describe('getListUrls(options, cb)', function() {
+	describe('prepareListUrls(options, cb)', function() {
 
 		it('should be a function', function() {
 
-			expect(freeproxylist.getListUrls).to.be.a('function');
+			expect(freeproxylist.prepareListUrls).to.be.a('function');
 		});
 
 		it('should return an array of list URLs', function(done) {
@@ -70,7 +70,7 @@ describe('source.freeproxylist', function() {
 				anonymityLevels: ['transparent']
 			};
 
-			freeproxylist.getListUrls(options, function(error, listUrls) {
+			freeproxylist.prepareListUrls(options, function(error, listUrls) {
 
 				try {
 
@@ -90,14 +90,6 @@ describe('source.freeproxylist', function() {
 
 				done();
 			});
-		});
-	});
-
-	describe('getListData(listUrls, cb)', function() {
-
-		it('should be a function', function() {
-
-			expect(freeproxylist.getListData).to.be.a('function');
 		});
 	});
 });

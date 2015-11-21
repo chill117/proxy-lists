@@ -1,8 +1,10 @@
 'use strict';
 
 var _ = require('underscore');
+var async = require('async');
 var cheerio = require('cheerio');
 var css = require('css');
+var EventEmitter = require('events');
 var request = require('request');
 
 var anonymityLevelFixes = {
@@ -17,15 +19,40 @@ var protocolFixes = {
 	'socks4/5': 'socks5'
 };
 
-var Source = module.exports = {
+var hidemyass = module.exports = {
 
 	homeUrl: 'http://proxylist.hidemyass.com/',
 
-	getProxies: function(options, cb) {
+	getProxies: function(options) {
+
+		options || (options = {});
+
+		var emitter = new EventEmitter();
+
+		var fn = async.seq(
+			this.getData,
+			this.parseResponseData
+		);
+
+		fn(options, function(error, proxies) {
+
+			if (error) {
+				emitter.emit('error', error);
+			} else {
+				emitter.emit('data', proxies);
+			}
+
+			emitter.emit('end');
+		});
+
+		return emitter;
+	},
+
+	getData: function(options, cb) {
 
 		var requestOptions = {
 			method: 'POST',
-			url: Source.homeUrl,
+			url: hidemyass.homeUrl,
 			headers: {
 				'User-Agent': 'request',
 				'X-Requested-With': 'XMLHttpRequest'
@@ -85,101 +112,99 @@ var Source = module.exports = {
 				return cb(error);
 			}
 
-			try {
-
-				var proxies = Source.parseResponseData(data);
-
-			} catch (error) {
-				return cb(error);
-			}
-
-			cb(null, proxies);
+			cb(null, data);
 		});
 	},
 
-	parseResponseData: function(data) {
+	parseResponseData: function(data, cb) {
 
-		data = JSON.parse(data);
+		try {
 
-		var proxies = [];
-		var $ = cheerio.load('<table>' + data.table + '</table>');
+			data = JSON.parse(data);
 
-		$('tr').each(function(index, tr) {
+			var proxies = [];
+			var $ = cheerio.load('<table>' + data.table + '</table>');
 
-			var proxy = {};
-			var ipEl = $('td', tr).eq(1);
-			var styles = css.parse(ipEl.find('style').text());
-			var protocol = $('td', tr).eq(6).text().toString().toLowerCase();
-			var port = parseInt($('td', tr).eq(2).text().toString());
-			var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase();
-			var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase();
+			$('tr').each(function(index, tr) {
 
-			if (protocolFixes[protocol]) {
-				protocol = protocolFixes[protocol];
-			}
+				var proxy = {};
+				var ipEl = $('td', tr).eq(1);
+				var styles = css.parse(ipEl.find('style').text());
+				var protocol = $('td', tr).eq(6).text().toString().toLowerCase();
+				var port = parseInt($('td', tr).eq(2).text().toString());
+				var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase();
+				var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase();
 
-			if (protocol === 'socks4/5') {
-				proxy.protocols = ['socks5', 'socks4'];
-			} else {
-				proxy.protocols = [protocol];
-			}
+				if (protocolFixes[protocol]) {
+					protocol = protocolFixes[protocol];
+				}
 
-			if (anonymityLevelFixes[anonymityLevel]) {
-				anonymityLevel = anonymityLevelFixes[anonymityLevel];
-			}
+				if (protocol === 'socks4/5') {
+					proxy.protocols = ['socks5', 'socks4'];
+				} else {
+					proxy.protocols = [protocol];
+				}
 
-			proxy.port = port;
-			proxy.country = country;
-			proxy.anonymityLevel = anonymityLevel;
-			proxy.ipAddress = '';
+				if (anonymityLevelFixes[anonymityLevel]) {
+					anonymityLevel = anonymityLevelFixes[anonymityLevel];
+				}
 
-			_.each(styles.stylesheet.rules, function(rule) {
+				proxy.port = port;
+				proxy.country = country;
+				proxy.anonymityLevel = anonymityLevel;
+				proxy.ipAddress = '';
 
-				var applyCss = {};
+				_.each(styles.stylesheet.rules, function(rule) {
 
-				_.each(rule.declarations, function(declaration) {
-					applyCss[declaration.property] = declaration.value;
+					var applyCss = {};
+
+					_.each(rule.declarations, function(declaration) {
+						applyCss[declaration.property] = declaration.value;
+					});
+
+					_.each(rule.selectors, function(selector) {
+						ipEl.find(selector).css(applyCss);
+					});
 				});
 
-				_.each(rule.selectors, function(selector) {
-					ipEl.find(selector).css(applyCss);
-				});
-			});
+				_.each(ipEl.children('span')[0].children, function(node) {
 
-			_.each(ipEl.children('span')[0].children, function(node) {
+					switch (node.type) {
 
-				switch (node.type) {
+						case 'text':
+							proxy.ipAddress += node.data;
+						break;
 
-					case 'text':
-						proxy.ipAddress += node.data;
-					break;
+						case 'tag':
 
-					case 'tag':
+							if (['span', 'div'].indexOf(node.name) !== -1) {
 
-						if (['span', 'div'].indexOf(node.name) !== -1) {
+								var isVisible = $(node).css('display') !== 'none';
 
-							var isVisible = $(node).css('display') !== 'none';
+								if (isVisible) {
 
-							if (isVisible) {
+									var contentHtml = $(node).html().toString();
+									var contentText = $(node).text().toString();
+									var isTextOnly = contentHtml.toString() === contentText.toString();
+									var isNonEmpty = contentText !== '';
 
-								var contentHtml = $(node).html().toString();
-								var contentText = $(node).text().toString();
-								var isTextOnly = contentHtml.toString() === contentText.toString();
-								var isNonEmpty = contentText !== '';
-
-								if (isTextOnly && isNonEmpty) {
-									proxy.ipAddress += contentText;
+									if (isTextOnly && isNonEmpty) {
+										proxy.ipAddress += contentText;
+									}
 								}
 							}
-						}
 
-					break;
-				}
+						break;
+					}
+				});
+
+				proxies.push(proxy);
 			});
 
-			proxies.push(proxy);
-		});
+		} catch (error) {
+			return cb(error);
+		}
 
-		return proxies;
+		cb(null, proxies);
 	}
 };
