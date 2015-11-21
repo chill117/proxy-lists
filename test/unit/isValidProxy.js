@@ -42,18 +42,6 @@ describe('isValidProxy(proxy)', function() {
 				ipAddress: '',
 				port: 4040,
 				protocols: ['socks4']
-			},
-			{
-				ipAddress: '127.0.0.1',
-				port: 80,
-				protocols: ['http'],
-				country: null
-			},
-			{
-				ipAddress: '127.0.0.1',
-				port: 80,
-				protocols: ['http'],
-				country: 'invalid country'
 			}
 		];
 
@@ -79,29 +67,25 @@ describe('isValidProxy(proxy)', function() {
 		];
 		var validPorts = [ 80, 8080, 443 ];
 		var validProtocols = [ 'http', 'https', 'socks4', 'socks5' ];
-		var validCountries = [ 'ca', 'us' ];
 
 		_.each(validIpAddresses, function(validIpAddress) {
 			_.each(validPorts, function(validPort) {
 				_.each(validProtocols, function(validProtocol) {
-					_.each(validCountries, function(validCountry) {
 
-						var validExample = {
-							ipAddress: validIpAddress,
-							port: validPort,
-							protocols: [validProtocol],
-							country: validCountry
-						};
+					var validExample = {
+						ipAddress: validIpAddress,
+						port: validPort,
+						protocols: [validProtocol]
+					};
 
-						try {
+					try {
 
-							expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
+						expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
 
-						} catch (error) {
+					} catch (error) {
 
-							throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
-						}
-					});
+						throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
+					}
 				});
 			});
 		});

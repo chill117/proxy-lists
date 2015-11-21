@@ -283,6 +283,8 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.4.0:
+  * `isValidProxy` no longer checks the `proxy.country` attribute.
 * v1.3.0:
   * Removed attribute `proxy.protocol` in favor of `proxy.protocols` (an array of all supported protocols).
   * Renamed attribute `proxy.ip_address` to `proxy.ipAddress` for consistency.

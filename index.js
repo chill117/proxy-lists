@@ -275,8 +275,7 @@ var ProxyLists = module.exports = {
 
 		return !!proxy.ipAddress && this.isValidIpAddress(proxy.ipAddress) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols) &&
-				!!proxy.country && _.has(this._countries, proxy.country);
+				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols);
 	},
 
 	isValidPort: function(port) {
@@ -286,7 +285,7 @@ var ProxyLists = module.exports = {
 
 	isValidProxyProtocols: function(protocols) {
 
-		return _.every(protocols, function(protocol) {
+		return _.isArray(protocols) && protocols.length > 0 && _.every(protocols, function(protocol) {
 			return ProxyLists.isValidProxyProtocol(protocol);
 		});
 	},
