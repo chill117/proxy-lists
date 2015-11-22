@@ -5,9 +5,13 @@ var expect = require('chai').expect;
 
 var ProxyLists = require('../../../index');
 
-var sources = ProxyLists.listSources({
-	sourcesBlackList: ['kingproxies', 'freeproxylist']
-});
+var listSourcesOptions = {};
+
+if (process.env.TRAVIS_CI) {
+	listSourcesOptions.sourcesBlackList = ['kingproxies', 'freeproxylist'];
+}
+
+var sources = ProxyLists.listSources(listSourcesOptions);
 
 _.each(sources, function(source) {
 
