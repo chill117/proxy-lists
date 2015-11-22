@@ -19,20 +19,27 @@ module.exports = {
 		options || (options = {});
 
 		var emitter = new EventEmitter();
+		var listUrls = this.prepareListUrls(options);
 
-		var fn = async.seq(
-			this.prepareListUrls,
-			this.getListData,
-			this.parseListData
-		);
+		async.each(listUrls, _.bind(function(listUrl, next) {
 
-		fn(options, function(error, proxies) {
+			var fn = async.seq(
+				this.getListHtml,
+				this.parseListHtml
+			);
 
-			if (error) {
-				emitter.emit('error', error);
-			} else {
-				emitter.emit('data', proxies);
-			}
+			fn(listUrl, function(error, proxies) {
+
+				if (error) {
+					emitter.emit('error', error);
+				} else {
+					emitter.emit('data', proxies);
+				}
+
+				next();
+			});
+
+		}, this), function() {
 
 			emitter.emit('end');
 		});
@@ -40,7 +47,7 @@ module.exports = {
 		return emitter;
 	},
 
-	prepareListUrls: function(options, cb) {
+	prepareListUrls: function(options) {
 
 		var listUrls = [];
 
@@ -65,38 +72,30 @@ module.exports = {
 			listUrls = listUrls.slice(0, 1);
 		}
 
-		cb(null, listUrls);
+		return listUrls;
 	},
 
-	getListData: function(listUrls, cb) {
+	getListHtml: function(listUrl, cb) {
 
-		async.map(listUrls, function(listUrl, next) {
+		request({
+			method: 'GET',
+			url: listUrl
+		}, function(error, response, data) {
 
-			request({
-				method: 'GET',
-				url: listUrl
-			}, function(error, response, data) {
+			if (error) {
+				return cb(error);
+			}
 
-				if (error) {
-					return next(error);
-				}
-
-				next(null, data);
-			});
-
-		}, cb);
+			cb(null, data);
+		});
 	},
 
-	parseListData: function(listData, cb) {
+	parseListHtml: function(listHtml, cb) {
 
-		if (!_.isArray(listData)) {
-			listData = [listData];
-		}
-
-		async.map(listData, function(data, next) {
+		try {
 
 			var proxies = [];
-			var $ = cheerio.load(data);
+			var $ = cheerio.load(listHtml);
 			var columnIndexes = {};
 
 			$('th', $('table thead tr').first()).each(function(index, th) {
@@ -141,17 +140,11 @@ module.exports = {
 				});
 			});
 
-			next(null, proxies);
+		} catch (error) {
 
-		}, function(error, parsed) {
+			return cb(error);
+		}
 
-			if (error) {
-				return cb(error);
-			}
-
-			var proxies = Array.prototype.concat.apply([], parsed);
-
-			cb(null, proxies);
-		});
+		cb(null, proxies);
 	}
 };
