@@ -6,7 +6,7 @@ var expect = require('chai').expect;
 var ProxyLists = require('../../../index');
 
 var sources = ProxyLists.listSources({
-	// sourcesBlackList: ['kingproxies', 'freeproxylist']
+	sourcesBlackList: ['kingproxies', 'freeproxylist']
 });
 
 _.each(sources, function(source) {
