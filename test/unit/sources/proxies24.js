@@ -10,11 +10,11 @@ describe('source.proxies24', function() {
 
 	var proxies24 = require('../../../sources/proxies24');
 
-	describe('parseStartingPageHtmlForLists(startingPageHtml, protocols, cb)', function() {
+	describe('parseStartingPageHtml(startingPage, cb)', function() {
 
 		it('should be a function', function() {
 
-			expect(proxies24.parseStartingPageHtmlForLists).to.be.a('function');
+			expect(proxies24.parseStartingPageHtml).to.be.a('function');
 		});
 
 		it('should parse starting page(s) HTML into an array of lists', function(done) {
@@ -38,10 +38,7 @@ describe('source.proxies24', function() {
 
 			async.each(startingPages, function(startingPage, next) {
 
-				var startingPageHtml = startingPage.html;
-				var protocols = startingPage.protocols;
-
-				proxies24.parseStartingPageHtmlForLists(startingPageHtml, protocols, function(error, lists) {
+				proxies24.parseStartingPageHtml(startingPage, function(error, lists) {
 
 					try {
 						expect(error).to.equal(null);
@@ -50,7 +47,7 @@ describe('source.proxies24', function() {
 
 						_.each(lists, function(list) {
 							expect(list.protocol).to.not.equal(undefined);
-							expect(_.contains(protocols, list.protocol)).to.equal(true);
+							expect(_.contains(startingPage.protocols, list.protocol)).to.equal(true);
 							expect(list.url).to.not.equal(undefined);
 						});
 					} catch (error) {
@@ -64,7 +61,7 @@ describe('source.proxies24', function() {
 		});
 	});
 
-	describe('parseListPageHtml(listPageHtml, protocol, cb)', function() {
+	describe('parseListPageHtml(list, cb)', function() {
 
 		it('should be a function', function() {
 
@@ -75,7 +72,7 @@ describe('source.proxies24', function() {
 
 			var samples = require('../../samples/proxies24/listPages');
 
-			var listPages = [
+			var lists = [
 				{
 					html: samples.http,
 					protocol: 'http'
@@ -90,12 +87,9 @@ describe('source.proxies24', function() {
 				}
 			];
 
-			async.each(listPages, function(listPage, next) {
+			async.each(lists, function(list, next) {
 
-				var listPageHtml = listPage.html;
-				var protocol = listPage.protocol;
-
-				proxies24.parseListPageHtml(listPageHtml.toString(), protocol, function(error, proxies) {
+				proxies24.parseListPageHtml(list, function(error, proxies) {
 
 					try {
 						expect(error).to.equal(null);
@@ -108,7 +102,7 @@ describe('source.proxies24', function() {
 							expect(proxy.port).to.not.equal(undefined);
 							expect(proxy.port).to.be.a('number');
 							expect(proxy.port).to.equal(parseInt(proxy.port));
-							expect(_.contains(proxy.protocols, protocol)).to.equal(true);
+							expect(_.contains(proxy.protocols, list.protocol)).to.equal(true);
 						});
 					} catch (error) {
 						return next(error);

@@ -22,30 +22,59 @@ var proxies24 = module.exports = {
 		options || (options = {});
 
 		var emitter = new EventEmitter();
+		var startPages = this.prepareStartingPages(options);
 
-		var fn = async.seq(
-			this.prepareStartingPages,
-			this.getLists,
-			this.getListPagesHtml,
-			this.parseListPagesHtml,
-			this.geoLocate
-		);
-
-		fn(options, function(error, proxies) {
+		GeoIpNativeLite.loadData(_.bind(function(error) {
 
 			if (error) {
 				emitter.emit('error', error);
-			} else {
-				emitter.emit('data', proxies);
+				emitter.emit('end');
+				return;
 			}
 
-			emitter.emit('end');
-		});
+			async.each(startPages, _.bind(function(startingPage, nextStartingPage) {
+
+				var fn = async.seq(
+					this.getStartingPageHtml,
+					this.parseStartingPageHtml
+				);
+
+				fn(startingPage, _.bind(function(error, lists) {
+
+					async.each(lists, _.bind(function(list, nextList) {
+
+						var fn = async.seq(
+							this.getListPageHtml,
+							this.parseListPageHtml,
+							this.geoLocate
+						);
+
+						fn(list, function(error, proxies) {
+
+							if (error) {
+								emitter.emit('error', error);
+							} else {
+								emitter.emit('data', proxies);
+							}
+
+							nextList();
+						});
+
+					}, this), nextStartingPage);
+
+				}, this));
+
+			}, this), function() {
+
+				emitter.emit('end');
+			});
+
+		}, this));
 
 		return emitter;
 	},
 
-	prepareStartingPages: function(options, cb) {
+	prepareStartingPages: function(options) {
 
 		var startingPages = [];
 
@@ -82,46 +111,36 @@ var proxies24 = module.exports = {
 			});
 		}
 
-		cb(null, startingPages);
+		return startingPages;
 	},
 
-	getLists: function(startingPages, cb) {
+	getStartingPageHtml: function(startingPage, cb) {
 
-		async.map(startingPages, function(startingPage, next) {
-
-			request({
-				method: 'GET',
-				url: startingPage.url
-			}, function(error, response, data) {
-
-				if (error) {
-					return next(error);
-				}
-
-				proxies24.parseStartingPageHtmlForLists(data, startingPage.protocols, next);
-			});
-
-		}, function(error, lists) {
+		request({
+			method: 'GET',
+			url: startingPage.url
+		}, function(error, response, data) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			// Collapse to a flat array.
-			lists = Array.prototype.concat.apply([], lists);
+			startingPage.html = data;
 
-			cb(null, lists);
+			cb(null, startingPage);
 		});
 	},
 
-	parseStartingPageHtmlForLists: function(startingPageHtml, protocols, cb) {
+	parseStartingPageHtml: function(startingPage, cb) {
 
 		var found = {};
 		var lists = [];
+		var html = startingPage.html;
+		var protocols = startingPage.protocols;
 
 		try {
 
-			var $ = cheerio.load(startingPageHtml);
+			var $ = cheerio.load(html);
 
 			$('.post-title a').each(function(i, anchor) {
 
@@ -152,54 +171,32 @@ var proxies24 = module.exports = {
 		cb(null, lists);
 	},
 
-	getListPagesHtml: function(lists, cb) {
+	getListPageHtml: function(list, cb) {
 
-		async.map(lists, function(list, next) {
-
-			request({
-				method: 'GET',
-				url: list.url
-			}, function(error, response, data) {
-
-				if (error) {
-					return next(error);
-				}
-
-				list.html = data;
-
-				next(null, list);
-
-			});
-
-		}, cb);
-	},
-
-	parseListPagesHtml: function(lists, cb) {
-
-		async.map(lists, function(list, next) {
-
-			proxies24.parseListPageHtml(list.html, list.protocol, next);
-
-		}, function(error, proxies) {
+		request({
+			method: 'GET',
+			url: list.url
+		}, function(error, response, data) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			// Collapse to a flat array.
-			proxies = Array.prototype.concat.apply([], proxies);
+			list.html = data;
 
-			cb(null, proxies);
+			cb(null, list);
 		});
 	},
 
-	parseListPageHtml: function(listPageHtml, protocol, cb) {
+	parseListPageHtml: function(list, cb) {
 
 		var proxies = [];
+		var html = list.html;
+		var protocol = list.protocol;
 
 		try {
 
-			var $ = cheerio.load(listPageHtml);
+			var $ = cheerio.load(html);
 
 			var hostsElSelectors = [
 				'.post-body textarea',
