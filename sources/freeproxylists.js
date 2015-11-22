@@ -43,21 +43,52 @@ var freeproxylists = module.exports = {
 		options || (options = {});
 
 		var emitter = new EventEmitter();
+		var startingPageUrls = this.prepareStartingPageUrls(options);
 
-		var fn = async.seq(
-			this.prepareStartingPageUrls,
-			this.getListUrls,
-			this.getListData,
-			this.parseListData
-		);
+		async.each(_.keys(startingPageUrls), _.bind(function(key, nextStartingPage) {
 
-		fn(options, function(error, proxies) {
+			var startingPageUrl = startingPageUrls[key];
 
-			if (error) {
-				emitter.emit('error', error);
-			} else {
-				emitter.emit('data', proxies);
-			}
+			var fn = async.seq(
+				this.getStartingPageHtml,
+				this.parseStartingPageHtml
+			);
+
+			fn(startingPageUrl, _.bind(function(error, listUrls) {
+
+				if (error) {
+					emitter.emit('error', error);
+					return nextStartingPage();
+				}
+
+				if (options.sample) {
+					// When sampling, only use one list URL.
+					listUrls = listUrls.slice(0, 1);
+				}
+
+				async.each(listUrls, _.bind(function(listUrl, nextList) {
+
+					var fn = async.seq(
+						this.getListData,
+						this.parseListData
+					);
+
+					fn(listUrl, function(error, proxies) {
+
+						if (error) {
+							emitter.emit('error', error);
+						} else {
+							emitter.emit('data', proxies);
+						}
+
+						nextList();
+					});
+
+				}, this), nextStartingPage);
+
+			}, this));
+
+		}, this), function() {
 
 			emitter.emit('end');
 		});
@@ -65,7 +96,7 @@ var freeproxylists = module.exports = {
 		return emitter;
 	},
 
-	prepareStartingPageUrls: function(options, cb) {
+	prepareStartingPageUrls: function(options) {
 
 		var startingPageUrls = {};
 
@@ -88,160 +119,123 @@ var freeproxylists = module.exports = {
 			startingPageUrls.socks = baseUrl + '/socks.html';
 		}
 
-		cb(null, startingPageUrls, options);
-	},
-
-	getListUrls: function(startingPageUrls, options, cb) {
-
-		var listUrlsByPage = {};
-		var pages = _.keys(startingPageUrls);
-
 		if (options.sample) {
-			// When sampling, only use one of the starting pages.
-			pages = [_.first(pages)];
+			// When sampling, only use one URL.
+			startingPageUrls = _.pick(startingPageUrls, _.first(_.keys(startingPageUrls)));
 		}
 
-		async.each(pages, function(page, next) {
+		return startingPageUrls;
+	},
 
-			var startingPageUrl = startingPageUrls[page];
+	getStartingPageHtml: function(startingPageUrl, cb) {
 
-			listUrlsByPage[page] = [];
-
-			request({
-				method: 'GET',
-				url: startingPageUrl
-			}, function(error, response, data) {
-
-				if (error) {
-					return next(error);
-				}
-
-				var $ = cheerio.load(data);
-
-				$('table a').each(function(index) {
-
-					var text = $(this).text();
-
-					if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
-						listUrlsByPage[page].push($(this).attr('href'));
-					}
-				});
-
-				next();
-			});
-
-		}, function(error) {
+		request({
+			method: 'GET',
+			url: startingPageUrl
+		}, function(error, response, data) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			if (options.sample) {
-				// When sampling, get keep one list URL for each starting page.
-				listUrlsByPage = _.mapObject(listUrlsByPage, function(listUrls) {
-					return listUrls.slice(0, 1);
-				});
-			}
-
-			var listUrls = Array.prototype.concat.apply([], _.values(listUrlsByPage));
-
-			cb(null, listUrls);
+			cb(null, data);
 		});
 	},
 
-	getListData: function(listUrls, cb) {
+	parseStartingPageHtml: function(startingPageHtml, cb) {
 
-		async.map(listUrls, function(listUrl, next) {
+		try {
 
-			var dataUrl = freeproxylists.listUrlToDataUrl(listUrl);
+			var listUrls = [];
+			var $ = cheerio.load(startingPageHtml);
 
-			request({
-				method: 'GET',
-				url: dataUrl
-			}, function(error, response, data) {
+			$('table a').each(function(index) {
 
-				if (error) {
-					return next(error);
+				var text = $(this).text();
+
+				if (text && text.substr(0, 'detailed list #'.length) === 'detailed list #') {
+					listUrls.push($(this).attr('href'));
 				}
-
-				var list = {
-					url: listUrl,
-					data: data
-				};
-
-				return next(null, list);
 			});
 
-		}, cb);
-	},
-
-	parseListData: function(listData, cb) {
-
-		if (!_.isArray(listData)) {
-			listData = [listData];
+		} catch (error) {
+			return cb(error);
 		}
 
-		async.map(listData, function(list, next) {
+		cb(null, listUrls);
+	},
 
-			if (list.url.substr(0, 'socks/'.length) === 'socks/') {
-				list.protocol = 'socks5';
-				list.anonymityLevel = 'anonymous';
-			} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
-				list.anonymityLevel = 'transparent';
-			} else if (list.url.substr(0, 'anon/'.length) === 'anon/') {
-				list.anonymityLevel = 'anonymous';
-			} else if (list.url.substr(0, 'elite/'.length) === 'elite/') {
-				list.anonymityLevel = 'elite';
-			}
+	getListData: function(listUrl, cb) {
 
-			parseString(list.data, function(error, result) {
+		var dataUrl = freeproxylists.listUrlToDataUrl(listUrl);
 
-				if (error) {
-					return next(error);
-				}
-
-				var proxies = [];
-				var html = result.root.quote[0];
-				var $ = cheerio.load(html);
-
-				$('table tr').each(function(index, tr) {
-
-					if (index > 1) {
-
-						// Data starts at the 3rd row.
-
-						var countryName = $('td', tr).eq(5).text().toString();
-						var countryCode = countryNameToCode[countryName] || null;
-
-						if (countryCode) {
-
-							var protocol = list.protocol;
-
-							if (!protocol) {
-								protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
-							}
-
-							proxies.push({
-								ipAddress: $('td', tr).eq(0).text().toString(),
-								port: parseInt($('td', tr).eq(1).text().toString()),
-								protocols: [protocol],
-								country: countryCode,
-								anonymityLevel: list.anonymityLevel
-							});
-						}
-					}
-				});
-
-				next(null, proxies);
-			});
-
-		}, function(error, parsed) {
+		request({
+			method: 'GET',
+			url: dataUrl
+		}, function(error, response, data) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			var proxies = Array.prototype.concat.apply([], parsed);
+			cb(null, data, listUrl);
+		});
+	},
+
+	parseListData: function(data, listUrl, cb) {
+
+		var list = {
+			url: listUrl,
+			data: data
+		};
+
+		if (list.url.substr(0, 'socks/'.length) === 'socks/') {
+			list.protocol = 'socks5';
+			list.anonymityLevel = 'anonymous';
+		} else if (list.url.substr(0, 'nonanon/'.length) === 'nonanon/') {
+			list.anonymityLevel = 'transparent';
+		} else if (list.url.substr(0, 'anon/'.length) === 'anon/') {
+			list.anonymityLevel = 'anonymous';
+		} else if (list.url.substr(0, 'elite/'.length) === 'elite/') {
+			list.anonymityLevel = 'elite';
+		}
+
+		parseString(list.data, function(error, result) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			var proxies = [];
+			var $ = cheerio.load(result.root.quote[0]);
+
+			$('table tr').each(function(index, tr) {
+
+				if (index > 1) {
+
+					// Data starts at the 3rd row.
+
+					var countryName = $('td', tr).eq(5).text().toString();
+					var countryCode = countryNameToCode[countryName] || null;
+
+					if (countryCode) {
+
+						var protocol = list.protocol;
+
+						if (!protocol) {
+							protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
+						}
+
+						proxies.push({
+							ipAddress: $('td', tr).eq(0).text().toString(),
+							port: parseInt($('td', tr).eq(1).text().toString()),
+							protocols: [protocol],
+							country: countryCode,
+							anonymityLevel: list.anonymityLevel
+						});
+					}
+				}
+			});
 
 			cb(null, proxies);
 		});
