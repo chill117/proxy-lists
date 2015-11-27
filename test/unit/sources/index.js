@@ -5,10 +5,17 @@ var expect = require('chai').expect;
 
 var ProxyLists = require('../../../index');
 
-var listSourcesOptions = {};
+var listSourcesOptions = {
+	sourcesBlackList: []
+};
 
 if (process.env.TRAVIS_CI) {
-	listSourcesOptions.sourcesBlackList = ['kingproxies', 'freeproxylist'];
+	listSourcesOptions.sourcesBlackList.push('freeproxylist');
+}
+
+// Must provide API key for king proxies.
+if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
+	listSourcesOptions.sourcesBlackList.push('kingproxies');
 }
 
 var sources = ProxyLists.listSources(listSourcesOptions);
