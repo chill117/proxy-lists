@@ -153,23 +153,23 @@ module.exports = {
 
 				var ipAddress = $('td.t_ip', tr).eq(0).text().toString();
 				var portXorExpr = $('td.t_port', tr).eq(0).text().toString().match(/document\.write\(([^\(\)]+)\)/)[1];
-				var port = parseXorExpression(portXorExpr)
+				var port = parseXorExpression(portXorExpr);
 				var protocol = $('td.t_type', tr).eq(0).text().toString().toLowerCase().trim();
 				var protocols;
 
 				switch (protocol) {
 
 					case '4':
-						protocols = ['socks4']
-						break;
+						protocols = ['socks4'];
+					break;
 
 					case '4/5':
-						protocols = ['socks5', 'socks4']
-						break;
+						protocols = ['socks5', 'socks4'];
+					break;
 
 					case '5':
-						protocols = ['socks5']
-						break;
+						protocols = ['socks5'];
+					break;
 				}
 
 				var country = $('td.t_country img', tr).eq(0).attr('alt').toString().toLowerCase();
