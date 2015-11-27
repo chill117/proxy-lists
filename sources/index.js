@@ -6,4 +6,5 @@ module.exports = {
 	'hidemyass': require('./hidemyass'),
 	'kingproxies': require('./kingproxies'),
 	'proxies24': require('./proxies24'),
+	'sockslist': require('./sockslist'),
 };
