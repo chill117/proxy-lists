@@ -20,8 +20,9 @@ module.exports = {
 
 		var emitter = new EventEmitter();
 		var listUrls = this.prepareListUrls(options);
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		async.each(listUrls, _.bind(function(listUrl, next) {
+		async[asyncMethod](listUrls, _.bind(function(listUrl, next) {
 
 			var fn = async.seq(
 				this.getListHtml,

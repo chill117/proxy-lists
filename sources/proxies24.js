@@ -23,6 +23,7 @@ var proxies24 = module.exports = {
 
 		var emitter = new EventEmitter();
 		var startPages = this.prepareStartingPages(options);
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
 		GeoIpNativeLite.loadData(_.bind(function(error) {
 
@@ -32,7 +33,7 @@ var proxies24 = module.exports = {
 				return;
 			}
 
-			async.each(startPages, _.bind(function(startingPage, nextStartingPage) {
+			async[asyncMethod](startPages, _.bind(function(startingPage, nextStartingPage) {
 
 				var fn = async.seq(
 					this.getStartingPageHtml,
@@ -41,7 +42,7 @@ var proxies24 = module.exports = {
 
 				fn(startingPage, _.bind(function(error, lists) {
 
-					async.each(lists, _.bind(function(list, nextList) {
+					async[asyncMethod](lists, _.bind(function(list, nextList) {
 
 						var fn = async.seq(
 							this.getListPageHtml,

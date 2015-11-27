@@ -44,8 +44,9 @@ var freeproxylists = module.exports = {
 
 		var emitter = new EventEmitter();
 		var startingPageUrls = this.prepareStartingPageUrls(options);
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		async.each(_.keys(startingPageUrls), _.bind(function(key, nextStartingPage) {
+		async[asyncMethod](_.keys(startingPageUrls), _.bind(function(key, nextStartingPage) {
 
 			var startingPageUrl = startingPageUrls[key];
 
@@ -66,7 +67,7 @@ var freeproxylists = module.exports = {
 					listUrls = listUrls.slice(0, 1);
 				}
 
-				async.each(listUrls, _.bind(function(listUrl, nextList) {
+				async[asyncMethod](listUrls, _.bind(function(listUrl, nextList) {
 
 					var fn = async.seq(
 						this.getListData,

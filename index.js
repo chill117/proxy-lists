@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var async = require('async');
 var EventEmitter = require('events');
 var net = require('net');
 
@@ -63,37 +64,20 @@ var ProxyLists = module.exports = {
 
 		var emitter = new EventEmitter();
 		var sources = this.listSources(options);
-		var ended = {};
-		var endEmitted = false;
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		var end = function(name) {
-
-			if (endEmitted) {
-				// Already emitted the 'end' event.
-				return;
-			}
-
-			ended[name] = true;
-
-			var allEnded = _.every(sources, function(source) {
-				return ended[source.name];
-			});
-
-			if (allEnded) {
-				endEmitted = true;
-				emitter.emit('end');
-			}
-		};
-
-		_.each(sources, function(source) {
+		async[asyncMethod](sources, _.bind(function(source, next) {
 
 			var gettingProxies = this.getProxiesFromSource(source.name, options);
 
 			gettingProxies.on('data', _.bind(emitter.emit, emitter, 'data'));
 			gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
-			gettingProxies.on('end', _.bind(end, undefined, source.name));
+			gettingProxies.on('end', _.bind(next, undefined, null));
 
-		}, this);
+		}, this), function() {
+
+			emitter.emit('end');
+		});
 
 		return emitter;
 	},
