@@ -7,9 +7,9 @@ var EventEmitter = require('events');
 var request = require('request');
 
 var anonymityLevelFixes = {
-	'3': 'elite',
+	'1': 'elite',
 	'2': 'anonymous',
-	'1': 'transparent'
+	'3': 'transparent'
 };
 
 module.exports = {
@@ -242,7 +242,7 @@ module.exports = {
 				var $cells = $('td', tr);
 				var ipAddress = $cells.eq(0).text().toString();
 				var port = parseInt($cells.eq(1).text().toString());
-				var anonymityLevel = $cells.eq(0).text().toString();
+				var anonymityLevel = $cells.eq(3).text().toString();
 				var countryImgSrc = $cells.eq(5).find('img').eq(0).attr('src');
 				var country = countryImgSrc && countryImgSrc.match(/\/([a-z]{2,2})\.png/)[1] || null;
 
