@@ -12,6 +12,8 @@ Get proxies from publicly available proxy lists.
 * [hidemyass](http://proxylist.hidemyass.com/)
 * [kingproxies](http://kingproxies.com/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
+* [proxylisten](http://www.proxy-listen.de/)
+* [sockslist](http://sockslist.net/)
 
 
 ## Installation
