@@ -1,0 +1,146 @@
+<div class="leftcol" id="leftleftonly"><div class="bgbottom">
+<div class="moduletable">
+<h3>Menü</h3>
+</div>
+<div class="moduletable">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td><a href="/" class="mainlevel">Startseite</a></td></tr>
+<tr><td><a href="/News/blog.html" class="mainlevel">News</a></td></tr>
+<tr><td><span class="mainlevel">.</span></td></tr>
+<tr><td><a href="/Proxy/Proxyliste.html" class="mainlevel" id="active_menu">Proxyliste</a></td></tr>
+<tr><td><a href="/Proxy/Proxychecker.html" class="mainlevel">Proxychecker</a></td></tr>
+<tr><td><a href="/Statistik.html" class="mainlevel">Proxystatistik</a></td></tr>
+<tr><td><a href="/Tutorials/" class="mainlevel">Artikel</a></td></tr>
+<tr><td><a href="/Tools/IP2Country-Lookup.html" class="mainlevel">IP2Country Lookup</a></td></tr>
+<tr><td><a href="/Partnerseiten.html" class="mainlevel">Partner</a></td></tr>
+<tr><td><span class="mainlevel">.</span></td></tr>
+<tr><td><a href="/Impressum.html" class="mainlevel">Impressum</a></td></tr>
+<tr><td><a href="/Kontakt/Contacts/Markus-Minini.html" class="mainlevel">Kontakt</a></td></tr>
+</tbody></table></div>
+<div class="moduletable">
+<h3>Statistik</h3>
+<table border="0">
+<tbody><tr>
+<td><b>Elite Proxies:</b></td>
+<td>480</td>
+</tr>
+<tr>
+<td><b>Anonym HTTP:</b></td>
+<td>644</td>
+</tr>
+<tr>
+<td><b>Anonym SSL:</b></td>
+<td>1603</td>
+</tr>
+<tr>
+<td><b>Transparent HTTP:</b></td>
+<td>1262</td>
+</tr>
+<tr>
+<td><b>Socks:</b></td>
+<td>98</td>
+</tr>
+<tr>
+<td><br></td>
+<td></td>
+</tr>
+</tbody></table>
+<b>Proxies checked<br>in the last 10 min:</b> 0
+</div>
+<div class="moduletable">
+</div>
+</div></div>
+
+<div>
+<form method="post" action="" id="proxyform">
+<table id="proxyform" align="center" cellspacing="11" class="proxylist_form">
+<tbody><tr>
+<td>
+<input type="image" name="lang_de" src="//www.proxy-listen.de/0_proxy/images/flags/de.png" alt="Deutsch" title="Deutsch">
+<input type="image" name="lang_en" src="//www.proxy-listen.de/0_proxy/images/flags/gb.png" alt="English" title="English">
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td id="left_row">
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Port auf dem der Proxyserver arbeitet" alt="Hilfe">
+<b>Port:</b>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+<select name="filter_port" id="port"></select>
+<br>
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Wenn der Proxyserver ein Gateway ist, wird eine andere IP angezeigt als man im Browser eingestellt hat." alt="Hilfe">
+<b>Gateway:</b>
+<select name="filter_http_gateway" id="gateway">
+<option value="">All</option>
+<option value="">-</option>
+<option value="Yes">yes</option>
+<option value="No">no</option>
+</select>
+<br>
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Ein Proxyserver kann verschiedene Informationen mitschicken. Angefangen davon, dass ein Proxyserver benutzt wird, bis hin zur richtigen IP des Benutzers. Bei einem Elite-Proxy kann man nicht erkennen, dass ein Proxyserver benutzt wird. Bei einem anonymen wird zwar mitgeteilt, dass ein Proxyserver benutzt wird, aber die richtge IP wird trotzdem versteckt. Bei einem transparenten Proxy wird auch die richtige IP des Benutzers mitgeschickt." alt="Hilfe">
+<b>Anonymity:</b>
+<select name="filter_http_anon" id="anonymity">
+</select>
+<br>
+</td>
+<td id="right_row">
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Reaktionszeit des Proxyservers. niedriger = schnellere Ladezeiten der Webseiten" alt="Hilfe">
+<b>Reactiontime:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select name="filter_response_time_http" id="ping">
+</select>
+<input name="fefefsfesf4tzrhtzuh" value="6be2ac0593ae3811cae5ba1dac9f5e52" type="hidden">
+<br>
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Land in dem der Proxyserver steht." alt="Hilfe">
+<b>Country:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select name="filter_country" id="country">
+<br>
+<img class="helpicon" src="//www.proxy-listen.de/0_proxy/images/help.png" width="20px" height="20px" title="Zuverlässigkeit des Proxyservers." alt="Hilfe">
+<b>Availability:</b>
+<select name="filter_timeouts1" id="downtime">
+</select>
+</td>
+</tr>
+<tr>
+<td height="101">
+<b>Liststyle:</b>
+<br>
+<input id="info" type="radio" name="liststyle" value="info" checked="checked">
+Detail<br>
+<input id="leech" type="radio" name="liststyle" value="leech">
+Copy&amp;Paste<br>      
+<br>
+<b>Count: </b>
+<select name="proxies" id="proxies">
+</select>
+</td>
+<td height="101">
+<b>Proxytype:</b> 
+<br>
+<input id="http" type="radio" name="type" value="http" checked="checked">HTTP<br>
+<input id="https" type="radio" name="type" value="https">HTTPS<br>
+<input id="httphttps" type="radio" name="type" value="httphttps">HTTP + HTTPS<br>
+<input id="socks4" type="radio" name="type" value="socks4">Socks 4<br>
+<input id="socks5" type="radio" name="type" value="socks5">Socks 5
+</td>
+</tr>
+<tr>
+<td height="28"><input onclick="doSubmit();" id="submit" type="submit" value="Show" name="submit"> 
+<input type="reset" value="Reset">  
+</td>
+<td>
+<input onclick="lastPage();" id="last_page" type="submit" value="laste page" name="back" disabled="disabled">
+<input onclick="nextPage();" id="next_page" type="submit" value="next page" name="next">
+</td>
+</tr>
+<tr>
+<td>
+<a href="http://www.proxy-listen.de/Proxy/Proxyliste.html?filter_port=&amp;filter_http_gateway=&amp;filter_http_anon=&amp;filter_response_time_http=&amp;filter_country=&amp;filter_timeouts1=&amp;type=http&amp;liststyle=info">Diese Suche als Favorit speichern</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2">
+</td>
+</tr>
+</tbody></table>
+</form>
+</div>

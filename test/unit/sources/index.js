@@ -39,6 +39,7 @@ _.each(sources, function(source) {
 
 				this.timeout(30000);
 
+				var gotProxies = false;
 				var doneCalled = false;
 				var cb = function(error) {
 
@@ -64,6 +65,8 @@ _.each(sources, function(source) {
 				gettingProxies.on('error', cb);
 
 				gettingProxies.on('data', function(proxies) {
+
+					gotProxies = true;
 
 					var invalidProxies = [];
 
@@ -91,7 +94,18 @@ _.each(sources, function(source) {
 					}
 				});
 
-				gettingProxies.on('end', cb);
+				gettingProxies.on('end', function() {
+
+					try {
+
+						expect(gotProxies).to.equal(true);
+
+					} catch (error) {
+						return cb(error);
+					}
+
+					cb();
+				});
 			});
 		});
 	});
