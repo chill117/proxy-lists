@@ -22,8 +22,19 @@ var proxies24 = module.exports = {
 		options || (options = {});
 
 		var emitter = new EventEmitter();
+
 		var startPages = this.prepareStartingPages(options);
-		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+
+		var getStartingPage = async.seq(
+			this.getStartingPageHtml,
+			this.parseStartingPageHtml
+		);
+
+		var getList = async.seq(
+			this.getListPageHtml,
+			this.parseListPageHtml,
+			this.geoLocate
+		);
 
 		GeoIpNativeLite.loadData(_.bind(function(error) {
 
@@ -33,24 +44,15 @@ var proxies24 = module.exports = {
 				return;
 			}
 
-			async[asyncMethod](startPages, _.bind(function(startingPage, nextStartingPage) {
+			var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-				var fn = async.seq(
-					this.getStartingPageHtml,
-					this.parseStartingPageHtml
-				);
+			async[asyncMethod](startPages, function(startingPage, nextStartingPage) {
 
-				fn(startingPage, _.bind(function(error, lists) {
+				getStartingPage(startingPage, function(error, lists) {
 
-					async[asyncMethod](lists, _.bind(function(list, nextList) {
+					async[asyncMethod](lists, function(list, nextList) {
 
-						var fn = async.seq(
-							this.getListPageHtml,
-							this.parseListPageHtml,
-							this.geoLocate
-						);
-
-						fn(list, function(error, proxies) {
+						getList(list, function(error, proxies) {
 
 							if (error) {
 								emitter.emit('error', error);
@@ -61,11 +63,10 @@ var proxies24 = module.exports = {
 							nextList();
 						});
 
-					}, this), nextStartingPage);
+					}, nextStartingPage);
+				});
 
-				}, this));
-
-			}, this), function() {
+			}, function() {
 
 				emitter.emit('end');
 			});
