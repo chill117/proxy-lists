@@ -128,7 +128,12 @@ var options = {
 		All proxy sources except 'freeproxylists':
 		['freeproxylists']
 	*/
-	sourcesBlackList: null
+	sourcesBlackList: null,
+
+	/*
+		Set to TRUE to have all asynchronous operations run in series.
+	*/
+	series: false
 };
 ```
 
@@ -191,7 +196,12 @@ var options = {
 
 		To get all proxies, regardless of anonymity level, set this option to NULL.
 	*/
-	anonymityLevels: ['anonymous', 'elite']
+	anonymityLevels: ['anonymous', 'elite'],
+
+	/*
+		Set to TRUE to have all asynchronous operations run in series.
+	*/
+	series: false
 };
 ```
 
