@@ -332,6 +332,8 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.5.0:
+  * Added `series` option to `ProxyLists.getProxies()` and `ProxyLists.getProxiesFromSource()`.
 * v1.4.0:
   * `isValidProxy` no longer checks the `proxy.country` attribute.
   * `ProxyLists.getProxies()`, `ProxyLists.getProxiesFromSource()`, and `getProxies()` for all sources now using event emitter interface.
