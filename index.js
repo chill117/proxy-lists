@@ -49,7 +49,12 @@ var ProxyLists = module.exports = {
 			All proxy sources except 'freeproxylists':
 			['freeproxylists']
 		*/
-		sourcesBlackList: null
+		sourcesBlackList: null,
+
+		/*
+			Set to TRUE to have all asynchronous operations run in series.
+		*/
+		series: false
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
