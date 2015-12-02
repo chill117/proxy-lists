@@ -35,17 +35,23 @@ module.exports = {
 				return;
 			}
 
-			var types = [];
-			var numPerPage = options.sample ? 50 : 300;
-			var filters = {};
-			var getHttp = _.contains(options.protocols, 'http');
-			var getHttps = _.contains(options.protocols, 'https');
+			var lists = [];
 
-			if (getHttp && getHttps) {
-				types.push('httphttps');
-			} else if (getHttp) {
+			// Types are protocols on proxylisten.
+			var types = [];
+
+			// Maximum number per page is 300.
+			// Minimum is 50.
+			var numPerPage = options.sample ? 50 : 300;
+
+			// Additional filter parameters.
+			var filters = {};
+
+			if (_.contains(options.protocols, 'http')) {
 				types.push('http');
-			} else if (getHttps) {
+			}
+
+			if (_.contains(options.protocols, 'https')) {
 				types.push('https');
 			}
 
@@ -53,50 +59,61 @@ module.exports = {
 				types.push('socks');
 			}
 
-			if (options.anonymityLevels.length === 1) {
-				filters.filter_http_anon = options.anonymityLevels[0];
-			}
+			var anonymityLevelToFilterValue = _.invert(anonymityLevelFixes);
+
+			_.each(types, function(type) {
+				_.each(options.anonymityLevels, function(anonymityLevel) {
+					lists.push({
+						type: type,
+						anonymityLevel: anonymityLevelToFilterValue[anonymityLevel]
+					});
+				});
+			});
 
 			if (options.countries.length === 1) {
 				filters.filter_country = options.countries[0];
 			}
 
 			if (options.sample) {
-				// Sampling, so only get one type.
-				types = types.slice(0, 1);
+				// Sampling, so only get one list.
+				lists = lists.slice(0, 1);
 			}
 
 			var asyncEachMethod = options.series === true ? 'eachSeries' : 'each';
 
-			async[asyncEachMethod](types, function(type, nextType) {
+			async[asyncEachMethod](lists, function(list, nextList) {
 
 				var expectedTotal;
 
-				switch (type) {
+				if (!_.isUndefined(info.stats[list.type + '_' + list.anonymityLevel])) {
+					expectedTotal = info.stats[list.type + '_' + list.anonymityLevel];
+				} else {
+					expectedTotal = Math.min(info.stats[list.anonymityLevel], info.stats[list.type]);
+				}
 
-					case 'http':
-						expectedTotal = info.stats.http;
-					break;
-
-					case 'https':
-						expectedTotal = info.stats.https;
-					break;
-
-					case 'httphttps':
-						expectedTotal = info.stats.http + info.stats.https;
-					break;
-
-					case 'socks':
-						expectedTotal = info.stats.socks;
-					break;
+				if (_.isNaN(expectedTotal)) {
+					expectedTotal = numPerPage;
 				}
 
 				var numTimes = options.sample ? 1 : Math.ceil(expectedTotal / numPerPage);
+
+				// More than 2 times is pointless because it doesn't yield any more unique proxies.
+				// Pagination on proxylisten is broken.
+				numTimes = Math.min(2, numTimes);
+
 				var asyncTimesMethod = options.series === true ? 'timesSeries' : 'times';
 
 				async[asyncTimesMethod](numTimes, function(index, nextTime) {
 
-					getProxiesFromList(type, numPerPage, info.hiddenField, filters, function(error, proxies) {
+					var listFilters = _.extend({}, filters, {
+						filter_http_anon: list.anonymityLevel
+					});
+
+					if (index > 0) {
+						listFilters.next = 'next page';
+					}
+
+					getProxiesFromList(list.type, numPerPage, info.hiddenField, listFilters, function(error, proxies) {
 
 						if (error) {
 							emitter.emit('error', error);
@@ -107,7 +124,7 @@ module.exports = {
 						nextTime();
 					});
 
-				}, nextType);
+				}, nextList);
 
 			}, function() {
 
@@ -175,8 +192,11 @@ module.exports = {
 				elite: totals.elite,
 				anonymous: totals.anonymousHttp + totals.anonymousSsl,
 				transparent: totals.transparentHttp,
-				http: totals.transparentHttp + totals.transparentHttp,
+				http: totals.anonymousHttp + totals.transparentHttp,
+				http_transparent: totals.transparentHttp,
+				http_anonymous: totals.anonymousHttp,
 				https: totals.anonymousSsl,
+				https_anonymous: totals.anonymousSsl,
 				socks: totals.socks
 			};
 
@@ -202,7 +222,8 @@ module.exports = {
 				'proxies': numPerPage.toString(),
 				'liststyle': 'info',
 				'type': type
-			})
+			}),
+			timeout: 3000
 		};
 
 		requestOptions.form[hiddenField.name] = hiddenField.value;
@@ -231,6 +252,7 @@ module.exports = {
 
 			var proxies = [];
 			var $ = cheerio.load(listHtml);
+			var regexCountryFromImgSrc = /\/([a-z]{2,2})\.[a-z]+$/;
 
 			$('table.proxyList tr').each(function(index, tr) {
 
@@ -243,8 +265,10 @@ module.exports = {
 				var ipAddress = $cells.eq(0).text().toString();
 				var port = parseInt($cells.eq(1).text().toString());
 				var anonymityLevel = $cells.eq(3).text().toString();
-				var countryImgSrc = $cells.eq(5).find('img').eq(0).attr('src');
-				var country = countryImgSrc && countryImgSrc.match(/\/([a-z]{2,2})\.png/)[1] || null;
+				var $countryImg = $cells.eq(5).find('img').eq(0);
+				var countryImgSrc = $countryImg && $countryImg.attr('src');
+				var countryImgSrcMatch = countryImgSrc && countryImgSrc.match(regexCountryFromImgSrc);
+				var country = countryImgSrcMatch && countryImgSrcMatch[1] || null;
 
 				proxies.push({
 					ipAddress: ipAddress,
