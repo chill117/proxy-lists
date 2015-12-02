@@ -35,7 +35,7 @@ This will install `proxy-lists` and add it to your application's `package.json` 
 
 ### getProxies
 
-`getProxies([options, ]cb)`
+`getProxies([options])`
 
 Gets proxies from all available proxy lists.
 
@@ -139,7 +139,7 @@ var options = {
 
 ### getProxiesFromSource
 
-`getProxiesFromSource(name, [options, ]cb)`
+`getProxiesFromSource(name, [options])`
 
 Gets proxies from a specific proxy list.
 
