@@ -130,10 +130,10 @@ var hidemyass = module.exports = {
 				var proxy = {};
 				var ipEl = $('td', tr).eq(1);
 				var styles = css.parse(ipEl.find('style').text());
-				var protocol = $('td', tr).eq(6).text().toString().toLowerCase();
-				var port = parseInt($('td', tr).eq(2).text().toString());
-				var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase();
-				var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase();
+				var protocol = $('td', tr).eq(6).text().toString().toLowerCase().trim();
+				var port = parseInt($('td', tr).eq(2).text().toString().trim());
+				var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase().trim();
+				var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase().trim();
 
 				if (protocolFixes[protocol]) {
 					protocol = protocolFixes[protocol];
@@ -197,6 +197,8 @@ var hidemyass = module.exports = {
 						break;
 					}
 				});
+
+				proxy.ipAddress = proxy.ipAddress.trim();
 
 				proxies.push(proxy);
 			});

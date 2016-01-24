@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events');
-var GeoIpNativeLite = require('geoip-native-lite');
 var request = require('request');
 
 var protocolToListLabel = {
@@ -32,46 +31,35 @@ var proxies24 = module.exports = {
 
 		var getList = async.seq(
 			this.getListPageHtml,
-			this.parseListPageHtml,
-			this.geoLocate
+			this.parseListPageHtml
 		);
 
-		GeoIpNativeLite.loadData(_.bind(function(error) {
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-			if (error) {
-				emitter.emit('error', error);
-				emitter.emit('end');
-				return;
-			}
+		async[asyncMethod](startPages, function(startingPage, nextStartingPage) {
 
-			var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+			getStartingPage(startingPage, function(error, lists) {
 
-			async[asyncMethod](startPages, function(startingPage, nextStartingPage) {
+				async[asyncMethod](lists, function(list, nextList) {
 
-				getStartingPage(startingPage, function(error, lists) {
+					getList(list, function(error, proxies) {
 
-					async[asyncMethod](lists, function(list, nextList) {
+						if (error) {
+							emitter.emit('error', error);
+						} else {
+							emitter.emit('data', proxies);
+						}
 
-						getList(list, function(error, proxies) {
+						nextList();
+					});
 
-							if (error) {
-								emitter.emit('error', error);
-							} else {
-								emitter.emit('data', proxies);
-							}
-
-							nextList();
-						});
-
-					}, nextStartingPage);
-				});
-
-			}, function() {
-
-				emitter.emit('end');
+				}, nextStartingPage);
 			});
 
-		}, this));
+		}, function() {
+
+			emitter.emit('end');
+		});
 
 		return emitter;
 	},
@@ -247,29 +235,5 @@ var proxies24 = module.exports = {
 		}
 
 		cb(null, proxies);
-	},
-
-	geoLocate: function(proxies, cb) {
-
-		GeoIpNativeLite.loadData(function(error) {
-
-			if (error) {
-				return cb(error);
-			}
-
-			var geoLocated = [];
-
-			_.each(proxies, function(proxy) {
-
-				var country = GeoIpNativeLite.lookup(proxy.ipAddress);
-
-				if (country) {
-					proxy.country = country;
-					geoLocated.push(proxy);
-				}
-			});
-
-			cb(null, geoLocated);
-		});
 	}
 };

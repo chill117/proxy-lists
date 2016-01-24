@@ -29,7 +29,6 @@
     "async": "1.5.0",
     "cheerio": "0.19.0",
     "css": "2.2.1",
-    "geoip-native-lite": "0.0.2",
     "request": "2.67.0",
     "underscore": "1.8.3",
     "xml2js": "0.4.15"
