@@ -343,6 +343,9 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.5.1:
+  * Fixes for source (hidemyass).
+  * Removed geo-ip lookups from source (proxies24).
 * v1.5.0:
   * Added `series` option to `ProxyLists.getProxies()` and `ProxyLists.getProxiesFromSource()`.
 * v1.4.0:
