@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
-var EventEmitter = require('events');
+var EventEmitter = require('events').EventEmitter || require('events');
 var request = require('request');
 
 module.exports = {

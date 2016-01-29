@@ -236,7 +236,7 @@ Usage:
 ```js
 // Core nodejs module.
 // See https://nodejs.org/api/events.html
-var EventEmitter = require('events');
+var EventEmitter = require('events').EventEmitter || require('events');
 
 var ProxyLists = require('proxy-lists');
 

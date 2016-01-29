@@ -2,7 +2,7 @@
 
 var _ = require('underscore');
 var async = require('async');
-var EventEmitter = require('events');
+var EventEmitter = require('events').EventEmitter || require('events');
 var net = require('net');
 
 var ProxyLists = module.exports = {

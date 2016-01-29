@@ -4,7 +4,7 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var css = require('css');
-var EventEmitter = require('events');
+var EventEmitter = require('events').EventEmitter || require('events');
 var request = require('request');
 
 var anonymityLevelFixes = {
