@@ -7,10 +7,10 @@ var request = require('request');
 
 module.exports = {
 
-	homeUrl: 'https://kingproxies.com/',
+	homeUrl: 'https://bitproxies.eu/',
 
 	requiredOptions: {
-		apiKey: 'You can get an API key for this service by creating an account at https://kingproxies.com/register'
+		apiKey: 'You can get an API key for this service by creating an account at https://bitproxies.eu/'
 	},
 
 	getProxies: function(options) {
@@ -42,23 +42,24 @@ module.exports = {
 
 		var requestOptions = {
 			method: 'GET',
-			url: 'https://kingproxies.com/api/v2/proxies.json',
+			url: 'https://bitproxies.eu/api/v2/proxies',
 			qs: {
-				key: options.kingproxies && options.kingproxies.apiKey || null,
-				type: options.anonymityLevels.join(','),
+				apiKey: options.bitproxies && options.bitproxies.apiKey || null,
+				anonymityLevels: options.anonymityLevels.join(','),
 				protocols: options.protocols.join(','),
-				alive: 'true',
-				country_code: _.keys(options.countries).join(',').toUpperCase(),
+				countries: _.keys(options.countries).join(','),
 			}
 		};
-
-		if (options.sample) {
-			requestOptions.qs.new = 'true';
-		}
 
 		request(requestOptions, function(error, response, data) {
 
 			if (error) {
+				return cb(error);
+			}
+
+			if (response.statusCode >= 300) {
+				error = new Error(data);
+				error.status = response.statusCode;
 				return cb(error);
 			}
 
@@ -72,19 +73,8 @@ module.exports = {
 
 			data = JSON.parse(data);
 
-			if (data.message) {
-				throw new Error(data.message);
-			}
-
-			var proxies = _.map(data.data.proxies, function(proxy) {
-
-				return {
-					ipAddress: proxy.ip,
-					port: parseInt(proxy.port),
-					protocols: proxy.protocols,
-					anonymityLevel: proxy.type.toLowerCase(),
-					country: proxy.country_code.toLowerCase()
-				};
+			var proxies = _.map(data, function(proxy) {
+				return _.pick(proxy, 'ipAddress', 'port', 'protocols', 'anonymityLevel', 'country');
 			});
 
 		} catch (error) {

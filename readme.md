@@ -16,6 +16,7 @@ Node.js module for getting proxies from publicly available proxy lists.
 * [sockslist](http://sockslist.net/)
 
 Proxy lists that require an API key:
+* [bitproxies](https://bitproxies.eu/)
 * [kingproxies](http://kingproxies.com/)
 
 Missing a proxy list that you think should be here? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
