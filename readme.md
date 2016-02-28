@@ -1,6 +1,6 @@
 # proxy-lists
 
-Get proxies from publicly available proxy lists.
+Node.js module for getting proxies from publicly available proxy lists.
 
 [![Build Status](https://travis-ci.org/chill117/proxy-lists.svg?branch=master)](https://travis-ci.org/chill117/proxy-lists) [![Status of Dependencies](https://david-dm.org/chill117/proxy-lists.svg)](https://david-dm.org/chill117/proxy-lists)
 
@@ -10,10 +10,14 @@ Get proxies from publicly available proxy lists.
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
 * [hidemyass](http://proxylist.hidemyass.com/)
-* [kingproxies](http://kingproxies.com/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxylisten](http://www.proxy-listen.de/)
 * [sockslist](http://sockslist.net/)
+
+Proxy lists that require an API key:
+* [kingproxies](http://kingproxies.com/)
+
+Missing a proxy list that you think should be here? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
 
 
 ## Installation
