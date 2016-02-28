@@ -268,6 +268,9 @@ ProxyLists.addSource('my-custom-source', {
 });
 ```
 
+Please consider sharing your custom proxy sources by [creating a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have them added to this module so that others can use them too.
+
+
 ### listSources
 
 `listSources([options])`
