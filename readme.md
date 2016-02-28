@@ -12,6 +12,7 @@ Node.js module for getting proxies from publicly available proxy lists.
 * [hidemyass](http://proxylist.hidemyass.com/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxylisten](http://www.proxy-listen.de/)
+* [proxyocean](http://www.proxyocean.com/)
 * [sockslist](http://sockslist.net/)
 
 Proxy lists that require an API key:
