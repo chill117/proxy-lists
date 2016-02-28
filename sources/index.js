@@ -7,5 +7,6 @@ module.exports = {
 	'kingproxies': require('./kingproxies'),
 	'proxies24': require('./proxies24'),
 	'proxylisten': require('./proxylisten'),
+	'proxyocean': require('./proxyocean'),
 	'sockslist': require('./sockslist'),
 };
