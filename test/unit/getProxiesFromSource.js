@@ -20,7 +20,7 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
 		try {
 
-			ProxyLists.getProxiesFromSource(name, function() { });
+			ProxyLists.getProxiesFromSource(name);
 
 		} catch (error) {
 
@@ -50,5 +50,42 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
 		// Clean-up.
 		delete ProxyLists._sources[name];
+	});
+
+	describe('requiredOptions', function() {
+
+		it('should throw an error when missing a required option', function() {
+
+			var name = 'has-required-options';
+			var requiredOptions = {
+				something: 'This is a required option!'
+			};
+
+			ProxyLists.addSource(name, {
+				requiredOptions: requiredOptions,
+				getProxies: function() {
+					var emitter = new EventEmitter();
+					return emitter;
+				}
+			});
+
+			var thrownError;
+
+			try {
+
+				ProxyLists.getProxiesFromSource(name);
+
+			} catch (error) {
+
+				thrownError = error;
+			}
+
+			expect(thrownError).to.not.equal(undefined);
+			expect(thrownError instanceof Error).to.equal(true);
+			expect(thrownError.message).to.equal('Missing required option (`option.' + name + '.something`): ' + requiredOptions.something);
+
+			// Clean-up.
+			delete ProxyLists._sources[name];
+		});
 	});
 });

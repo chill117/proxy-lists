@@ -100,30 +100,28 @@ describe('addSource(name, source)', function() {
 		expect(thrownError.message).to.equal('Source missing required "getProxies" method.');
 	});
 
-	it('should add source to list of sources', function(done) {
+	it('should add source to list of sources', function() {
 
 		var name = 'some-source';
 		var source = {
 			homeUrl: 'http://some-source.com/',
+			requiredOptions: {
+				apiKey: 'some sample error message for when this option is missing'
+			},
 			getProxies: function() {}
 		};
 
-		try {
-
-			ProxyLists.addSource(name, source);
-
-		} catch (error) {
-
-			return done(error);
-		}
+		ProxyLists.addSource(name, source);
 
 		var sources = ProxyLists.listSources();
 
-		expect(_.findWhere(sources, { name: name })).to.deep.equal({ name: name, homeUrl: source.homeUrl });
+		expect(_.findWhere(sources, { name: name })).to.deep.equal({
+			name: name,
+			homeUrl: source.homeUrl,
+			requiredOptions: source.requiredOptions
+		});
 
 		// Clean-up.
 		delete ProxyLists._sources[name];
-
-		done();
 	});
 });

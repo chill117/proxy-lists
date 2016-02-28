@@ -28,6 +28,7 @@
   "dependencies": {
     "async": "1.5.2",
     "cheerio": "0.20.0",
+    "colors": "1.1.2",
     "css": "2.2.1",
     "request": "2.69.0",
     "underscore": "1.8.3",

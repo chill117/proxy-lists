@@ -13,11 +13,6 @@ if (process.env.TRAVIS_CI) {
 	listSourcesOptions.sourcesBlackList.push('freeproxylist');
 }
 
-// Must provide API key for king proxies.
-if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
-	listSourcesOptions.sourcesBlackList.push('kingproxies');
-}
-
 var sources = ProxyLists.listSources(listSourcesOptions);
 
 _.each(sources, function(source) {
@@ -40,23 +35,18 @@ _.each(sources, function(source) {
 				this.timeout(30000);
 
 				var gotProxies = false;
-				var doneCalled = false;
-				var cb = function(error) {
-
-					if (doneCalled) {
-						// Already called done().
-						return;
-					}
-
-					doneCalled = true;
-					done(error);
-				};
+				var cb = _.once(done);
 
 				var options = {
 					anonymityLevels: ['anonymous', 'elite', 'transparent'],
 					protocols: ['http', 'https', 'socks4', 'socks5'],
 					sample: true
 				};
+
+				if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
+					options.kingproxies = {};
+					options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
+				}
 
 				options = ProxyLists.prepareOptions(options);
 

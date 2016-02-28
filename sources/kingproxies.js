@@ -9,6 +9,10 @@ module.exports = {
 
 	homeUrl: 'https://kingproxies.com/',
 
+	requiredOptions: {
+		apiKey: 'You can obtain an API key for this service by creating an account at https://kingproxies.com/register.'
+	},
+
 	getProxies: function(options) {
 
 		options || (options = {});
@@ -35,15 +39,6 @@ module.exports = {
 	},
 
 	getData: function(options, cb) {
-
-		if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
-			options.kingproxies || (options.kingproxies = {});
-			options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
-		}
-
-		if (!options.kingproxies || !options.kingproxies.apiKey) {
-			return cb(new Error('Missing API key for kingproxies. Provide API key via `options.kingproxies.apiKey`.'));
-		}
 
 		var requestOptions = {
 			method: 'GET',

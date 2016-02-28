@@ -2,8 +2,15 @@
 
 var _ = require('underscore');
 var async = require('async');
+var colors = require('colors');
 var EventEmitter = require('events').EventEmitter || require('events');
 var net = require('net');
+
+colors.setTheme({
+	info: 'green',
+	warn: 'yellow',
+	error: 'red'
+});
 
 var ProxyLists = module.exports = {
 
@@ -73,7 +80,13 @@ var ProxyLists = module.exports = {
 
 		async[asyncMethod](sources, _.bind(function(source, next) {
 
-			var gettingProxies = this.getProxiesFromSource(source.name, options);
+			try {
+				var gettingProxies = this.getProxiesFromSource(source.name, options);
+			} catch (error) {
+				// Print the error as a warning, but continue getting proxies.
+				console.warn(error.toString().warn);
+				return next();
+			}
 
 			gettingProxies.on('data', _.bind(emitter.emit, emitter, 'data'));
 			gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
@@ -96,9 +109,18 @@ var ProxyLists = module.exports = {
 
 		options = this.prepareOptions(options || {});
 
-		var emitter = new EventEmitter();
+		var source = this._sources[name];
 
-		var gettingProxies = this._sources[name].getProxies(options);
+		if (source.requiredOptions) {
+			_.each(source.requiredOptions, function(message, key) {
+				if (!options[name] || !_.isObject(options[name]) || !options[name][key]) {
+					throw new Error('Missing required option (`option.' + name + '.' + key + '`): ' + message);
+				}
+			});
+		}
+
+		var emitter = new EventEmitter();
+		var gettingProxies = source.getProxies(options);
 
 		gettingProxies.on('data', function(proxies) {
 
@@ -174,7 +196,8 @@ var ProxyLists = module.exports = {
 
 			return {
 				name: name,
-				homeUrl: source.homeUrl || ''
+				homeUrl: source.homeUrl || '',
+				requiredOptions: source.requiredOptions || {}
 			};
 
 		}, this);
