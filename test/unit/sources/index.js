@@ -13,6 +13,10 @@ if (process.env.TRAVIS_CI) {
 	listSourcesOptions.sourcesBlackList.push('freeproxylist');
 }
 
+if (!process.env.PROXY_LISTS_BITPROXIES_API_KEY) {
+	listSourcesOptions.sourcesBlackList.push('bitproxies');
+}
+
 if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
 	listSourcesOptions.sourcesBlackList.push('kingproxies');
 }
@@ -47,9 +51,21 @@ _.each(sources, function(source) {
 					sample: true
 				};
 
-				if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
-					options.kingproxies = {};
-					options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
+				switch (name) {
+
+					case 'bitproxies':
+						if (process.env.PROXY_LISTS_BITPROXIES_API_KEY) {
+							options.bitproxies = {};
+							options.bitproxies.apiKey = process.env.PROXY_LISTS_BITPROXIES_API_KEY;
+						}
+					break;
+
+					case 'kingproxies':
+						if (process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
+							options.kingproxies = {};
+							options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
+						}
+					break;
 				}
 
 				options = ProxyLists.prepareOptions(options);
