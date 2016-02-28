@@ -13,6 +13,10 @@ if (process.env.TRAVIS_CI) {
 	listSourcesOptions.sourcesBlackList.push('freeproxylist');
 }
 
+if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
+	listSourcesOptions.sourcesBlackList.push('kingproxies');
+}
+
 var sources = ProxyLists.listSources(listSourcesOptions);
 
 _.each(sources, function(source) {
