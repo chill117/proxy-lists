@@ -12,6 +12,9 @@
   "scripts": {
     "test": "grunt test"
   },
+  "bin": {
+    "proxy-lists": "cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/chill117/proxy-lists"
