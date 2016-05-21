@@ -24,21 +24,64 @@ Missing a proxy list that you think should be here? [Open an issue](https://gith
 
 ## Installation
 
-Add to your application via `npm`:
+If you wish to use this module as a [CLI tool](#command-line-interface), install it globally via npm:
+```
+npm install -g proxy-lists
+```
+
+Otherwise, you can add it to your existing node application like this:
 ```
 npm install proxy-lists --save
 ```
 This will install `proxy-lists` and add it to your application's `package.json` file.
 
 
-## How to Use
+## Usage
 
-* [getProxies](#getproxies)
-  * [Proxy Object](#proxy-object)
-* [getProxiesFromSource](#getproxiesfromsource)
-* [addSource](#addsource)
-* [listSources](#listsources)
+* [Command-line interface](#command-line-interface)
+* [API](#api)
+  * [getProxies](#getproxies)
+    * [Proxy Object](#proxy-object)
+  * [getProxiesFromSource](#getproxiesfromsource)
+  * [addSource](#addsource)
+  * [listSources](#listsources)
 
+
+## Command-line interface
+
+This section assumes that you have `proxy-lists` installed globally and that it is available on your current user's PATH.
+
+To view the help screen for the CLI tool:
+```
+proxy-lists --help
+```
+
+To view the help screen for the `getProxies` command:
+```
+proxy-lists getProxies --help
+```
+
+To output the proxies in `.txt` format:
+```
+proxy-lists getProxies --output-format="txt"
+```
+
+To get proxies from specific sources:
+```
+proxy-lists getProxies --sources-white-list="hidemyass,sockslist"
+```
+
+To get only anonymous and elite proxies:
+```
+proxy-lists getProxies --anonymity-levels="anonymous,elite"
+```
+
+The output of the `getProxies` command is written to a new file (`proxies.txt`) in your current working directory.
+
+
+## API
+
+These are the public methods of the `ProxyLists` module that allow you to get proxies, add custom proxy sources, and list existing sources.
 
 ### getProxies
 
@@ -322,7 +365,6 @@ var options = {
 ```
 
 
-
 ## Contributing
 
 There are a number of ways you can contribute:
@@ -352,6 +394,8 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.6.0:
+  * Added command-line interface.
 * v1.5.1:
   * Fixes for source (hidemyass).
   * Removed geo-ip lookups from source (proxies24).
