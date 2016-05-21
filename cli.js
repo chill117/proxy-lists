@@ -67,6 +67,14 @@ program
 			value,
 			'txt'
 		)
+		.option(
+			'--series',
+			'Perform all asynchronous operations in series'
+		)
+		.option(
+			'--sample',
+			'Get a sample of proxies from each source'
+		)
 		.action(function() {
 
 			var outputFormat = this.outputFormat;
@@ -173,11 +181,16 @@ program
 				'countries',
 				'protocols',
 				'sourcesWhiteList',
-				'sourcesBlackList'
+				'sourcesBlackList',
+				'sample',
+				'series'
 			]);
 
 			var gettingProxies = ProxyLists.getProxies(options);
 			gettingProxies.on('data', onData);
+			gettingProxies.on('error', function(error) {
+				console.error(error);
+			});
 			gettingProxies.on('end', onEnd);
 			startOutput();
 		});
