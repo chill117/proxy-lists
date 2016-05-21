@@ -6,7 +6,7 @@ var program = require('commander');
 
 var pkg = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
 var ProxyLists = require('.');
-var validOutputFormats = ['json', 'csv'];
+var validOutputFormats = ['json', 'csv', 'txt'];
 var proxyFieldNames = ['source', 'ipAddress', 'port', 'country', 'protocols', 'anonymityLevel'];
 
 function list(value) {
@@ -42,13 +42,13 @@ program
 			null
 		)
 		.option(
-			'-w, --sources-white-list <list>',
+			'-s, --sources-white-list <list>',
 			'Get proxies from these sources only [' + _.keys(ProxyLists._sources).join(', ') + ']',
 			list,
 			null
 		)
 		.option(
-			'-w, --sources-black-list <list>',
+			'-x, --sources-black-list <list>',
 			'Do not get proxies from these sources [' + _.keys(ProxyLists._sources).join(', ') + ']',
 			list,
 			null
@@ -101,6 +101,15 @@ program
 							});
 
 							writeStream.write('\n' + data.join('\n'));
+							break;
+
+						case 'txt':
+
+							data = _.map(data, function(row) {
+								return row.ipAddress + ':' + row.port;
+							});
+
+							writeStream.write((wroteData ? '\n' : '') + data.join('\n'));
 							break;
 					}
 
