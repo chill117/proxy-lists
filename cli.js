@@ -65,7 +65,7 @@ program
 			'-F, --output-format [value]',
 			'Format in which the output will be written [' + validOutputFormats.join(', ') + ']',
 			value,
-			'json'
+			'txt'
 		)
 		.action(function() {
 
