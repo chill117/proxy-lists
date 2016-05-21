@@ -296,9 +296,13 @@ var ProxyLists = module.exports = {
 		return options;
 	},
 
-	isValidProxy: function(proxy) {
+	isValidProxy: function(proxy, options) {
 
-		return !!proxy.ipAddress && this.isValidIpAddress(proxy.ipAddress) &&
+		options = _.defaults(options || {}, {
+			validateIp: true
+		});
+
+		return !!proxy.ipAddress && (!options.validateIp || this.isValidIpAddress(proxy.ipAddress)) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
 				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols);
 	},

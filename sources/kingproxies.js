@@ -72,10 +72,6 @@ module.exports = {
 
 			data = JSON.parse(data);
 
-			if (data.message) {
-				throw new Error(data.message);
-			}
-
 			var proxies = _.map(data.data.proxies, function(proxy) {
 
 				return {

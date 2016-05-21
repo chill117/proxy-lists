@@ -396,6 +396,7 @@ grunt test:code-style
 
 * v1.6.0:
   * Added command-line interface.
+  * Fixes for source (kingproxies).
 * v1.5.1:
   * Fixes for source (hidemyass).
   * Removed geo-ip lookups from source (proxies24).

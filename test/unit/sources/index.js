@@ -50,6 +50,16 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				this.timeout(30000);
 
+				// Don't validate IP addresses for some sources.
+				var validateIp = ['bitproxies', 'kingproxies'].indexOf(name) === -1;
+
+				function isValidProxy(proxy) {
+
+					return ProxyLists.isValidProxy(proxy, {
+						validateIp: validateIp
+					});
+				}
+
 				var gotProxies = false;
 				var cb = _.once(function(error) {
 
@@ -91,7 +101,7 @@ describe('source.getProxies([options, ]cb)', function() {
 						_.each(proxies, function(proxy) {
 
 							try {
-								expect(ProxyLists.isValidProxy(proxy)).to.equal(true);
+								expect(isValidProxy(proxy)).to.equal(true);
 							} catch (error) {
 								invalidProxies.push(proxy);
 							}
