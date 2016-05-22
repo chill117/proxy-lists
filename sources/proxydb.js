@@ -133,13 +133,13 @@ var Source = module.exports = {
 
 			$('table tbody tr').each(function() {
 
-				var tr = $(this);
-				var anonymityLevel = tr.find('td:nth-child(8)').text().trim();
+				var $tr = $(this);
+				var anonymityLevel = $tr.find('td:nth-child(8)').text().trim();
 
 				proxies.push({
-					ipAddress: tr.find('td:nth-child(1) a').text().trim(),
-					port: parseInt(tr.find('td:nth-child(2)').text().trim()),
-					country: tr.find('td:nth-child(4) abbr').text().trim().toLowerCase(),
+					ipAddress: $tr.find('td:nth-child(1) a').text().trim(),
+					port: parseInt($tr.find('td:nth-child(2)').text().trim()),
+					country: $tr.find('td:nth-child(4) abbr').text().trim().toLowerCase(),
 					protocols: [protocol],
 					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
 				});
