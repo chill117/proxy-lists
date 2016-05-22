@@ -102,7 +102,7 @@ describe('source.freeproxylists', function() {
 
 		it('should get list data given a list URL', function(done) {
 
-			this.timeout(5000);
+			this.timeout(10000);
 
 			var startingPageUrl = 'http://www.freeproxylists.com/socks.html';
 
