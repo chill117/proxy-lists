@@ -9,6 +9,7 @@ Node.js module for getting proxies from publicly available proxy lists.
 
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
+* [incloak](https://incloak.com/)
 * [hidemyass](http://proxylist.hidemyass.com/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxydb](http://proxydb.net/)
