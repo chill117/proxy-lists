@@ -104,13 +104,13 @@ var Source = module.exports = {
 
 		if (!_.isEmpty(options.protocols)) {
 			requestOptions.qs.type = _.map(options.protocols, function(protocol) {
-				return convertProtocols[protocol]
+				return convertProtocols[protocol];
 			}).join('');
 		}
 
 		if (!_.isEmpty(options.anonymityLevels)) {
 			requestOptions.qs.anon = _.map(options.anonymityLevels, function(anonymityLevel) {
-				return convertAnonymityLevels[anonymityLevel]
+				return convertAnonymityLevels[anonymityLevel];
 			}).join('');
 		}
 
