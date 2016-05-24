@@ -4,6 +4,7 @@ module.exports = {
 	'bitproxies': require('./bitproxies'),
 	'freeproxylist': require('./freeproxylist'),
 	'freeproxylists': require('./freeproxylists'),
+	'gatherproxy': require('./gatherproxy'),
 	'hidemyass': require('./hidemyass'),
 	'incloak': require('./incloak'),
 	'kingproxies': require('./kingproxies'),
