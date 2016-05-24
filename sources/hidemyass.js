@@ -173,7 +173,7 @@ var hidemyass = module.exports = {
 
 						case 'text':
 							proxy.ipAddress += node.data;
-						break;
+							break;
 
 						case 'tag':
 
@@ -194,7 +194,7 @@ var hidemyass = module.exports = {
 								}
 							}
 
-						break;
+							break;
 					}
 				});
 

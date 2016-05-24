@@ -36,7 +36,7 @@ describe('source.getProxies([options, ]cb)', function() {
 						}
 						options.bitproxies = {};
 						options.bitproxies.apiKey = process.env.PROXY_LISTS_BITPROXIES_API_KEY;
-					break;
+						break;
 
 					case 'kingproxies':
 						if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
@@ -45,7 +45,7 @@ describe('source.getProxies([options, ]cb)', function() {
 						}
 						options.kingproxies = {};
 						options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
-					break;
+						break;
 				}
 
 				this.timeout(30000);

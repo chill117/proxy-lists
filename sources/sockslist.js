@@ -161,15 +161,15 @@ module.exports = {
 
 					case '4':
 						protocols = ['socks4'];
-					break;
+						break;
 
 					case '4/5':
 						protocols = ['socks5', 'socks4'];
-					break;
+						break;
 
 					case '5':
 						protocols = ['socks5'];
-					break;
+						break;
 				}
 
 				var country = $('td.t_country img', tr).eq(0).attr('alt').toString().toLowerCase();
