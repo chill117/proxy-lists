@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var expect = require('chai').expect;
 
-describe.only('source.gatherproxy', function() {
+describe('source.gatherproxy', function() {
 
 	var Source = require('../../../sources/gatherproxy');
 
