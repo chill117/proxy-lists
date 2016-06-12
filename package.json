@@ -34,6 +34,7 @@
     "colors": "1.1.2",
     "commander": "2.9.0",
     "css": "2.2.1",
+    "geoip-native-lite": "0.1.0",
     "request": "2.72.0",
     "underscore": "1.8.3",
     "xml2js": "0.4.16"

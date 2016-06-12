@@ -37,13 +37,14 @@ var Source = module.exports = {
 			Source.parseData
 		)(function(error, proxies) {
 
-			if (options.sample) {
-				proxies = proxies.slice(0, 50);
-			}
-
 			if (error) {
 				emitter.emit('error', error);
 			} else {
+
+				if (options.sample) {
+					proxies = proxies.slice(0, 50);
+				}
+
 				emitter.emit('data', proxies);
 			}
 
@@ -116,16 +117,18 @@ var Source = module.exports = {
 
 	parseData: function(data, cb) {
 
+		var proxies = [];
+
 		try {
-			var proxies = _.map(data.trim().split('\n'), function(line) {
+			_.each(data.trim().split('\n'), function(line) {
 
 				var parts = line.split(':');
-
-				return {
+				var proxy = {
 					ipAddress: parts[0],
 					port: parseInt(parts[1]),
 					protocols: ['http']
 				};
+				proxies.push(proxy);
 			});
 		} catch (error) {
 			return cb(error);

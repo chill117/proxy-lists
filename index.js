@@ -4,12 +4,20 @@ var _ = require('underscore');
 var async = require('async');
 var colors = require('colors');
 var EventEmitter = require('events').EventEmitter || require('events');
+var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
 
 colors.setTheme({
 	info: 'green',
 	warn: 'yellow',
 	error: 'red'
+});
+
+// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
+GeoIpNativeLite.loadDataSync({
+	ipv4: true,
+	ipv6: false,
+	cache: true
 });
 
 var ProxyLists = module.exports = {
@@ -77,6 +85,9 @@ var ProxyLists = module.exports = {
 		var emitter = new EventEmitter();
 		var sources = this.listSources(options);
 		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+		var onData = _.bind(emitter.emit, emitter, 'data');
+		var onError = _.bind(emitter.emit, emitter, 'error');
+		var onEnd = _.once(_.bind(emitter.emit, emitter, 'end'));
 
 		async[asyncMethod](sources, _.bind(function(source, next) {
 
@@ -88,14 +99,11 @@ var ProxyLists = module.exports = {
 				return next();
 			}
 
-			gettingProxies.on('data', _.bind(emitter.emit, emitter, 'data'));
-			gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
-			gettingProxies.on('end', _.bind(next, undefined, null));
+			gettingProxies.on('data', onData);
+			gettingProxies.on('error', onError);
+			gettingProxies.on('end', _.once(_.bind(next, undefined, null)));
 
-		}, this), function() {
-
-			emitter.emit('end');
-		});
+		}, this), onEnd);
 
 		return emitter;
 	},
@@ -131,6 +139,7 @@ var ProxyLists = module.exports = {
 			// Add the 'source' attribute to every proxy.
 			proxies = _.map(proxies, function(proxy) {
 				proxy.source = name;
+				proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
 				return proxy;
 			});
 

@@ -93,56 +93,6 @@ describe('source.freeproxylists', function() {
 		});
 	});
 
-	describe('getListData(listUrl, cb)', function() {
-
-		it('should be a function', function() {
-
-			expect(freeproxylists.getListData).to.be.a('function');
-		});
-
-		it('should get list data given a list URL', function(done) {
-
-			this.timeout(10000);
-
-			var startingPageUrl = 'http://www.freeproxylists.com/socks.html';
-
-			var options = {
-				sample: true
-			};
-
-			var fn = async.seq(
-				freeproxylists.getStartingPageHtml,
-				freeproxylists.parseStartingPageHtml
-			);
-
-			fn(startingPageUrl, function(error, listUrls) {
-
-				if (error) {
-					return done(error);
-				}
-
-				var listUrl = _.first(listUrls);
-
-				freeproxylists.getListData(listUrl, function(error, data, listUrl) {
-
-					try {
-
-						expect(error).to.equal(null);
-						expect(listUrl).to.be.a('string');
-						expect(data).to.be.a('string');
-						expect(data.length > 0).to.equal(true);
-						expect(data.substr(0, '<?xml'.length)).to.equal('<?xml');
-
-					} catch (error) {
-						return done(error);
-					}
-
-					done();
-				});
-			});
-		});
-	});
-
 	describe('parseListData(listData, cb)', function() {
 
 		it('should be a function', function() {
