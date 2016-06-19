@@ -397,6 +397,9 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.7.0:
+  * Now performing geo-ip look-up for all proxies
+  * More proxy sources: gatherproxy.com, incloak.com, proxydb.net
 * v1.6.0:
   * Added command-line interface.
   * Fixes for source (kingproxies).
