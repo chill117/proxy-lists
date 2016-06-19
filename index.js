@@ -134,14 +134,14 @@ var ProxyLists = module.exports = {
 
 			proxies || (proxies = []);
 
-			proxies = ProxyLists.filterProxies(proxies, options);
-
 			// Add the 'source' attribute to every proxy.
 			proxies = _.map(proxies, function(proxy) {
 				proxy.source = name;
 				proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
 				return proxy;
 			});
+
+			proxies = ProxyLists.filterProxies(proxies, options);
 
 			emitter.emit('data', proxies);
 		});
