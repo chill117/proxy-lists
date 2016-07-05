@@ -82,8 +82,7 @@ module.exports = {
 				};
 				if ( (countriesKeys && _.contains(countriesKeys, proxyItem.country))
 					&& (!options.anonymityLevels || options.anonymityLevels && _.contains(options.anonymityLevels, proxyItem.anonymityLevel))
-					&& (!options.protocols || options.protocols && _.intersection(options.protocols, proxyItem.protocols).length) )
-				{
+					&& (!options.protocols || options.protocols && _.intersection(options.protocols, proxyItem.protocols).length) ) {
 					proxies.push(proxyItem);
 				}
 			}
