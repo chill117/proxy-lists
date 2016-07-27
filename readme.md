@@ -16,6 +16,7 @@ Node.js module for getting proxies from publicly available proxy lists.
 * [proxydb](http://proxydb.net/)
 * [proxylisten](http://www.proxy-listen.de/)
 * [proxyocean](http://www.proxyocean.com/)
+* [proxyspy](http://txt.proxyspy.net/proxy.txt)
 * [sockslist](http://sockslist.net/)
 
 Proxy lists that require an API key:
