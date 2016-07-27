@@ -34,7 +34,7 @@ var unoffocialCountryNames = {
 
 var countryNameToCode = _.invert(_.extend({}, countries, unoffocialCountryNames));
 
-var freeproxylists = module.exports = {
+var Source = module.exports = {
 
 	homeUrl: baseUrl,
 
@@ -150,7 +150,7 @@ var freeproxylists = module.exports = {
 			var listUrls = [];
 			var $ = cheerio.load(startingPageHtml);
 
-			$('table a').each(function(index) {
+			$('table a').each(function() {
 
 				var text = $(this).text();
 
@@ -168,7 +168,7 @@ var freeproxylists = module.exports = {
 
 	getListData: function(listUrl, cb) {
 
-		var dataUrl = freeproxylists.listUrlToDataUrl(listUrl);
+		var dataUrl = Source.listUrlToDataUrl(listUrl);
 
 		request({
 			method: 'GET',

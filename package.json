@@ -29,24 +29,24 @@
     "url": "https://github.com/chill117/proxy-lists/issues"
   },
   "dependencies": {
-    "async": "2.0.0-rc.6",
+    "async": "2.0.1",
     "cheerio": "0.20.0",
     "colors": "1.1.2",
     "commander": "2.9.0",
     "css": "2.2.1",
     "geoip-native-lite": "0.1.0",
-    "request": "2.72.0",
+    "request": "2.74.0",
     "underscore": "1.8.3",
-    "xml2js": "0.4.16"
+    "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "benchmark": "2.1.0",
+    "benchmark": "2.1.1",
     "chai": "3.5.0",
     "grunt": "1.0.1",
-    "grunt-jscs": "3.0.0",
+    "grunt-eslint": "19.0.0",
     "grunt-mocha-test": "0.12.7",
     "load-grunt-config": "0.19.2",
     "mocha": "2.5.3",
-    "time-grunt": "1.3.0"
+    "time-grunt": "1.4.0"
   }
 }

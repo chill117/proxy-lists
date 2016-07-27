@@ -298,7 +298,6 @@ var Source = module.exports = {
 
 			default:
 				throw new Error('Failed to solve Captcha ("' + captcha + '"): Invalid operator.');
-				break;
 		}
 
 		return Math.round(solution);

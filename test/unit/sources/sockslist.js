@@ -1,10 +1,7 @@
 'use strict';
 
-var _ = require('underscore');
 var async = require('async');
 var expect = require('chai').expect;
-
-var ProxyLists = require('../../../index');
 
 describe('source.sockslist', function() {
 
@@ -25,7 +22,11 @@ describe('source.sockslist', function() {
 
 				sockslist.parseListHtml(listHtml, function(error, proxies, numPages) {
 
-					if (error) {
+					try {
+						expect(error).to.equal(null);
+						expect(proxies).to.be.an('array');
+						expect(numPages).to.be.a('number');
+					} catch (error) {
 						return next(error);
 					}
 

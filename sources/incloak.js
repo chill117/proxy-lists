@@ -26,9 +26,7 @@ var convertAnonymityLevels = {
 	'elite': 4
 };
 
-var ProxyLists = require('../');
-
-var Source = module.exports = {
+module.exports = {
 
 	homeUrl: 'https://incloak.com/',
 

@@ -13,7 +13,7 @@ var anonymityLevelFixes = {
 	'L4': 'elite'
 };
 
-var Source = module.exports = {
+module.exports = {
 
 	homeUrl: 'http://proxydb.net/',
 

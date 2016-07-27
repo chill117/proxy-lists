@@ -80,14 +80,13 @@ module.exports = {
 
 		var found = {};
 		var lists = [];
-		var html = html;
 		var protocols = _.keys(protocolToListLabel);
 
 		try {
 
 			var $ = cheerio.load(html);
 
-			$('.post-title a').each(function(i, anchor) {
+			$('.post-title a').each(function() {
 
 				var $anchor = $(this);
 				var label = $anchor.text().toString().toLowerCase();
@@ -135,7 +134,6 @@ module.exports = {
 
 	parseListPageHtml: function(list, cb) {
 
-		var proxies = [];
 		var html = list.html;
 		var protocol = list.protocol;
 

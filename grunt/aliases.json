@@ -8,7 +8,7 @@
 		"mochaTest:benchmarks"
 	],
 	"test:code-style": [
-		"jscs"
+		"eslint"
 	],
 	"test:unit": [
 		"mochaTest:unit"

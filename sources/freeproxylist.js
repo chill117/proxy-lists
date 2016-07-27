@@ -99,10 +99,9 @@ module.exports = {
 			var $ = cheerio.load(listHtml);
 			var columnIndexes = {};
 
-			$('th', $('table thead tr').first()).each(function(index, th) {
+			$('th', $('table thead tr').first()).each(function(index) {
 
 				var key = $(this).text().toString().toLowerCase().replace(/ /g, '_');
-
 				columnIndexes[key] = index;
 			});
 

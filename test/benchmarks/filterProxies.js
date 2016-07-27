@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var Benchmark = require('benchmark');
 
 var ProxyLists = require('../../index');
@@ -29,8 +28,6 @@ describe('benchmark: filterProxies', function() {
 	it('filtering an array of ' + targetNumProxies + ' proxies', function(done) {
 
 		this.timeout(15000);
-
-		var i = 0;
 
 		var bench = new Benchmark(function() {
 			ProxyLists.filterProxies(proxiesToFilter, preparedOptions);

@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter || require('events');
 var expect = require('chai').expect;
 

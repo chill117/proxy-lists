@@ -143,7 +143,7 @@ program
 				}
 			}
 
-			function startOutput() {
+			var startOutput = _.once(function() {
 
 				console.log('Writing output to ' + outputFile);
 
@@ -157,9 +157,9 @@ program
 						writeStream.write(proxyFieldNames.join(','));
 						break;
 				}
-			}
+			});
 
-			function endOutput() {
+			var endOutput = _.once(function() {
 
 				switch (outputFormat) {
 					case 'json':
@@ -169,10 +169,7 @@ program
 
 				writeStream.end();
 				console.log('Done!');
-			}
-
-			startOutput = _.once(startOutput);
-			endOutput = _.once(endOutput);
+			});
 
 			console.log('Getting proxies...');
 

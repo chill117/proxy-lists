@@ -4,8 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var expect = require('chai').expect;
 
-var ProxyLists = require('../../../index');
-
 describe('source.proxies24', function() {
 
 	var proxies24 = require('../../../sources/proxies24');

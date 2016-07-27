@@ -19,7 +19,7 @@ var protocolFixes = {
 	'socks4/5': 'socks5'
 };
 
-var hidemyass = module.exports = {
+var Source = module.exports = {
 
 	homeUrl: 'http://proxylist.hidemyass.com/',
 
@@ -52,7 +52,7 @@ var hidemyass = module.exports = {
 
 		var requestOptions = {
 			method: 'POST',
-			url: hidemyass.homeUrl,
+			url: Source.homeUrl,
 			headers: {
 				'User-Agent': 'request',
 				'X-Requested-With': 'XMLHttpRequest'
