@@ -1,7 +1,7 @@
+.eslintrc.js
 .gitignore
-.jscsrc
 .npmignore
 .travis.yml
-grunt
-test
+grunt/
+test/
 gruntFile.js
