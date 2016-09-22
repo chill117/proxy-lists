@@ -7,7 +7,7 @@ var fs = require('fs');
 var program = require('commander');
 
 var pkg = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
-var ProxyLists = require('.');
+var ProxyLists = require('./index');
 var validOutputFormats = ['json', 'csv', 'txt'];
 var proxyFieldNames = ['source', 'ipAddress', 'port', 'country', 'protocols', 'anonymityLevel'];
 
