@@ -396,8 +396,11 @@ To run only code-style checks:
 grunt test:code-style
 ```
 
+
 ## Changelog
 
+* v1.7.1:
+  * Fixed issues: [#28](https://github.com/chill117/proxy-lists/issues/28), [#29](https://github.com/chill117/proxy-lists/issues/29)
 * v1.7.0:
   * Now performing geo-ip look-up for all proxies
   * More proxy sources: gatherproxy.com, incloak.com, proxydb.net
