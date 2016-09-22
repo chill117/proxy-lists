@@ -147,6 +147,10 @@ var Source = module.exports = {
 				return cb(error);
 			}
 
+			if (!cookie) {
+				return cb(new Error('Missing required session cookie.'));
+			}
+
 			request({
 				method: 'POST',
 				url: 'http://gatherproxy.com/subscribe/login',
@@ -308,6 +312,6 @@ var Source = module.exports = {
 		var cookie = _.find(cookies, function(cookie) {
 			return cookie.substr(0, name.length) === name;
 		});
-		return cookie.substr(0, cookie.indexOf(';'));
+		return cookie && cookie.substr(0, cookie.indexOf(';'));
 	}
 };
