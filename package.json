@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "async": "2.0.1",
-    "cheerio": "0.20.0",
+    "cheerio": "0.22.0",
     "colors": "1.1.2",
     "commander": "2.9.0",
     "css": "2.2.1",
     "geoip-native-lite": "0.1.0",
-    "request": "2.74.0",
+    "request": "2.75.0",
     "underscore": "1.8.3",
     "xml2js": "0.4.17"
   },
@@ -44,9 +44,9 @@
     "chai": "3.5.0",
     "grunt": "1.0.1",
     "grunt-eslint": "19.0.0",
-    "grunt-mocha-test": "0.12.7",
+    "grunt-mocha-test": "0.13.2",
     "load-grunt-config": "0.19.2",
-    "mocha": "2.5.3",
+    "mocha": "3.0.2",
     "time-grunt": "1.4.0"
   }
 }

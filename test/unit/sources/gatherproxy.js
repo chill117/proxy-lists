@@ -48,7 +48,7 @@ describe('source.gatherproxy', function() {
 		});
 	});
 
-	describe('getSessionCookie()', function() {
+	describe('getSessionCookie(cookies)', function() {
 
 		it('should be a function', function() {
 

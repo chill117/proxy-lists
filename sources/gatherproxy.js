@@ -191,7 +191,6 @@ var Source = module.exports = {
 			}
 
 			cb(null, solution, cookie);
-
 		});
 	},
 
