@@ -91,11 +91,26 @@ describe('source.freeproxylists', function() {
 		});
 	});
 
-	describe('parseListData(listData, cb)', function() {
+	describe('parseListData(listData, listUrl, cb)', function() {
 
 		it('should be a function', function() {
 
 			expect(freeproxylists.parseListData).to.be.a('function');
+		});
+
+		it('should handle badly structured XML', function(done) {
+
+			var list = {
+				url: 'anon/somesample.html',
+				data: '<?xml version="1.0" encoding="utf-8"?><missingroot></missingroot>'
+			};
+
+			freeproxylists.parseListData(list.data, list.url, function(error, proxies) {
+
+				expect(error).to.not.equal(null);
+				expect(proxies).to.equal(undefined);
+				done();
+			});
 		});
 
 		it('should parse the XML data into a JSON array of proxies', function(done) {

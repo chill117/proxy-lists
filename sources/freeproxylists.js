@@ -4,7 +4,7 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var parseString = require('xml2js').parseString;
+var parseXml = require('xml2js').parseString;
 var request = require('request');
 
 var baseUrl = 'http://www.freeproxylists.com';
@@ -201,42 +201,48 @@ var Source = module.exports = {
 			list.anonymityLevel = 'elite';
 		}
 
-		parseString(list.data, function(error, result) {
+		parseXml(list.data, function(error, result) {
 
 			if (error) {
 				return cb(error);
 			}
 
-			var proxies = [];
-			var $ = cheerio.load(result.root.quote[0]);
+			try {
 
-			$('table tr').each(function(index, tr) {
+				var proxies = [];
+				var $ = cheerio.load(result.root.quote[0]);
 
-				if (index > 1) {
+				$('table tr').each(function(index, tr) {
 
-					// Data starts at the 3rd row.
+					if (index > 1) {
 
-					var countryName = $('td', tr).eq(5).text().toString();
-					var countryCode = countryNameToCode[countryName] || null;
+						// Data starts at the 3rd row.
 
-					if (countryCode) {
+						var countryName = $('td', tr).eq(5).text().toString();
+						var countryCode = countryNameToCode[countryName] || null;
 
-						var protocol = list.protocol;
+						if (countryCode) {
 
-						if (!protocol) {
-							protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
+							var protocol = list.protocol;
+
+							if (!protocol) {
+								protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
+							}
+
+							proxies.push({
+								ipAddress: $('td', tr).eq(0).text().toString(),
+								port: parseInt($('td', tr).eq(1).text().toString()),
+								protocols: [protocol],
+								country: countryCode,
+								anonymityLevel: list.anonymityLevel
+							});
 						}
-
-						proxies.push({
-							ipAddress: $('td', tr).eq(0).text().toString(),
-							port: parseInt($('td', tr).eq(1).text().toString()),
-							protocols: [protocol],
-							country: countryCode,
-							anonymityLevel: list.anonymityLevel
-						});
 					}
-				}
-			});
+				});
+
+			} catch (error) {
+				return cb(error);
+			}
 
 			cb(null, proxies);
 		});
