@@ -2,16 +2,9 @@
 
 var _ = require('underscore');
 var async = require('async');
-var colors = require('colors');
 var EventEmitter = require('events').EventEmitter || require('events');
 var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
-
-colors.setTheme({
-	info: 'green',
-	warn: 'yellow',
-	error: 'red'
-});
 
 // Prepare the GeoIp data so that we can perform GeoIp look-ups later.
 GeoIpNativeLite.loadDataSync({
@@ -95,7 +88,7 @@ var ProxyLists = module.exports = {
 				var gettingProxies = this.getProxiesFromSource(source.name, options);
 			} catch (error) {
 				// Print the error as a warning, but continue getting proxies.
-				console.warn(error.toString().warn);
+				console.warn(error.toString());
 				return next();
 			}
 

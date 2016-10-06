@@ -31,7 +31,6 @@
   "dependencies": {
     "async": "2.0.1",
     "cheerio": "0.22.0",
-    "colors": "1.1.2",
     "commander": "2.9.0",
     "css": "2.2.1",
     "geoip-native-lite": "0.1.0",
