@@ -75,6 +75,11 @@ To get proxies from specific sources:
 proxy-lists getProxies --sources-white-list="hidemyass,sockslist"
 ```
 
+To get proxies from specific countries:
+```
+proxy-lists getProxies --countries="us,ca"
+```
+
 To get only anonymous and elite proxies:
 ```
 proxy-lists getProxies --anonymity-levels="anonymous,elite"
