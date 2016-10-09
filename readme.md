@@ -80,6 +80,11 @@ To get proxies from specific countries:
 proxy-lists getProxies --countries="us,ca"
 ```
 
+To get proxies with specific protocols:
+```
+proxy-lists getProxies --protocols="http,https"
+```
+
 To get only anonymous and elite proxies:
 ```
 proxy-lists getProxies --anonymity-levels="anonymous,elite"
