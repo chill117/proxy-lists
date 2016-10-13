@@ -75,11 +75,37 @@ program
 			'--sample',
 			'Get a sample of proxies from each source'
 		)
+		.option(
+			'--stdout',
+			'Write to STDOUT instead of a file'
+		)
 		.action(function() {
 
 			var outputFormat = this.outputFormat;
+			var stdout = this.stdout;
 			var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
-			var writeStream = fs.createWriteStream(outputFile);
+
+			if(!stdout) {
+				var writeStream = fs.createWriteStream(outputFile);
+			}
+			else {
+				outputFile = 'STDOUT';
+				var logFile = process.cwd() + '/proxy-lists.log';
+				var logStream = fs.createWriteStream(logFile);
+				var writeStream = {
+					write: function(data) {
+						process.stdout.write(data + '\n');
+					},
+					end: function() {},
+					on: function() {}
+				};
+
+				// Pipe console.log output to the log file
+				console.log = function(message) {
+					logStream.write(message + '\n');
+				}
+			}
+
 			writeStream.on('error', console.error.bind(console));
 			var numWriting = 0;
 			var wroteData = false;
@@ -121,12 +147,6 @@ program
 
 							writeStream.write((wroteData ? '\n' : '') + data.join('\n'));
 							break;
-
-						case 'stdout':
-							data = _.map(data, function(row) {
-								console.log(row.ipAddress + ':' + row.port);
-							});
-							break;
 					}
 
 					numWriting--;
@@ -144,14 +164,14 @@ program
 
 			function endIfDoneWritingData() {
 
-				if (ended && !numWriting && outputFormat !== 'stdout') {
+				if (ended && !numWriting) {
 					endOutput();
 				}
 			}
 
 			var startOutput = _.once(function() {
 
-				console.error('Writing output to ' + outputFile);
+				console.log('Writing output to ' + outputFile);
 
 				switch (outputFormat) {
 
@@ -174,10 +194,14 @@ program
 				}
 
 				writeStream.end();
-				console.error('Done!');
+				console.log('Done!');
+
+				if(logStream) {
+					logStream.end();
+				}
 			});
 
-			console.error('Getting proxies...');
+			console.log('Getting proxies...');
 
 			var options = _.pick(this, [
 				'anonymityLevels',
@@ -196,9 +220,7 @@ program
 			});
 			gettingProxies.on('end', onEnd);
 
-			if(outputFormat !== 'stdout') {
-				startOutput();
-			}
+			startOutput();
 		});
 
 program.parse(process.argv);
