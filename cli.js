@@ -121,6 +121,12 @@ program
 
 							writeStream.write((wroteData ? '\n' : '') + data.join('\n'));
 							break;
+
+						case 'stdout':
+							data = _.map(data, function(row) {
+								console.log(row.ipAddress + ':' + row.port);
+							});
+							break;
 					}
 
 					numWriting--;
@@ -138,14 +144,14 @@ program
 
 			function endIfDoneWritingData() {
 
-				if (ended && !numWriting) {
+				if (ended && !numWriting && outputFormat !== 'stdout') {
 					endOutput();
 				}
 			}
 
 			var startOutput = _.once(function() {
 
-				console.log('Writing output to ' + outputFile);
+				console.error('Writing output to ' + outputFile);
 
 				switch (outputFormat) {
 
@@ -168,10 +174,10 @@ program
 				}
 
 				writeStream.end();
-				console.log('Done!');
+				console.error('Done!');
 			});
 
-			console.log('Getting proxies...');
+			console.error('Getting proxies...');
 
 			var options = _.pick(this, [
 				'anonymityLevels',
@@ -189,7 +195,10 @@ program
 				console.error(error);
 			});
 			gettingProxies.on('end', onEnd);
-			startOutput();
+
+			if(outputFormat !== 'stdout') {
+				startOutput();
+			}
 		});
 
 program.parse(process.argv);
