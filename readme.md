@@ -72,7 +72,7 @@ proxy-lists getProxies --output-format="txt"
 
 To output proxies to STDOUT:
 ```
-proxy-lists getProxies --output-format="stdout"
+proxy-lists getProxies --stdout
 ```
 
 To output proxies to a different file than proxies.txt:
