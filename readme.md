@@ -70,6 +70,11 @@ To output the proxies in `.txt` format:
 proxy-lists getProxies --output-format="txt"
 ```
 
+To output proxes to a different file than proxies.txt:
+```
+proxy-lists getProxies --output-file="somefile.txt"
+```
+
 To get proxies from specific sources:
 ```
 proxy-lists getProxies --sources-white-list="hidemyass,sockslist"
