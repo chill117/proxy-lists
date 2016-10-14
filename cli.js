@@ -84,15 +84,16 @@ program
 			var outputFormat = this.outputFormat;
 			var stdout = this.stdout;
 			var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
+			var writeStream;
 
 			if(!stdout) {
-				var writeStream = fs.createWriteStream(outputFile);
+				writeStream = fs.createWriteStream(outputFile);
 			}
 			else {
 				outputFile = 'STDOUT';
 				var logFile = process.cwd() + '/proxy-lists.log';
 				var logStream = fs.createWriteStream(logFile);
-				var writeStream = {
+				writeStream = {
 					write: function(data) {
 						process.stdout.write(data + '\n');
 					},
