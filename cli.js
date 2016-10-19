@@ -79,6 +79,12 @@ program
 			'--stdout',
 			'Write to STDOUT instead of a file'
 		)
+		.option(
+			'-l, --log-file [value]',
+			'File to which will be logged when writing to stdout',
+			value,
+			'proxy-lists.log'
+		)
 		.action(function() {
 
 			var outputFormat = this.outputFormat;
@@ -91,7 +97,7 @@ program
 			}
 			else {
 				outputFile = 'STDOUT';
-				var logFile = process.cwd() + '/proxy-lists.log';
+				var logFile = process.cwd() + '/' + this.logFile;
 				var logStream = fs.createWriteStream(logFile);
 				writeStream = {
 					write: function(data) {
