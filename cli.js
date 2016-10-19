@@ -100,10 +100,14 @@ program
 					end: function() {},
 					on: function() {}
 				};
+			}
 
-				// Pipe console.log output to the log file
-				console.log = function(message) {
+			function log(message) {
+				if(stdout) {
 					logStream.write(message + '\n');
+				}
+				else {
+					console.log(message);
 				}
 			}
 
@@ -172,7 +176,7 @@ program
 
 			var startOutput = _.once(function() {
 
-				console.log('Writing output to ' + outputFile);
+				log('Writing output to ' + outputFile);
 
 				switch (outputFormat) {
 
@@ -195,14 +199,14 @@ program
 				}
 
 				writeStream.end();
-				console.log('Done!');
+				log('Done!');
 
 				if(logStream) {
 					logStream.end();
 				}
 			});
 
-			console.log('Getting proxies...');
+			log('Getting proxies...');
 
 			var options = _.pick(this, [
 				'anonymityLevels',
