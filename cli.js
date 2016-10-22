@@ -75,11 +75,48 @@ program
 			'--sample',
 			'Get a sample of proxies from each source'
 		)
+		.option(
+			'--stdout',
+			'Write to STDOUT instead of a file'
+		)
+		.option(
+			'-l, --log-file [value]',
+			'File to which will be logged when writing to stdout',
+			value,
+			'proxy-lists.log'
+		)
 		.action(function() {
 
 			var outputFormat = this.outputFormat;
+			var stdout = this.stdout;
 			var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
-			var writeStream = fs.createWriteStream(outputFile);
+			var writeStream;
+
+			if(!stdout) {
+				writeStream = fs.createWriteStream(outputFile);
+			}
+			else {
+				outputFile = 'STDOUT';
+				var logFile = process.cwd() + '/' + this.logFile;
+				var logStream = fs.createWriteStream(logFile);
+				writeStream = {
+					write: function(data) {
+						process.stdout.write(data + '\n');
+					},
+					end: function() {},
+					on: function() {}
+				};
+			}
+
+			function log(message) {
+				if(stdout) {
+					logStream.write(message + '\n');
+				}
+				else {
+					console.log(message);
+				}
+			}
+
 			writeStream.on('error', console.error.bind(console));
 			var numWriting = 0;
 			var wroteData = false;
@@ -145,7 +182,7 @@ program
 
 			var startOutput = _.once(function() {
 
-				console.log('Writing output to ' + outputFile);
+				log('Writing output to ' + outputFile);
 
 				switch (outputFormat) {
 
@@ -168,10 +205,14 @@ program
 				}
 
 				writeStream.end();
-				console.log('Done!');
+				log('Done!');
+
+				if(logStream) {
+					logStream.end();
+				}
 			});
 
-			console.log('Getting proxies...');
+			log('Getting proxies...');
 
 			var options = _.pick(this, [
 				'anonymityLevels',
@@ -189,6 +230,7 @@ program
 				console.error(error);
 			});
 			gettingProxies.on('end', onEnd);
+
 			startOutput();
 		});
 
