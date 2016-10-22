@@ -92,10 +92,9 @@ program
 			var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
 			var writeStream;
 
-			if(!stdout) {
+			if (!stdout) {
 				writeStream = fs.createWriteStream(outputFile);
-			}
-			else {
+			} else {
 				outputFile = 'STDOUT';
 				var logFile = process.cwd() + '/' + this.logFile;
 				var logStream = fs.createWriteStream(logFile);
@@ -109,10 +108,10 @@ program
 			}
 
 			function log(message) {
-				if(stdout) {
+
+				if (stdout) {
 					logStream.write(message + '\n');
-				}
-				else {
+				} else {
 					console.log(message);
 				}
 			}
@@ -207,7 +206,7 @@ program
 				writeStream.end();
 				log('Done!');
 
-				if(logStream) {
+				if (logStream) {
 					logStream.end();
 				}
 			});
