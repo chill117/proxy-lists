@@ -419,6 +419,8 @@ grunt test:code-style
 
 ## Changelog
 
+* TBD:
+  * Added `--stdout` option to CLI utility.
 * v1.7.1:
   * Fixed issues: [#28](https://github.com/chill117/proxy-lists/issues/28), [#29](https://github.com/chill117/proxy-lists/issues/29)
 * v1.7.0:
