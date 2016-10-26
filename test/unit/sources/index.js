@@ -107,7 +107,7 @@ describe('source.getProxies([options, ]cb)', function() {
 							}
 						});
 
-						expect(invalidProxies).to.deep.equal([]);
+						expect(invalidProxies.length).to.not.equal(proxies.length);
 
 					} catch (error) {
 						return cb(error);
