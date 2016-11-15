@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Get proxies from publicly available proxy lists.",
   "keywords": [
     "proxies",
@@ -34,12 +34,12 @@
     "commander": "2.9.0",
     "css": "2.2.1",
     "geoip-native-lite": "0.1.0",
-    "request": "2.75.0",
+    "request": "2.78.0",
     "underscore": "1.8.3",
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "benchmark": "2.1.1",
+    "benchmark": "2.1.2",
     "chai": "3.5.0",
     "grunt": "1.0.1",
     "grunt-eslint": "19.0.0",
