@@ -14,4 +14,5 @@ module.exports = {
 	'proxyocean': require('./proxyocean'),
 	'sockslist': require('./sockslist'),
 	'proxyspy': require('./proxyspy'),
+	'blogspot': require('./blogspot')
 };
