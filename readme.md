@@ -206,7 +206,12 @@ var options = {
 	/*
 		Set to TRUE to have all asynchronous operations run in series.
 	*/
-	series: false
+	series: false,
+
+  /*
+    An array of IP types: ipv4 and/or ipv6
+  */
+  ipTypes: ['ipv4', 'ipv6']
 };
 ```
 

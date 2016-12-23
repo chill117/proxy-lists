@@ -6,13 +6,6 @@ var EventEmitter = require('events').EventEmitter || require('events');
 var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
 
-// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
-GeoIpNativeLite.loadDataSync({
-	ipv4: true,
-	ipv6: false,
-	cache: true
-});
-
 var ProxyLists = module.exports = {
 
 	defaultOptions: {
@@ -62,13 +55,19 @@ var ProxyLists = module.exports = {
 		/*
 			Set to TRUE to have all asynchronous operations run in series.
 		*/
-		series: false
+		series: false,
+
+		/*
+			An array of IP types: ipv4 and/or ipv6
+		*/
+		ipTypes: ['ipv4', 'ipv6']
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
+	_ipTypes: ['ipv4', 'ipv6'],
 
 	// Get proxies from all sources.
 	getProxies: function(options) {
@@ -81,6 +80,15 @@ var ProxyLists = module.exports = {
 		var onData = _.bind(emitter.emit, emitter, 'data');
 		var onError = _.bind(emitter.emit, emitter, 'error');
 		var onEnd = _.once(_.bind(emitter.emit, emitter, 'end'));
+		var ipv4 = options.ipTypes.indexOf('ipv4') > -1 ? true : false;
+		var ipv6 = options.ipTypes.indexOf('ipv6') > -1 ? true : false;
+
+		// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
+		GeoIpNativeLite.loadDataSync({
+			ipv4: ipv4,
+			ipv6: ipv6,
+			cache: true
+		});
 
 		async[asyncMethod](sources, _.bind(function(source, next) {
 
