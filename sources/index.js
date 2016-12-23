@@ -11,7 +11,6 @@ module.exports = {
 	'proxies24': require('./proxies24'),
 	'proxydb': require('./proxydb'),
 	'proxylisten': require('./proxylisten'),
-	'proxyocean': require('./proxyocean'),
 	'sockslist': require('./sockslist'),
 	'proxyspy': require('./proxyspy'),
 };

@@ -172,7 +172,16 @@ var Source = module.exports = {
 				var $error = $('.error');
 
 				if ($error && $error.length > 0) {
-					return cb(new Error($error.text().trim()));
+					error = new Error($error.text().trim());
+					error.debug = {
+						cookie: cookie,
+						form: {
+							'Username': user.email,
+							'Password': user.password,
+							'Captcha': captchaSolution
+						}
+					};
+					return cb(error);
 				}
 
 				cb(null, cookie);

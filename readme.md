@@ -15,7 +15,6 @@ Node.js module for getting proxies from publicly available proxy lists.
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxydb](http://proxydb.net/)
 * [proxylisten](http://www.proxy-listen.de/)
-* [proxyocean](http://www.proxyocean.com/)
 * [proxyspy](http://txt.proxyspy.net/proxy.txt)
 * [sockslist](http://sockslist.net/)
 
