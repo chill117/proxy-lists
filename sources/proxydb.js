@@ -7,10 +7,10 @@ var EventEmitter = require('events').EventEmitter || require('events');
 var request = require('request');
 
 var anonymityLevelFixes = {
-	'Transparent': 'transparent',
-	'Anonymous': 'anonymous',
-	'Distorting': 'anonymous',
-	'High Anonymous': 'elite'
+	'L1': 'transparent',
+	'L2': 'anonymous',
+	'L3': 'anonymous',
+	'L4': 'elite'
 };
 
 module.exports = {
@@ -134,13 +134,12 @@ module.exports = {
 			$('table tbody tr').each(function() {
 
 				var $tr = $(this);
-				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
-				var ipPort = $tr.find('td:nth-child(1) a').text().trim().split(':');
+				var anonymityLevel = $tr.find('td:nth-child(8)').text().trim();
 
 				proxies.push({
-					ipAddress: ipPort[0],
-					port: ipPort[1],
-					country: $tr.find('td:nth-child(6) abbr').text().trim().toLowerCase(),
+					ipAddress: $tr.find('td:nth-child(1) a').text().trim(),
+					port: parseInt($tr.find('td:nth-child(2)').text().trim()),
+					country: $tr.find('td:nth-child(4) abbr').text().trim().toLowerCase(),
 					protocols: [protocol],
 					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
 				});
