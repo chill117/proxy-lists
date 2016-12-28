@@ -423,6 +423,10 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.9.0:
+  * Fixes for proxydb.
+  * Removed source (proxyocean) because it no longer exists.
+  * Added support for ipv6 addresses.
 * v1.8.0:
   * Added `--stdout` option to CLI utility.
   * Fixed issues: [#35](https://github.com/chill117/proxy-lists/issues/35), [#37](https://github.com/chill117/proxy-lists/issues/37)
