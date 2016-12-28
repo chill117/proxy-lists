@@ -33,7 +33,7 @@
     "cheerio": "0.22.0",
     "commander": "2.9.0",
     "css": "2.2.1",
-    "geoip-native-lite": "0.1.0",
+    "geoip-native-lite": "0.2.0",
     "request": "2.78.0",
     "underscore": "1.8.3",
     "xml2js": "0.4.17"
