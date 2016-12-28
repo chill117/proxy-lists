@@ -56,6 +56,12 @@ program
 			null
 		)
 		.option(
+			'-i, --ip-types <list>',
+			'Accepted IP types [' + ProxyLists._ipTypes.join(', ') + ']',
+			list,
+			null
+		)
+		.option(
 			'-f, --output-file [value]',
 			'File to which the output will be written',
 			value,
@@ -220,7 +226,8 @@ program
 				'sourcesWhiteList',
 				'sourcesBlackList',
 				'sample',
-				'series'
+				'series',
+				'ipTypes'
 			]);
 
 			var gettingProxies = ProxyLists.getProxies(options);

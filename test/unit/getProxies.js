@@ -23,7 +23,7 @@ describe('getProxies([options, ]cb)', function() {
 		expect(ProxyLists.getProxies).to.be.a('function');
 	});
 
-	it('should call getProxies() for all sources', function() {
+	it('should call getProxies() for all sources', function(done) {
 
 		var testSources = ['somewhere', 'somewhere-else'];
 		var called = {};
@@ -35,15 +35,48 @@ describe('getProxies([options, ]cb)', function() {
 				getProxies: function() {
 					var emitter = new EventEmitter();
 					called[name] = true;
+					var onEnd = _.bind(emitter.emit, emitter, 'end');
+					_.defer(onEnd);
 					return emitter;
 				}
 			});
 		});
 
-		ProxyLists.getProxies();
+		ProxyLists.getProxies().on('end', function() {
 
-		_.each(testSources, function(name) {
-			expect(called[name]).to.equal(true);
+			try {
+				_.each(testSources, function(name) {
+					expect(called[name]).to.equal(true);
+				});
+			} catch (error) {
+				return done(error);
+			}
+
+			done();
+		});
+	});
+
+	it('source with ipv6 addresses', function(done) {
+
+		ProxyLists._sources = {};
+
+		ProxyLists.addSource('ipv6test', {
+			getProxies: function() {
+				var emitter = new EventEmitter();
+				var onData = _.bind(emitter.emit, emitter, 'data');
+				var onEnd = _.bind(emitter.emit, emitter, 'end');
+				_.defer(onData, [{
+					ipAddress: '1200:0000:AB00:1234:0000:2552:7777:1313',
+					port: 80,
+					anonymityLevel: 'transparent'
+				}])
+				_.defer(onEnd);
+				return emitter;
+			}
+		});
+
+		ProxyLists.getProxies({ ipTypes: ['ipv4', 'ipv6'] }).on('end', function() {
+			done();
 		});
 	});
 
@@ -53,10 +86,23 @@ describe('getProxies([options, ]cb)', function() {
 
 			describe('TRUE', function() {
 
-				it('should get proxies from all sources in series', function() {
+				it('should get proxies from all sources in series', function(done) {
 
 					var testSources = ['somewhere', 'somewhere-else'];
-					var gettingProxiesFromSource = {};
+					var called = {};
+
+					var gettingProxiesCalledForSource = function(name) {
+
+						var nextExpected = testSources[_.keys(called).length];
+
+						try {
+							expect(name).to.equal(nextExpected);
+						} catch (error) {
+							return done(error);
+						}
+
+						called[name] = true;
+					};
 
 					ProxyLists._sources = {};
 
@@ -64,7 +110,9 @@ describe('getProxies([options, ]cb)', function() {
 						ProxyLists.addSource(name, {
 							getProxies: function() {
 								var emitter = new EventEmitter();
-								gettingProxiesFromSource[name] = true;
+								var onEnd = _.bind(emitter.emit, emitter, 'end');
+								_.defer(_.bind(gettingProxiesCalledForSource, undefined, name));
+								_.defer(onEnd);
 								return emitter;
 							}
 						});
@@ -74,9 +122,16 @@ describe('getProxies([options, ]cb)', function() {
 						series: true
 					};
 
-					ProxyLists.getProxies(options);
+					ProxyLists.getProxies(options).on('end', function() {
 
-					expect(_.keys(gettingProxiesFromSource)).to.have.length(1);
+						try {
+							expect(_.keys(called)).to.have.length(testSources.length);
+						} catch (error) {
+							return done(error);
+						}
+
+						done();
+					});
 				});
 			});
 
