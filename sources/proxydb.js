@@ -13,6 +13,8 @@ var anonymityLevelFixes = {
 	'High Anonymous': 'elite'
 };
 
+var limitPerPage = 50;
+
 module.exports = {
 
 	homeUrl: 'http://proxydb.net/',
@@ -23,57 +25,44 @@ module.exports = {
 
 		var emitter = new EventEmitter();
 
-		var getPageData = async.seq(
+		var getPageOfProxies = async.seq(
 			this.getPageHtml,
 			this.parsePageHtml
 		);
 
-		var protocols = _.reject(options.protocols, function(protocol) {
-			return protocol === 'socks4';
+		options.countries = _.map(options.countries, function(country) {
+			return country.toUpperCase();
 		});
 
-		if (options.sample) {
-			protocols = protocols.slice(0, 1);
-		}
+		var numProxiesFromLastPage;
 
-		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+		async.until(function() { return numProxiesFromLastPage < limitPerPage; }, function(nextPage) {
 
-		async[asyncMethod](protocols, function(protocol, nextProtocol) {
+			var page = 1;
 
-			getPageData(protocol, 1/* page */, options, function(error, proxies, numPages) {
+			getPageOfProxies(page++, options, function(error, proxies) {
 
 				if (error) {
-					emitter.emit('error', error);
-					return nextProtocol();
+					return nextPage(error);
+				}
+
+				if (options.sample) {
+					// Stop after this page.
+					numProxiesFromLastPage = 0;
+				} else {
+					// Will continue if there are more pages to get.
+					numProxiesFromLastPage = proxies && proxies.length || 0;
 				}
 
 				emitter.emit('data', proxies);
-
-				if (options.sample) {
-					return nextProtocol();
-				}
-
-				var asyncMethod = options.series === true ? 'timesSeries' : 'times';
-
-				async[asyncMethod](numPages - 1, function(index, nextPage) {
-
-					var page = index + 1;
-
-					getPageData(protocol, page, options, function(error, proxies) {
-
-						if (error) {
-							emitter.emit('error', error);
-						} else {
-							emitter.emit('data', proxies);
-						}
-
-						nextPage();
-					});
-
-				}, nextProtocol);
+				nextPage();
 			});
 
-		}, function() {
+		}, function(error) {
+
+			if (error) {
+				emitter.emit('error', error);
+			}
 
 			emitter.emit('end');
 		});
@@ -81,25 +70,17 @@ module.exports = {
 		return emitter;
 	},
 
-	getPageHtml: function(protocol, page, options, cb) {
+	getPageHtml: function(page, options, cb) {
 
 		var requestOptions = {
 			method: 'GET',
 			url: 'http://proxydb.net/',
 			qs: {
-				limit: 50,
-				exclude_gateway: 1,
-				minavail: 50,
-				protocol: protocol,
+				offset: (page - 1) * limitPerPage,
+				protocol: options.protocols,
 				anonlvl: []
 			}
 		};
-
-		if (options.sample) {
-			requestOptions.qs.limit = 25;
-		}
-
-		requestOptions.qs.offset = requestOptions.qs.limit * (page - 1);
 
 		if (_.contains(options.anonymityLevels, 'transparent')) {
 			requestOptions.qs.anonlvl.push(1);
@@ -120,11 +101,11 @@ module.exports = {
 				return cb(error);
 			}
 
-			cb(null, html, protocol);
+			cb(null, html);
 		});
 	},
 
-	parsePageHtml: function(html, protocol, cb) {
+	parsePageHtml: function(html, cb) {
 
 		try {
 
@@ -134,13 +115,15 @@ module.exports = {
 			$('table tbody tr').each(function() {
 
 				var $tr = $(this);
-				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
 				var host = $tr.find('td:nth-child(1) a').text().trim().split(':');
+				var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
+				var country = $tr.find('td:nth-child(6) abbr').text().trim().toLowerCase();
+				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
 
 				proxies.push({
 					ipAddress: host[0],
 					port: parseInt(host[1]),
-					country: $tr.find('td:nth-child(6) abbr').text().trim().toLowerCase(),
+					country: country,
 					protocols: [protocol],
 					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
 				});
