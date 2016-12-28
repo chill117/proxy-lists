@@ -58,9 +58,12 @@ var ProxyLists = module.exports = {
 		series: false,
 
 		/*
-			An array of IP types: ipv4 and/or ipv6
+			Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+			To include both ipv4 and ipv6:
+			['ipv4', 'ipv6']
 		*/
-		ipTypes: ['ipv4', 'ipv6']
+		ipTypes: ['ipv4']
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
@@ -80,15 +83,6 @@ var ProxyLists = module.exports = {
 		var onData = _.bind(emitter.emit, emitter, 'data');
 		var onError = _.bind(emitter.emit, emitter, 'error');
 		var onEnd = _.once(_.bind(emitter.emit, emitter, 'end'));
-		var ipv4 = options.ipTypes.indexOf('ipv4') > -1 ? true : false;
-		var ipv6 = options.ipTypes.indexOf('ipv6') > -1 ? true : false;
-
-		// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
-		GeoIpNativeLite.loadDataSync({
-			ipv4: ipv4,
-			ipv6: ipv6,
-			cache: true
-		});
 
 		async[asyncMethod](sources, _.bind(function(source, next) {
 
@@ -129,26 +123,44 @@ var ProxyLists = module.exports = {
 		}
 
 		var emitter = new EventEmitter();
-		var gettingProxies = source.getProxies(options);
+		var onData = _.bind(emitter.emit, emitter, 'data');
+		var onError = _.bind(emitter.emit, emitter, 'error');
+		var onEnd = _.once(_.bind(emitter.emit, emitter, 'end'));
 
-		gettingProxies.on('data', function(proxies) {
+		// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
+		GeoIpNativeLite.loadData({
+			ipv4: options.ipTypes.indexOf('ipv4') !== -1,
+			ipv6: options.ipTypes.indexOf('ipv6') !== -1,
+			cache: true
+		}, function(error) {
 
-			proxies || (proxies = []);
+			if (error) {
+				// Failed to load GeoIp data.
+				// Emit error and end.
+				onError(error);
+				return onEnd();
+			}
 
-			// Add the 'source' attribute to every proxy.
-			proxies = _.map(proxies, function(proxy) {
-				proxy.source = name;
-				proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
-				return proxy;
+			var gettingProxies = source.getProxies(options);
+
+			gettingProxies.on('data', function(proxies) {
+
+				proxies || (proxies = []);
+
+				// Add the 'source' attribute to every proxy.
+				proxies = _.map(proxies, function(proxy) {
+					proxy.source = name;
+					proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
+					return proxy;
+				});
+
+				proxies = ProxyLists.filterProxies(proxies, options);
+				onData(proxies);
 			});
 
-			proxies = ProxyLists.filterProxies(proxies, options);
-
-			emitter.emit('data', proxies);
+			gettingProxies.on('error', onError);
+			gettingProxies.once('end', onEnd);
 		});
-
-		gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
-		gettingProxies.once('end', _.bind(emitter.emit, emitter, 'end'));
 
 		return emitter;
 	},

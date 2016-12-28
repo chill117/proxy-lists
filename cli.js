@@ -59,7 +59,7 @@ program
 			'-i, --ip-types <list>',
 			'Accepted IP types [' + ProxyLists._ipTypes.join(', ') + ']',
 			list,
-			'ipv4,ipv6'
+			null
 		)
 		.option(
 			'-f, --output-file [value]',
