@@ -223,19 +223,19 @@ var options = {
 The proxy object has the following properties:
 * __ipAddress__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
+* __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
 * __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
   * __http__ - The proxy uses HTTP.
   * __https__ - The proxy uses HTTPS.
   * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol.
   * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol.
-* __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
-* __anonymityLevel__ - `string` The anonymity level of the proxy. Can be any one of the following:
+* __tunnel__ - _optional_ `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
+* __anonymityLevel__ - _optional_`string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.
   * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
   * __elite__ - The proxy hides the requester's IP address and does not add any proxy-related headers to the request.
-* __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
 
-It's important to note that this module does __NOT__ verify any of the information provided by the proxy lists from which the proxies are gathered. If you need to test proxies, verify their anonymity level, or confirm their geo-location; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
+It's important to note that this module does __NOT__ verify all of the information provided by the proxy lists from which the proxies are gathered. If you need to check that proxies work, verify their anonymity level, whether or not they support tunneling; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
 
 
 ### getProxiesFromSource
@@ -302,7 +302,15 @@ var options = {
 	/*
 		Set to TRUE to have all asynchronous operations run in series.
 	*/
-	series: false
+	series: false,
+
+	/*
+		Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+		To include both ipv4 and ipv6:
+		['ipv4', 'ipv6']
+	*/
+	ipTypes: ['ipv4']
 };
 ```
 
@@ -343,6 +351,8 @@ ProxyLists.addSource('my-custom-source', {
 	}
 });
 ```
+
+Your proxy source is required to return the following for each proxy: `ipAddress`, `port`, `protocols`. See [Proxy Object](#proxy-object) above for more information.
 
 Please consider sharing your custom proxy sources by [creating a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have them added to this module so that others can use them too.
 
