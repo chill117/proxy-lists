@@ -30,10 +30,6 @@ describe('isValidProxy(proxy)', function() {
 			},
 			{
 				ipAddress: '127.0.0.1',
-				port: 4040
-			},
-			{
-				ipAddress: '127.0.0.1',
 				port: 4040,
 				protocols: ['invalid']
 			},
@@ -41,6 +37,33 @@ describe('isValidProxy(proxy)', function() {
 				ipAddress: '',
 				port: 4040,
 				protocols: ['socks4']
+			},
+			{
+				ipAddress: '127.0.0.1',
+				port: 8888,
+				protocols: ['']
+			},
+			{
+				ipAddress: '127.0.0.1',
+				port: 8888,
+				protocols: null
+			},
+			{
+				ipAddress: '127.0.0.1',
+				port: 80,
+				protocols: ['socks4'],
+				anonymityLevel: 'invalid'
+			},
+			{
+				ipAddress: '127.0.0.1',
+				port: 80,
+				protocols: ['socks4'],
+				anonymityLevel: ''
+			},
+			{
+				ipAddress: '127.0.0.1',
+				port: 80,
+				anonymityLevel: null
 			}
 		];
 
@@ -62,22 +85,26 @@ describe('isValidProxy(proxy)', function() {
 		];
 		var validPorts = [ 80, 8080, 443 ];
 		var validProtocols = [ 'http', 'https', 'socks4', 'socks5' ];
+		var validAnonymityLevels = [ 'transparent', 'anonymous', 'elite' ];
 
 		_.each(validIpAddresses, function(validIpAddress) {
 			_.each(validPorts, function(validPort) {
 				_.each(validProtocols, function(validProtocol) {
+					_.each(validAnonymityLevels, function(validAnonymityLevel) {
 
-					var validExample = {
-						ipAddress: validIpAddress,
-						port: validPort,
-						protocols: [validProtocol]
-					};
+						var validExample = {
+							ipAddress: validIpAddress,
+							port: validPort,
+							protocols: [validProtocol],
+							anonymityLevel: validAnonymityLevel
+						};
 
-					try {
-						expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
-					} catch (error) {
-						throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
-					}
+						try {
+							expect(ProxyLists.isValidProxy(validExample)).to.equal(true);
+						} catch (error) {
+							throw new Error('Expected proxy to be valid: "' + JSON.stringify(validExample) + '"');
+						}
+					});
 				});
 			});
 		});

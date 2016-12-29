@@ -324,9 +324,13 @@ var ProxyLists = module.exports = {
 			validateIp: true
 		});
 
+		// 'ipAddress' and 'port' are required.
 		return !!proxy.ipAddress && (!options.validateIp || this.isValidIpAddress(proxy.ipAddress)) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols);
+				// 'protocols' is not required, but if it's set it should be valid.
+				(_.isUndefined(proxy.protocols) || this.isValidProxyProtocols(proxy.protocols)) &&
+				// 'anonymityLevel' is not required, but if it's set it should be valid.
+				(_.isUndefined(proxy.anonymityLevel) || this.isValidAnonymityLevel(proxy.anonymityLevel));
 	},
 
 	isValidPort: function(port) {
@@ -344,6 +348,11 @@ var ProxyLists = module.exports = {
 	isValidProxyProtocol: function(protocol) {
 
 		return _.contains(this._protocols, protocol);
+	},
+
+	isValidAnonymityLevel: function(anonymityLevel) {
+
+		return _.isString(anonymityLevel) && _.contains(this._anonymityLevels, anonymityLevel);
 	},
 
 	isValidIpAddress: function(ipAddress) {

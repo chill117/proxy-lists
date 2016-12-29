@@ -143,16 +143,23 @@ Sample `proxies`:
 	{
 		ipAddress: '123.123.2.42',
 		port: 8080,
-		protocols: ['http'],
 		country: 'us',
-		anonymityLevel: 'transparent'
+		source: 'superproxies'
 	},
 	{
 		ipAddress: '234.221.233.142',
 		port: 3128,
-		protocols: ['https'],
 		country: 'cz',
-		anonymityLevel: 'elite'
+		protocols: ['https'],
+		source: 'someproxysource'
+	},
+	{
+		ipAddress: '234.221.233.142',
+		port: 3128,
+		country: 'cz',
+		anonymityLevel: 'elite',
+		protocols: ['https'],
+		source: 'anotherproxysource'
 	}
 ]
 ```
@@ -224,16 +231,19 @@ The proxy object has the following properties:
 * __ipAddress__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
 * __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
-* __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
+* __source__ - `string` The name of the proxy list from which the proxy was gathered.
+* __protocols__ - _optional_ `array` An array of protocols that the proxy supports. May contain one or more of the following:
   * __http__ - The proxy uses HTTP.
   * __https__ - The proxy uses HTTPS.
   * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol.
   * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol.
 * __tunnel__ - _optional_ `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
-* __anonymityLevel__ - _optional_`string` The anonymity level of the proxy. Can be any one of the following:
+* __anonymityLevel__ - _optional_ `string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.
   * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
   * __elite__ - The proxy hides the requester's IP address and does not add any proxy-related headers to the request.
+
+The attributes marked as _optional_ above might not be given for all proxies. Some proxy lists are missing this information.
 
 It's important to note that this module does __NOT__ verify all of the information provided by the proxy lists from which the proxies are gathered. If you need to check that proxies work, verify their anonymity level, whether or not they support tunneling; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
 
@@ -352,7 +362,7 @@ ProxyLists.addSource('my-custom-source', {
 });
 ```
 
-Your proxy source is required to return the following for each proxy: `ipAddress`, `port`, `protocols`. See [Proxy Object](#proxy-object) above for more information.
+Your proxy source is required to return the following for each proxy: `ipAddress`, `port`. See [Proxy Object](#proxy-object) above for more information.
 
 Please consider sharing your custom proxy sources by [creating a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have them added to this module so that others can use them too.
 
