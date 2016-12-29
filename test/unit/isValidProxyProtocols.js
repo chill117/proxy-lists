@@ -8,7 +8,6 @@ var ProxyLists = require('../../index');
 describe('isValidProxyProtocols(protocols)', function() {
 
 	it('should be a function', function() {
-
 		expect(ProxyLists.isValidProxyProtocols).to.be.a('function');
 	});
 
@@ -24,13 +23,9 @@ describe('isValidProxyProtocols(protocols)', function() {
 		];
 
 		_.each(invalidExamples, function(invalidExample) {
-
 			try {
-
 				expect(ProxyLists.isValidProxyProtocols(invalidExample)).to.equal(false);
-
 			} catch (error) {
-
 				throw new Error('Expected "' + JSON.stringifiy(invalidExample) + '" to be invalid.');
 			}
 		});
@@ -44,13 +39,9 @@ describe('isValidProxyProtocols(protocols)', function() {
 		];
 
 		_.each(validExamples, function(validExample) {
-
 			try {
-
 				expect(ProxyLists.isValidProxyProtocols(validExample)).to.equal(true);
-
 			} catch (error) {
-
 				throw new Error('Expected "' + JSON.stringifiy(validExample) + '" to be valid.');
 			}
 		});

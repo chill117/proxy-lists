@@ -8,7 +8,6 @@ var ProxyLists = require('../../index');
 describe('isValidIpAddress(ipAddress)', function() {
 
 	it('should be a function', function() {
-
 		expect(ProxyLists.isValidIpAddress).to.be.a('function');
 	});
 
@@ -24,13 +23,9 @@ describe('isValidIpAddress(ipAddress)', function() {
 		];
 
 		_.each(invalidIpAddresses, function(invalidIpAddress) {
-
 			try {
-
 				expect(ProxyLists.isValidIpAddress(invalidIpAddress)).to.equal(false);
-
 			} catch (error) {
-
 				throw new Error('Expected IP address to be invalid: "' + invalidIpAddress + '"');
 			}
 		});
@@ -47,13 +42,9 @@ describe('isValidIpAddress(ipAddress)', function() {
 		];
 
 		_.each(validIpAddresses, function(validIpAddress) {
-
 			try {
-
 				expect(ProxyLists.isValidIpAddress(validIpAddress)).to.equal(true);
-
 			} catch (error) {
-
 				throw new Error('Expected IP address to be valid: "' + validIpAddress + '"');
 			}
 		});
