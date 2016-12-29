@@ -172,13 +172,10 @@ module.exports = {
 						break;
 				}
 
-				var country = $('td.t_country img', tr).eq(0).attr('alt').toString().toLowerCase();
-
 				proxies.push({
 					ipAddress: ipAddress,
 					port: port,
 					protocols: protocols,
-					country: country,
 					anonymityLevel: null
 				});
 			});

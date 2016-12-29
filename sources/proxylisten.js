@@ -252,7 +252,6 @@ module.exports = {
 
 			var proxies = [];
 			var $ = cheerio.load(listHtml);
-			var regexCountryFromImgSrc = /\/([a-z]{2,2})\.[a-z]+$/;
 
 			$('table.proxyList tr').each(function(index, tr) {
 
@@ -265,17 +264,12 @@ module.exports = {
 				var ipAddress = $cells.eq(0).text().toString();
 				var port = parseInt($cells.eq(1).text().toString());
 				var anonymityLevel = $cells.eq(3).text().toString();
-				var $countryImg = $cells.eq(5).find('img').eq(0);
-				var countryImgSrc = $countryImg && $countryImg.attr('src');
-				var countryImgSrcMatch = countryImgSrc && countryImgSrc.match(regexCountryFromImgSrc);
-				var country = countryImgSrcMatch && countryImgSrcMatch[1] || null;
 
 				proxies.push({
 					ipAddress: ipAddress,
 					port: port,
 					protocols: protocols,
-					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null,
-					country: country
+					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
 				});
 			});
 

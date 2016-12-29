@@ -133,7 +133,6 @@ var Source = module.exports = {
 					var styles = css.parse(ipEl.find('style').text());
 					var protocol = $('td', tr).eq(6).text().toString().toLowerCase().trim();
 					var port = parseInt($('td', tr).eq(2).text().toString().trim());
-					var country = $('td', tr).eq(3).attr('rel').toString().toLowerCase().trim();
 					var anonymityLevel = $('td', tr).eq(7).text().toString().toLowerCase().trim();
 				} catch (error) {
 					return true;
@@ -154,7 +153,6 @@ var Source = module.exports = {
 				}
 
 				proxy.port = port;
-				proxy.country = country;
 				proxy.anonymityLevel = anonymityLevel;
 				proxy.ipAddress = '';
 

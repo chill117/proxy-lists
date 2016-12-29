@@ -115,7 +115,6 @@ module.exports = {
 
 				var ipAddress = $('td', tr).eq(columnIndexes['ip_address']).text().toString();
 				var port = parseInt($('td', tr).eq(columnIndexes['port']).text().toString());
-				var country = $('td', tr).eq(columnIndexes['code']).text().toString().toLowerCase();
 
 				var protocol;
 
@@ -135,7 +134,6 @@ module.exports = {
 					ipAddress: ipAddress,
 					port: port,
 					protocols: [protocol],
-					country: country,
 					anonymityLevel: anonymityLevel
 				});
 			});

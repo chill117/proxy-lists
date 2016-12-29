@@ -88,8 +88,7 @@ module.exports = {
 					ipAddress: addrParts[0],
 					port: parseInt(addrParts[1]),
 					protocols: props[2] ? ['http', 'https'] : ['http'],
-					anonymityLevel: anonymityCodeMap[props[1]],
-					country: props[0]
+					anonymityLevel: anonymityCodeMap[props[1]]
 				});
 			}
 

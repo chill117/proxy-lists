@@ -117,13 +117,11 @@ module.exports = {
 				var $tr = $(this);
 				var host = $tr.find('td:nth-child(1) a').text().trim().split(':');
 				var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
-				var country = $tr.find('td:nth-child(6) abbr').text().trim().toLowerCase();
 				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
 
 				proxies.push({
 					ipAddress: host[0],
 					port: parseInt(host[1]),
-					country: country,
 					protocols: [protocol],
 					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
 				});
