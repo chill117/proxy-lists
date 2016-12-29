@@ -175,8 +175,7 @@ module.exports = {
 				proxies.push({
 					ipAddress: ipAddress,
 					port: port,
-					protocols: protocols,
-					anonymityLevel: null
+					protocols: protocols
 				});
 			});
 

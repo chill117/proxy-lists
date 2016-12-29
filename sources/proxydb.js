@@ -119,12 +119,17 @@ module.exports = {
 				var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
 				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
 
-				proxies.push({
+				var proxy = {
 					ipAddress: host[0],
 					port: parseInt(host[1]),
-					protocols: [protocol],
-					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
-				});
+					protocols: [protocol]
+				};
+
+				if (anonymityLevel && anonymityLevelFixes[anonymityLevel]) {
+					proxy.anonymityLevel = anonymityLevelFixes[anonymityLevel];
+				}
+
+				proxies.push(proxy);
 			});
 
 		} catch (error) {

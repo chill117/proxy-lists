@@ -265,12 +265,17 @@ module.exports = {
 				var port = parseInt($cells.eq(1).text().toString());
 				var anonymityLevel = $cells.eq(3).text().toString();
 
-				proxies.push({
+				var proxy = {
 					ipAddress: ipAddress,
 					port: port,
-					protocols: protocols,
-					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
-				});
+					protocols: protocols
+				};
+
+				if (anonymityLevel && anonymityLevelFixes[anonymityLevel]) {
+					proxy.anonymityLevel = anonymityLevelFixes[anonymityLevel];
+				}
+
+				proxies.push(proxy);
 			});
 
 		} catch (error) {
