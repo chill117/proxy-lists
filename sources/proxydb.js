@@ -127,13 +127,10 @@ module.exports = {
 				});
 			});
 
-			var numPages = $('.pagination li:last-child a').text().trim();
-			numPages = numPages ? parseInt(numPages) : 0;
-
 		} catch (error) {
 			return cb(error);
 		}
 
-		cb(null, proxies, numPages);
+		cb(null, proxies);
 	}
 };
