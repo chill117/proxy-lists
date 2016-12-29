@@ -208,10 +208,13 @@ var options = {
 	*/
 	series: false,
 
-  /*
-    An array of IP types: ipv4 and/or ipv6
-  */
-  ipTypes: ['ipv4', 'ipv6']
+	/*
+		Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+		To include both ipv4 and ipv6:
+		['ipv4', 'ipv6']
+	*/
+	ipTypes: ['ipv4']
 };
 ```
 
