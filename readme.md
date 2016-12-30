@@ -7,6 +7,8 @@ Node.js module for getting proxies from publicly available proxy lists.
 
 ## Supported Proxy Lists
 
+* blackhatworld - Specific forum threads are scraped:
+  * [100-scrapebox-proxies](https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574)
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
 * [gatherproxy](http://gatherproxy.com/)
@@ -446,6 +448,8 @@ grunt test:code-style
 
 ## Changelog
 
+* TBD:
+  * Added new source (blackhatworld).
 * v1.10.0:
   * Added new source (maxiproxies).
   * Removed source (proxyspy) because it is no longer working.
