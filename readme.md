@@ -446,6 +446,12 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.10.0:
+  * Added new source (maxiproxies).
+  * Removed source (proxyspy) because it is no longer working.
+  * Fix for [#42](https://github.com/chill117/proxy-lists/issues/42)
+  * If using your own custom sources:
+    * Proxy sources are now only required to provide `ipAddress` and `port`; all other fields are optional and should be provided only if known.
 * v1.9.0:
   * Fixes for proxydb.
   * Removed source (proxyocean) because it no longer exists.
