@@ -21,8 +21,9 @@ module.exports = {
 		var emitter = new EventEmitter();
 
 		var getProxiesFromThread = this.getProxiesFromLastPostInThread.bind(this);
+		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		async.each(threadUrls, function(threadUrl, nextThread) {
+		async[asyncMethod](threadUrls, function(threadUrl, nextThread) {
 
 			getProxiesFromThread(threadUrl, function(error, proxies) {
 

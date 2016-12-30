@@ -27,7 +27,9 @@ module.exports = {
 				return emitter.emit('end');
 			}
 
-			async.each(urls, function(url, nextUrl) {
+			var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+
+			async[asyncMethod](urls, function(url, nextUrl) {
 
 				getProxiesFromPage(url, function(error, proxies) {
 
