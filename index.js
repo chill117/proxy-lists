@@ -141,7 +141,7 @@ var ProxyLists = module.exports = {
 				return onEnd();
 			}
 
-			var gettingProxies = source.getProxies(options);
+			var gettingProxies = source.getProxies(ProxyLists.deepClone(options));
 
 			gettingProxies.on('data', function(proxies) {
 
@@ -358,6 +358,11 @@ var ProxyLists = module.exports = {
 	isValidIpAddress: function(ipAddress) {
 
 		return net.isIP(ipAddress) !== 0;
+	},
+
+	deepClone: function(object) {
+
+		return JSON.parse(JSON.stringify(object));
 	}
 };
 
