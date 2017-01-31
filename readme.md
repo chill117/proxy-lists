@@ -450,6 +450,7 @@ grunt test:code-style
 
 * TBD:
   * Added new source (blackhatworld).
+  * Fix for [#43](https://github.com/chill117/proxy-lists/issues/43)
 * v1.10.0:
   * Added new source (maxiproxies).
   * Removed source (proxyspy) because it is no longer working.
