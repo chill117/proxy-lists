@@ -448,7 +448,7 @@ grunt test:code-style
 
 ## Changelog
 
-* TBD:
+* v1.11.0:
   * Added new source (blackhatworld).
   * Fix for [#43](https://github.com/chill117/proxy-lists/issues/43)
 * v1.10.0:
