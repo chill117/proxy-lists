@@ -59,7 +59,7 @@ program
 			'-i, --ip-types <list>',
 			'Accepted IP types [' + ProxyLists._ipTypes.join(', ') + ']',
 			list,
-			null
+			['ipv4']
 		)
 		.option(
 			'-f, --output-file [value]',
@@ -83,7 +83,9 @@ program
 		)
 		.option(
 			'--stdout',
-			'Write to STDOUT instead of a file'
+			'Write to STDOUT instead of a file',
+			value,
+			false
 		)
 		.option(
 			'-l, --log-file [value]',
@@ -172,6 +174,11 @@ program
 				endIfDoneWritingData();
 			}
 
+			function onError(error) {
+
+				log(error);
+			}
+
 			function onEnd() {
 
 				ended = true;
@@ -232,11 +239,8 @@ program
 
 			var gettingProxies = ProxyLists.getProxies(options);
 			gettingProxies.on('data', onData);
-			gettingProxies.on('error', function(error) {
-				console.error(error);
-			});
+			gettingProxies.on('error', onError);
 			gettingProxies.on('end', onEnd);
-
 			startOutput();
 		});
 

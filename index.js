@@ -129,8 +129,8 @@ var ProxyLists = module.exports = {
 
 		// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
 		GeoIpNativeLite.loadData({
-			ipv4: options.ipTypes.indexOf('ipv4') !== -1,
-			ipv6: options.ipTypes.indexOf('ipv6') !== -1,
+			ipv4: options.ipTypes && options.ipTypes.indexOf('ipv4') !== -1,
+			ipv6: options.ipTypes && options.ipTypes.indexOf('ipv6') !== -1,
 			cache: true
 		}, function(error) {
 
