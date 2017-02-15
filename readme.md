@@ -7,16 +7,17 @@ Node.js module for getting proxies from publicly available proxy lists.
 
 ## Supported Proxy Lists
 
+* blackhatworld - Specific forum threads are scraped:
+  * [100-scrapebox-proxies](https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574)
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
 * [gatherproxy](http://gatherproxy.com/)
 * [hidemyass](http://proxylist.hidemyass.com/)
 * [incloak](https://incloak.com/)
+* [maxiproxies](http://maxiproxies.com/proxy-lists/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxydb](http://proxydb.net/)
 * [proxylisten](http://www.proxy-listen.de/)
-* [proxyocean](http://www.proxyocean.com/)
-* [proxyspy](http://txt.proxyspy.net/proxy.txt)
 * [sockslist](http://sockslist.net/)
 
 Proxy lists that require an API key:
@@ -144,16 +145,23 @@ Sample `proxies`:
 	{
 		ipAddress: '123.123.2.42',
 		port: 8080,
-		protocols: ['http'],
 		country: 'us',
-		anonymityLevel: 'transparent'
+		source: 'superproxies'
 	},
 	{
 		ipAddress: '234.221.233.142',
 		port: 3128,
-		protocols: ['https'],
 		country: 'cz',
-		anonymityLevel: 'elite'
+		protocols: ['https'],
+		source: 'someproxysource'
+	},
+	{
+		ipAddress: '234.221.233.142',
+		port: 3128,
+		country: 'cz',
+		anonymityLevel: 'elite',
+		protocols: ['https'],
+		source: 'anotherproxysource'
 	}
 ]
 ```
@@ -207,7 +215,15 @@ var options = {
 	/*
 		Set to TRUE to have all asynchronous operations run in series.
 	*/
-	series: false
+	series: false,
+
+	/*
+		Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+		To include both ipv4 and ipv6:
+		['ipv4', 'ipv6']
+	*/
+	ipTypes: ['ipv4']
 };
 ```
 
@@ -216,19 +232,22 @@ var options = {
 The proxy object has the following properties:
 * __ipAddress__ - `string` The IP address of the proxy.
 * __port__ - `integer` The port number of the proxy.
-* __protocols__ - `array` An array of protocols that the proxy supports. May contain one or more of the following:
+* __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
+* __source__ - `string` The name of the proxy list from which the proxy was gathered.
+* __protocols__ - _optional_ `array` An array of protocols that the proxy supports. May contain one or more of the following:
   * __http__ - The proxy uses HTTP.
   * __https__ - The proxy uses HTTPS.
   * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol.
   * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol.
-* __tunnel__ - `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
-* __anonymityLevel__ - `string` The anonymity level of the proxy. Can be any one of the following:
+* __tunnel__ - _optional_ `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
+* __anonymityLevel__ - _optional_ `string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.
   * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
   * __elite__ - The proxy hides the requester's IP address and does not add any proxy-related headers to the request.
-* __country__ - `string` [Alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1) of the country in which the proxy is geo-located.
 
-It's important to note that this module does __NOT__ verify any of the information provided by the proxy lists from which the proxies are gathered. If you need to test proxies, verify their anonymity level, or confirm their geo-location; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
+The attributes marked as _optional_ above might not be given for all proxies. Some proxy lists are missing this information.
+
+It's important to note that this module does __NOT__ verify all of the information provided by the proxy lists from which the proxies are gathered. If you need to check that proxies work, verify their anonymity level, whether or not they support tunneling; use [proxy-verifier](https://github.com/chill117/proxy-verifier).
 
 
 ### getProxiesFromSource
@@ -295,7 +314,15 @@ var options = {
 	/*
 		Set to TRUE to have all asynchronous operations run in series.
 	*/
-	series: false
+	series: false,
+
+	/*
+		Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+		To include both ipv4 and ipv6:
+		['ipv4', 'ipv6']
+	*/
+	ipTypes: ['ipv4']
 };
 ```
 
@@ -336,6 +363,8 @@ ProxyLists.addSource('my-custom-source', {
 	}
 });
 ```
+
+Your proxy source is required to return the following for each proxy: `ipAddress`, `port`. See [Proxy Object](#proxy-object) above for more information.
 
 Please consider sharing your custom proxy sources by [creating a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have them added to this module so that others can use them too.
 
@@ -419,6 +448,19 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.11.0:
+  * Added new source (blackhatworld).
+  * Fix for [#43](https://github.com/chill117/proxy-lists/issues/43)
+* v1.10.0:
+  * Added new source (maxiproxies).
+  * Removed source (proxyspy) because it is no longer working.
+  * Fix for [#42](https://github.com/chill117/proxy-lists/issues/42)
+  * If using your own custom sources:
+    * Proxy sources are now only required to provide `ipAddress` and `port`; all other fields are optional and should be provided only if known.
+* v1.9.0:
+  * Fixes for proxydb.
+  * Removed source (proxyocean) because it no longer exists.
+  * Added support for ipv6 addresses.
 * v1.8.0:
   * Added `--stdout` option to CLI utility.
   * Fixed issues: [#35](https://github.com/chill117/proxy-lists/issues/35), [#37](https://github.com/chill117/proxy-lists/issues/37)

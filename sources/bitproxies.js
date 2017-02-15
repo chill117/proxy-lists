@@ -74,7 +74,7 @@ module.exports = {
 			data = JSON.parse(data);
 
 			var proxies = _.map(data, function(proxy) {
-				return _.pick(proxy, 'ipAddress', 'port', 'protocols', 'anonymityLevel', 'country');
+				return _.pick(proxy, 'ipAddress', 'port', 'protocols', 'anonymityLevel');
 			});
 
 		} catch (error) {

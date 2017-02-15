@@ -7,8 +7,17 @@ var ProxyLists = require('../../index');
 
 describe('listSources([options])', function() {
 
-	it('should be a function', function() {
+	var sourcesBefore;
 
+	beforeEach(function() {
+		sourcesBefore = _.clone(ProxyLists._sources);
+	});
+
+	afterEach(function() {
+		ProxyLists._sources = sourcesBefore;
+	});
+
+	it('should be a function', function() {
 		expect(ProxyLists.listSources).to.be.a('function');
 	});
 

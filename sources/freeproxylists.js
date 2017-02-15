@@ -9,31 +9,6 @@ var request = require('request');
 
 var baseUrl = 'http://www.freeproxylists.com';
 
-var countries = require('../countries');
-
-// freeproxylists uses unofficial names for some countries.
-var unoffocialCountryNames = {
-	'bo': 'Bolivia',
-	'ci': 'Cote D\'Ivoire (Ivory Coast)',
-	'hr': 'Croatia (Hrvatska)',
-	'gb': 'Great Britain (UK)',
-	'ir': 'Iran',
-	'kr': 'Korea (South)',
-	'la': 'Laos',
-	'mk': 'Macedonia',
-	'md': 'Moldova',
-	'nz': 'New Zealand (Aotearoa)',
-	'ps': 'Palestine',
-	'sk': 'Slovak Republic',
-	'sy': 'Syria',
-	'tw': 'Taiwan',
-	'tz': 'Tanzania',
-	'us': 'United States',
-	'vu': 'Venezuela',
-};
-
-var countryNameToCode = _.invert(_.extend({}, countries, unoffocialCountryNames));
-
 var Source = module.exports = {
 
 	homeUrl: baseUrl,
@@ -218,25 +193,18 @@ var Source = module.exports = {
 
 						// Data starts at the 3rd row.
 
-						var countryName = $('td', tr).eq(5).text().toString();
-						var countryCode = countryNameToCode[countryName] || null;
+						var protocol = list.protocol;
 
-						if (countryCode) {
-
-							var protocol = list.protocol;
-
-							if (!protocol) {
-								protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
-							}
-
-							proxies.push({
-								ipAddress: $('td', tr).eq(0).text().toString(),
-								port: parseInt($('td', tr).eq(1).text().toString()),
-								protocols: [protocol],
-								country: countryCode,
-								anonymityLevel: list.anonymityLevel
-							});
+						if (!protocol) {
+							protocol = $('td', tr).eq(2).text().toString() === 'true' ? 'https' : 'http';
 						}
+
+						proxies.push({
+							ipAddress: $('td', tr).eq(0).text().toString(),
+							port: parseInt($('td', tr).eq(1).text().toString()),
+							protocols: [protocol],
+							anonymityLevel: list.anonymityLevel
+						});
 					}
 				});
 

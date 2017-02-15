@@ -107,7 +107,14 @@ describe('source.getProxies([options, ]cb)', function() {
 							}
 						});
 
-						expect(invalidProxies.length).to.not.equal(proxies.length);
+						var percentInvalid = (invalidProxies.length / proxies.length) * 100;
+
+						// Allow up to 40% of the proxies to be invalid.
+						if (percentInvalid > 40) {
+							// Print up to 10 invalid proxies for debugging.
+							console.log(invalidProxies.slice(0, Math.min(10, invalidProxies.length)));
+							throw new Error('Too many invalid proxies from source: "' + name + '"');
+						}
 
 					} catch (error) {
 						return cb(error);

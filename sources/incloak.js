@@ -135,17 +135,20 @@ module.exports = {
 
 				var $tr = $(this);
 				var anonymityLevel = $tr.find('td:nth-child(6)').text().trim();
-				var countryElClassName = $tr.find('td:nth-child(3) .flag-icon').attr('class').toString();
 
-				proxies.push({
+				var proxy = {
 					ipAddress: $tr.find('td:nth-child(1)').text().trim(),
 					port: parseInt($tr.find('td:nth-child(2)').text().trim()),
-					country: countryElClassName.substr(countryElClassName.lastIndexOf('-') + 1).toLowerCase(),
 					protocols: _.map($tr.find('td:nth-child(5)').text().split(','), function(protocol) {
 						return protocol.toLowerCase().trim();
-					}),
-					anonymityLevel: anonymityLevelFixes[anonymityLevel] || null
-				});
+					})
+				};
+
+				if (anonymityLevel && anonymityLevelFixes[anonymityLevel]) {
+					proxy.anonymityLevel = anonymityLevelFixes[anonymityLevel];
+				}
+
+				proxies.push(proxy);
 			});
 
 			var numPages = $('.proxy__pagination li:last-child a').text().trim();

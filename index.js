@@ -6,13 +6,6 @@ var EventEmitter = require('events').EventEmitter || require('events');
 var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
 
-// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
-GeoIpNativeLite.loadDataSync({
-	ipv4: true,
-	ipv6: false,
-	cache: true
-});
-
 var ProxyLists = module.exports = {
 
 	defaultOptions: {
@@ -62,13 +55,22 @@ var ProxyLists = module.exports = {
 		/*
 			Set to TRUE to have all asynchronous operations run in series.
 		*/
-		series: false
+		series: false,
+
+		/*
+			Load GeoIp data for these types of IP addresses. Default is only ipv4.
+
+			To include both ipv4 and ipv6:
+			['ipv4', 'ipv6']
+		*/
+		ipTypes: ['ipv4']
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_countries: require('./countries'),
 	_sources: require('./sources'),
+	_ipTypes: ['ipv4', 'ipv6'],
 
 	// Get proxies from all sources.
 	getProxies: function(options) {
@@ -121,26 +123,44 @@ var ProxyLists = module.exports = {
 		}
 
 		var emitter = new EventEmitter();
-		var gettingProxies = source.getProxies(options);
+		var onData = _.bind(emitter.emit, emitter, 'data');
+		var onError = _.bind(emitter.emit, emitter, 'error');
+		var onEnd = _.once(_.bind(emitter.emit, emitter, 'end'));
 
-		gettingProxies.on('data', function(proxies) {
+		// Prepare the GeoIp data so that we can perform GeoIp look-ups later.
+		GeoIpNativeLite.loadData({
+			ipv4: options.ipTypes && options.ipTypes.indexOf('ipv4') !== -1,
+			ipv6: options.ipTypes && options.ipTypes.indexOf('ipv6') !== -1,
+			cache: true
+		}, function(error) {
 
-			proxies || (proxies = []);
+			if (error) {
+				// Failed to load GeoIp data.
+				// Emit error and end.
+				onError(error);
+				return onEnd();
+			}
 
-			// Add the 'source' attribute to every proxy.
-			proxies = _.map(proxies, function(proxy) {
-				proxy.source = name;
-				proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
-				return proxy;
+			var gettingProxies = source.getProxies(ProxyLists.deepClone(options));
+
+			gettingProxies.on('data', function(proxies) {
+
+				proxies || (proxies = []);
+
+				// Add the 'source' attribute to every proxy.
+				proxies = _.map(proxies, function(proxy) {
+					proxy.source = name;
+					proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
+					return proxy;
+				});
+
+				proxies = ProxyLists.filterProxies(proxies, options);
+				onData(proxies);
 			});
 
-			proxies = ProxyLists.filterProxies(proxies, options);
-
-			emitter.emit('data', proxies);
+			gettingProxies.on('error', onError);
+			gettingProxies.once('end', onEnd);
 		});
-
-		gettingProxies.on('error', _.bind(emitter.emit, emitter, 'error'));
-		gettingProxies.once('end', _.bind(emitter.emit, emitter, 'end'));
 
 		return emitter;
 	},
@@ -304,9 +324,13 @@ var ProxyLists = module.exports = {
 			validateIp: true
 		});
 
+		// 'ipAddress' and 'port' are required.
 		return !!proxy.ipAddress && (!options.validateIp || this.isValidIpAddress(proxy.ipAddress)) &&
 				!!proxy.port && this.isValidPort(proxy.port) &&
-				!!proxy.protocols && this.isValidProxyProtocols(proxy.protocols);
+				// 'protocols' is not required, but if it's set it should be valid.
+				(_.isUndefined(proxy.protocols) || this.isValidProxyProtocols(proxy.protocols)) &&
+				// 'anonymityLevel' is not required, but if it's set it should be valid.
+				(_.isUndefined(proxy.anonymityLevel) || this.isValidAnonymityLevel(proxy.anonymityLevel));
 	},
 
 	isValidPort: function(port) {
@@ -326,9 +350,19 @@ var ProxyLists = module.exports = {
 		return _.contains(this._protocols, protocol);
 	},
 
+	isValidAnonymityLevel: function(anonymityLevel) {
+
+		return _.isString(anonymityLevel) && _.contains(this._anonymityLevels, anonymityLevel);
+	},
+
 	isValidIpAddress: function(ipAddress) {
 
 		return net.isIP(ipAddress) !== 0;
+	},
+
+	deepClone: function(object) {
+
+		return JSON.parse(JSON.stringify(object));
 	}
 };
 

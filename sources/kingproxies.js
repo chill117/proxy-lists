@@ -78,8 +78,7 @@ module.exports = {
 					ipAddress: proxy.ip,
 					port: parseInt(proxy.port),
 					protocols: proxy.protocols,
-					anonymityLevel: proxy.type.toLowerCase(),
-					country: proxy.country_code.toLowerCase()
+					anonymityLevel: proxy.type.toLowerCase()
 				};
 			});
 
