@@ -447,7 +447,7 @@ grunt test:code-style
 
 ## Changelog
 
-* TBD:
+* v1.11.1:
   * Fixed [#46](https://github.com/chill117/proxy-lists/issues/46)
   * Removed source (maxiproxies) because it no longer exists.
 * v1.11.0:
