@@ -9,7 +9,6 @@ module.exports = {
 	'hidemyass': require('./hidemyass'),
 	'incloak': require('./incloak'),
 	'kingproxies': require('./kingproxies'),
-	'maxiproxies': require('./maxiproxies'),
 	'proxies24': require('./proxies24'),
 	'proxydb': require('./proxydb'),
 	'proxylisten': require('./proxylisten'),

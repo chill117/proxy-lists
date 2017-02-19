@@ -14,7 +14,6 @@ Node.js module for getting proxies from publicly available proxy lists.
 * [gatherproxy](http://gatherproxy.com/)
 * [hidemyass](http://proxylist.hidemyass.com/)
 * [incloak](https://incloak.com/)
-* [maxiproxies](http://maxiproxies.com/proxy-lists/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxydb](http://proxydb.net/)
 * [proxylisten](http://www.proxy-listen.de/)
@@ -448,6 +447,9 @@ grunt test:code-style
 
 ## Changelog
 
+* TBD:
+  * Fixed [#46](https://github.com/chill117/proxy-lists/issues/46)
+  * Removed source (maxiproxies) because it no longer exists.
 * v1.11.0:
   * Added new source (blackhatworld).
   * Fix for [#43](https://github.com/chill117/proxy-lists/issues/43)
