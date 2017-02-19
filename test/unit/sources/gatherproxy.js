@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var async = require('async');
 var expect = require('chai').expect;
 
 describe('source.gatherproxy', function() {
@@ -66,6 +67,36 @@ describe('source.gatherproxy', function() {
 			var sessionCookie = Source.getSessionCookie(cookies);
 
 			expect(sessionCookie).to.equal('ASP.NET_SessionId=yqzcmlp44p3mewwm4cfjrphr');
+		});
+	});
+
+	describe('parseDownloadPageHtml(html)', function() {
+
+		it('should be a function', function() {
+
+			expect(Source.parseDownloadPageHtml).to.be.a('function');
+		});
+
+		it('should parse the HTML for the download link', function(done) {
+
+			var samples = require('../../samples/gatherproxy/downloadPageHtml');
+
+			async.each(samples, function(html, next) {
+
+				Source.parseDownloadPageHtml(html, function(error, downloadLink) {
+
+					try {
+						expect(error).to.equal(null);
+						expect(downloadLink).to.be.a('string');
+						expect(downloadLink).to.not.equal('');
+					} catch (error) {
+						return next(error);
+					}
+
+					next();
+				});
+
+			}, done);
 		});
 	});
 });
