@@ -96,6 +96,10 @@ module.exports = {
 
 		try {
 
+			if (!html) {
+				throw new Error('Thread HTML is empty.');
+			}
+
 			var $ = cheerio.load(html);
 			var $pageNav = $('.PageNav');
 			var lastPage = $pageNav.attr('data-last').toString();
@@ -122,7 +126,10 @@ module.exports = {
 
 		request({
 			method: 'GET',
-			url: url
+			url: url,
+			headers: {
+				'User-Agent': 'proxy-lists-module'
+			}
 		}, function(error, response, html) {
 
 			if (error) {

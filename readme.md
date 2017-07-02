@@ -12,7 +12,6 @@ Node.js module for getting proxies from publicly available proxy lists.
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
 * [gatherproxy](http://gatherproxy.com/)
-* [hidemyass](http://proxylist.hidemyass.com/)
 * [incloak](https://incloak.com/)
 * proxies24 - [http](http://proxyserverlist-24.blogspot.com/), [https](http://sslproxies24.blogspot.com/), [socks](http://vip-socks24.blogspot.com/)
 * [proxydb](http://proxydb.net/)
@@ -82,7 +81,7 @@ proxy-lists getProxies --output-file="somefile.txt"
 
 To get proxies from specific sources:
 ```
-proxy-lists getProxies --sources-white-list="hidemyass,sockslist"
+proxy-lists getProxies --sources-white-list="gatherproxy,sockslist"
 ```
 
 To get proxies from specific countries:
@@ -389,8 +388,8 @@ Sample `sources`:
 		homeUrl: 'http://www.freeproxylists.com'
 	},
 	{
-		name: 'hidemyass',
-		homeUrl: 'http://proxylist.hidemyass.com/'
+		name: 'gatherproxy',
+		homeUrl: 'http://www.gatherproxy.com'
 	}
 ]
 ```
@@ -447,6 +446,9 @@ grunt test:code-style
 
 ## Changelog
 
+* v1.11.2:
+  * Removed source (hidemyass)
+  * Fixed source (blackhatworld)
 * v1.11.1:
   * Fixed [#46](https://github.com/chill117/proxy-lists/issues/46)
   * Removed source (maxiproxies) because it no longer exists.
