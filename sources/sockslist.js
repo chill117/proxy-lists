@@ -47,24 +47,17 @@ module.exports = {
 				}
 
 				var asyncMethod = options.series === true ? 'timesSeries' : 'times';
-
-				async[asyncMethod](numPages - 1, _.bind(function(index, nextPage) {
-
+				async[asyncMethod](numPages - 1, function(index, nextPage) {
 					var pageNumber = index + 2;
-
 					getProxiesFromPage(pageNumber, function(error, proxies) {
-
 						if (error) {
 							emitter.emit('error', error);
 						} else {
 							emitter.emit('data', proxies);
 						}
-
 						nextPage();
 					});
-
-				}, this), function() {
-
+				}, function() {
 					emitter.emit('end');
 				});
 			});
@@ -144,6 +137,8 @@ module.exports = {
 				}
 			});
 
+			var portRegEx = /document\.write\(([^()]+)\)/;
+
 			$('table.proxytbl tr').each(function(index, tr) {
 
 				if (index === 0) {
@@ -152,7 +147,7 @@ module.exports = {
 				}
 
 				var ipAddress = $('td.t_ip', tr).eq(0).text().toString();
-				var portXorExpr = $('td.t_port', tr).eq(0).text().toString().match(/document\.write\(([^\(\)]+)\)/)[1];
+				var portXorExpr = $('td.t_port', tr).eq(0).html().toString().match(portRegEx)[1];
 				var port = parseXorExpression(portXorExpr);
 				var protocol = $('td.t_type', tr).eq(0).text().toString().toLowerCase().trim();
 				var protocols;
@@ -178,9 +173,7 @@ module.exports = {
 					protocols: protocols
 				});
 			});
-
 		} catch (error) {
-
 			return cb(error);
 		}
 
