@@ -3,6 +3,7 @@
 module.exports = {
 	'bitproxies': require('./bitproxies'),
 	'blackhatworld': require('./blackhatworld'),
+	'coolproxy': require('./coolproxy'),
 	'freeproxylist': require('./freeproxylist'),
 	'freeproxylists': require('./freeproxylists'),
 	'gatherproxy': require('./gatherproxy'),
