@@ -66,7 +66,7 @@ module.exports = {
 
 			var proxies = [];
 			var $ = cheerio.load(html);
-			var $pre = $('#messageList .message:last-child pre').first();
+			var $pre = $('#messageList .message pre').last();
 			var lines = $pre.text().trim().split('\n');
 
 			_.each(lines, function(line) {
