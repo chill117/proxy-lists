@@ -14,14 +14,6 @@ describe('source.premproxy', function() {
 			expect(Source.parsePageHtml).to.be.a('function');
 		});
 
-	});
-
-	describe('parsePageHtml(html, cb)', function() {
-
-		it('should be a function', function() {
-			expect(Source.parsePageHtml).to.be.a('function');
-		});
-
 		it('should parse the HTML into an array of proxies', function(done) {
 
 			var samples = require('../../samples/premproxy/pageHtml');

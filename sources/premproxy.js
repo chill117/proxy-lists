@@ -6,56 +6,74 @@ var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
 var request = require('request');
 
-var pageUrls = _.map(_.range(1, 20), function (i) {
-	var page = (i < 10)? '0' + i : i;
-	return "https://premproxy.com/list/"+page+".htm";
-});
-
 module.exports = {
+
+	homeUrl: 'https://premproxy.com/list/',
 
 	getProxies: function(options) {
 
 		options || (options = {});
 
 		var emitter = new EventEmitter();
-
 		var getProxiesFromPage = this.getProxiesFromPage.bind(this);
-		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
+		var pageNumber = 19;
+		var done = false;
 
-		async[asyncMethod](pageUrls, function(pageUrl, nextPage) {
-
-			getProxiesFromPage(pageUrl, function(error, proxies) {
+		// Until runs in series.
+		async.until(function() { return done; }, function(next) {
+			getProxiesFromPage(pageNumber++, function(error, proxies) {
 
 				if (error) {
-					return nextPage(error);
-				}
-
-				if (!_.isEmpty(proxies)) {
+					emitter.emit('error', error);
+				} else if (!_.isEmpty(proxies)) {
 					emitter.emit('data', proxies);
+				} else {
+					done = true;
 				}
 
-				nextPage();
-
+				next();
 			});
-
-		}, function(error) {
-
-			if (error) {
-				emitter.emit('error', error);
-			}
-
+		}, function() {
 			emitter.emit('end');
 		});
 
 		return emitter;
 	},
 
-	getProxiesFromPage: function(pageUrl, cb) {
+	getProxiesFromPage: function(pageNumber, cb) {
 
-		async.seq(
-			this.getHtml.bind(this),
-			this.parsePageHtml.bind(this)
-		)(pageUrl, cb);
+		var pageUrl = this.makePageUrl(pageNumber);
+		var parsePageHtml = this.parsePageHtml.bind(this);
+
+		request({
+			method: 'GET',
+			url: pageUrl,
+			headers: {
+				'User-Agent': 'proxy-lists-module'
+			}
+		}, function(error, response, body) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			if (response.statusCode >= 300) {
+				return cb(null, []/* proxies */);
+			}
+
+			parsePageHtml(body.toString(), cb);
+		});
+	},
+
+	makePageUrl: function(pageNumber) {
+
+		var pageUrl = 'https://premproxy.com/list/';
+		if (pageNumber < 10) {
+			// Left pad when page number is single digit.
+			pageUrl += '0';
+		}
+		pageUrl += pageNumber + '.htm';
+		return pageUrl;
 	},
 
 	parsePageHtml: function(html, cb) {
@@ -64,42 +82,26 @@ module.exports = {
 
 			var proxies = [];
 			var $ = cheerio.load(html);
-			var rows = _.tail($('table tr'));
 
-			_.each(rows, function(row) {
-				var $row = $(row);
-				var host = $row.find('td:nth-child(1)').text().trim().split(':');
-				var anonymityLevel = $row.find('td:nth-child(2)').text().trim();
-				proxies.push({
-					ipAddress: host[0],
-					port: parseInt(host[1]),
-					anonymityLevel: anonymityLevel,
-					protocols: ['http']
+			$('table tr')
+				// Skip the first row:
+				.slice(1)
+				.each(function(index, tr) {
+					var $row = $(tr);
+					var host = $row.find('td:nth-child(1)').text().trim().split(':');
+					var anonymityLevel = $row.find('td:nth-child(2)').text().trim();
+					proxies.push({
+						ipAddress: host[0],
+						port: parseInt(host[1]),
+						anonymityLevel: anonymityLevel,
+						protocols: ['http']
+					});
 				});
-			});
 
 		} catch (error) {
 			return cb(error);
 		}
 
 		cb(null, proxies);
-	},
-
-	getHtml: function(url, cb) {
-
-		request({
-			method: 'GET',
-			url: url,
-			headers: {
-				'User-Agent': 'proxy-lists-module'
-			}
-		}, function(error, response, html) {
-
-			if (error) {
-				return cb(error);
-			}
-
-			cb(null, html);
-		});
 	}
 };
