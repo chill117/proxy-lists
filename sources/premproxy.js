@@ -16,7 +16,7 @@ module.exports = {
 
 		var emitter = new EventEmitter();
 		var getProxiesFromPage = this.getProxiesFromPage.bind(this);
-		var pageNumber = 19;
+		var pageNumber = 1;
 		var done = false;
 
 		// Until runs in series.
