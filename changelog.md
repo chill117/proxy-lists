@@ -1,5 +1,9 @@
 # Changelog
 
+* TBD:
+  * Added source (premproxy)
+  * Fixed source (proxydb)
+  * Fix for blackhatworld source when last reply in thread does not contain the proxy list
 * v1.12.0:
   * Added new source (coolproxy)
 * v1.11.2:
