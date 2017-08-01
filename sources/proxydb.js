@@ -26,8 +26,8 @@ module.exports = {
 		var emitter = new EventEmitter();
 
 		var getPageOfProxies = async.seq(
-			this.getPageHtml,
-			this.parsePageHtml
+			this.getPageHtml.bind(this),
+			this.parsePageHtml.bind(this)
 		);
 
 		options.countries = _.map(options.countries, function(country) {
@@ -136,9 +136,6 @@ module.exports = {
 					}
 
 					proxies.push(proxy);
-				} else {
-					console.log('FAILED TO PARSE HOST');
-					console.log(scriptContent);
 				}
 			});
 
