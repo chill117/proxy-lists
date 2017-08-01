@@ -40,12 +40,12 @@
   },
   "devDependencies": {
     "benchmark": "2.1.4",
-    "chai": "4.0.2",
+    "chai": "4.1.0",
     "grunt": "1.0.1",
     "grunt-eslint": "20.0.0",
     "grunt-mocha-test": "0.13.2",
     "load-grunt-config": "0.19.2",
-    "mocha": "3.4.2",
+    "mocha": "3.5.0",
     "time-grunt": "1.4.0"
   }
 }
