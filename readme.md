@@ -368,6 +368,12 @@ Your proxy source is required to return the following for each proxy: `ipAddress
 
 Please consider sharing your custom proxy sources by [creating a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have them added to this module so that others can use them too.
 
+#### Important Options to Note
+
+Please note that there are a couple options that you should respect in your custom proxy source:
+* **sample** - `boolean` If `options.sample` is `true` then you should do your best to make the fewest number of HTTP requests to the proxy source but still get at least some real proxies. The purpose of this option is to reduce the strain caused by this module's unit tests on each proxy sources' servers.
+* **series** - `boolean` If `options.series` is `true` you should make sure that all asynchronous code in your custom source is run in series, NOT parallel. The purpose is to reduce the memory usage of the module so that it can be run in low-memory environments such as a VPS with 256MB of RAM.
+
 
 ### listSources
 
