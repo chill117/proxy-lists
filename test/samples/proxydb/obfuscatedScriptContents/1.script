@@ -1,0 +1,6 @@
+
+	var x = '7.621.391'.split('').reverse().join('');
+	var y = '3.154';
+	var p = -26789 + 34869;
+	document.write('<a href="/' + x + y + '/' + p + '#http" title="193-126-73-154.net.novis.pt">' + x + y + String.fromCharCode(58) + p + '</a>');
+	proxies.push(x + y + String.fromCharCode(58) + p);

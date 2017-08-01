@@ -1,0 +1,5 @@
+                        var x = '.76.771'.split('').reverse().join('');
+                        var y = '83.62';
+                        var p = -52765 + 60845;
+                        document.write('<a href="/' + x + y + '/' + p + '#https" title="host13.transportws.com.br">' + x + y + String.fromCharCode(58) + p + '</a>');
+                        proxies.push(x + y + String.fromCharCode(58) + p);

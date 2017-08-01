@@ -8,6 +8,23 @@ describe('source.proxydb', function() {
 
 	var Source = require('../../../sources/proxydb');
 
+	describe('parseHostFromScriptObfuscation(content)', function() {
+
+		it('should parse the host from the obfuscated script contents', function() {
+
+			var samples = require('../../samples/proxydb/obfuscatedScriptContents');
+
+			_.each(samples, function(sample) {
+				var host = Source.parseHostFromScriptObfuscation(sample.toString());
+				expect(host).to.not.equal(null);
+				var matches = host.match(/([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]+)/);
+				expect(matches).to.not.equal(null);
+				expect(matches[1]).to.be.a('string');
+				expect(matches[2]).to.be.a('string');
+			});
+		});
+	});
+
 	describe('parsePageHtml(html, cb)', function() {
 
 		it('should be a function', function() {

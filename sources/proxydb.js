@@ -111,25 +111,35 @@ module.exports = {
 
 			var proxies = [];
 			var $ = cheerio.load(html);
+			var parseHostFromScriptObfuscation = this.parseHostFromScriptObfuscation.bind(this);
 
 			$('table tbody tr').each(function() {
 
 				var $tr = $(this);
-				var host = $tr.find('td:nth-child(1) a').text().trim().split(':');
-				var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
-				var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
+				var scriptContent = $tr.find('script').html();
+				var host = parseHostFromScriptObfuscation(scriptContent);
 
-				var proxy = {
-					ipAddress: host[0],
-					port: parseInt(host[1]),
-					protocols: [protocol]
-				};
+				if (host) {
 
-				if (anonymityLevel && anonymityLevelFixes[anonymityLevel]) {
-					proxy.anonymityLevel = anonymityLevelFixes[anonymityLevel];
+					host = host.split(':');
+					var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
+					var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
+
+					var proxy = {
+						ipAddress: host[0],
+						port: parseInt(host[1]),
+						protocols: [protocol]
+					};
+
+					if (anonymityLevel && anonymityLevelFixes[anonymityLevel]) {
+						proxy.anonymityLevel = anonymityLevelFixes[anonymityLevel];
+					}
+
+					proxies.push(proxy);
+				} else {
+					console.log('FAILED TO PARSE HOST');
+					console.log(scriptContent);
 				}
-
-				proxies.push(proxy);
 			});
 
 		} catch (error) {
@@ -137,5 +147,20 @@ module.exports = {
 		}
 
 		cb(null, proxies);
+	},
+
+	parseHostFromScriptObfuscation: function(content) {
+
+		try {
+			var parts = content.trim().split('\n');
+			var ipAddressPart1 = parts[0].trim().match(/var x = '([^']+)'\.split\(''\)\.reverse\(\)\.join\(''\);/)[1].split('').reverse().join('');
+			var ipAddressPart2 = parts[1].trim().match(/var y = '([^']+)';/)[1];
+			var portMatches = parts[2].trim().match(/var p = -([0-9]+) \+ ([0-9]+);/);
+			var port = parseInt(portMatches[2]) - parseInt(portMatches[1]);
+			var host = ipAddressPart1 + ipAddressPart2 + ':' + port;
+		} catch (error) {
+			// Do nothing with the error.
+		}
+		return host || null;
 	}
 };
