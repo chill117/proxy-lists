@@ -31,6 +31,11 @@ module.exports = {
 					done = true;
 				}
 
+				if (options.sample) {
+					// Only get one page when sampling.
+					done = true;
+				}
+
 				next();
 			});
 		}, function() {
