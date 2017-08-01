@@ -9,6 +9,7 @@ Node.js module for getting proxies from publicly available proxy lists.
 
 * blackhatworld - Specific forum threads are scraped:
   * [100-scrapebox-proxies](https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574)
+  * [gscraper-proxies](https://www.blackhatworld.com/seo/gscraper-proxies.703493/)
 * [coolproxy](http://www.cool-proxy.net/proxies/http_proxy_list)
 * [freeproxylist](http://free-proxy-list.net/)
 * [freeproxylists](http://www.freeproxylists.com/)
