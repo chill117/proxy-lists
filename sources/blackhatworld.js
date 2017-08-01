@@ -7,7 +7,8 @@ var EventEmitter = require('events').EventEmitter || require('events');
 var request = require('request');
 
 var threadUrls = [
-	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/'
+	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
+	'https://www.blackhatworld.com/seo/gscraper-proxies.703493/'
 ];
 
 module.exports = {
