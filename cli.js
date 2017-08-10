@@ -38,6 +38,12 @@ program
 		null
 	)
 	.option(
+		'-C, --countries-black-list <list>',
+		'Exclude proxies from these countries [de, gb, ..]',
+		list,
+		null
+	)
+	.option(
 		'-p, --protocols <list>',
 		'Get proxies that support these protocols [' + ProxyLists._protocols.join(', ') + ']',
 		list,
@@ -229,6 +235,7 @@ program
 		var options = _.pick(this, [
 			'anonymityLevels',
 			'countries',
+			'countriesBlackList',
 			'protocols',
 			'sourcesWhiteList',
 			'sourcesBlackList',
