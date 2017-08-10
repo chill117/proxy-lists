@@ -10,6 +10,15 @@ var ProxyLists = module.exports = {
 
 	defaultOptions: {
 		/*
+			The filter mode determines how some options will be used to exclude proxies.
+
+			For example if using this option `anonymityLevels: ['elite']`:
+				'strict' mode will only allow proxies that have the 'anonymityLevel' property equal to 'elite'; ie. proxies that are missing the 'anonymityLevel' property will be excluded.
+				'loose' mode will allow proxies that have the 'anonymityLevel' property of 'elite' as well as those that are missing the 'anonymityLevel' property.
+		*/
+		filterMode: 'strict',
+
+		/*
 			Get proxies for the specified countries.
 
 			To get all proxies, regardless of country, set this option to NULL.
@@ -268,17 +277,31 @@ var ProxyLists = module.exports = {
 			anonymityLevelsTest = arrayToHash(options.anonymityLevels);
 		}
 
+		var strict = options.filterMode === 'strict';
+
 		return _.filter(proxies, function(proxy) {
 
-			if (countriesTest && !countriesTest[proxy.country]) {
+			if (
+				countriesTest &&
+				(strict || proxy.country) &&
+				!countriesTest[proxy.country]
+			) {
 				return false;
 			}
 
-			if (countriesBlackListTest && !!countriesBlackListTest[proxy.country]) {
+			if (
+				countriesBlackListTest &&
+				(strict || proxy.country) &&
+				!!countriesBlackListTest[proxy.country]
+			) {
 				return false;
 			}
 
-			if (anonymityLevelsTest && !anonymityLevelsTest[proxy.anonymityLevel]) {
+			if (
+				anonymityLevelsTest &&
+				(strict || proxy.anonymityLevel) &&
+				!anonymityLevelsTest[proxy.anonymityLevel]
+			) {
 				return false;
 			}
 
@@ -288,7 +311,7 @@ var ProxyLists = module.exports = {
 					return protocolsTest[protocol];
 				});
 
-				if (!hasAtLeastOnePassingProtocol) {
+				if ((strict || !_.isEmpty(proxy.protocols)) && !hasAtLeastOnePassingProtocol) {
 					return false;
 				}
 			}

@@ -2,6 +2,7 @@
 
 * TBD:
   * Added `countriesBlackList` option
+  * Added `filterMode` option
 * v1.13.0:
   * Added source (premproxy)
   * Fixed source (proxydb)

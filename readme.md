@@ -171,6 +171,15 @@ All available options:
 ```js
 var options = {
 	/*
+		The filter mode determines how some options will be used to exclude proxies.
+
+		For example if using this option `anonymityLevels: ['elite']`:
+			'strict' mode will only allow proxies that have the 'anonymityLevel' property equal to 'elite'; ie. proxies that are missing the 'anonymityLevel' property will be excluded.
+			'loose' mode will allow proxies that have the 'anonymityLevel' property of 'elite' as well as those that are missing the 'anonymityLevel' property.
+	*/
+	filterMode: 'strict',
+
+	/*
 		Get proxies for the specified countries.
 
 		To get all proxies, regardless of country, set this option to NULL.

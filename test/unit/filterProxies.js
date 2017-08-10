@@ -112,5 +112,147 @@ describe('filterProxies([options, ]cb)', function() {
 				});
 			});
 		});
+
+		describe('filterMode', function() {
+
+			describe('loose: include proxies with NULL or missing values', function() {
+
+				it('countries', function() {
+
+					var options = {
+						filterMode: 'loose',
+						countries: { 'us': true, 'ca': true }
+					};
+
+					var toBeFiltered = [
+						{
+							ipAddress: '127.22.231.1',
+							port: 8080,
+							country: 'gb'
+						},
+						{
+							ipAddress: '127.1.2.2',
+							port: 8888,
+							country: 'us'
+						},
+						{
+							ipAddress: '127.1.1.4',
+							port: 6000,
+							country: null
+						},
+						{
+							ipAddress: '127.1.81.4',
+							port: 6000
+						}
+					];
+
+					var filtered = ProxyLists.filterProxies(toBeFiltered, options);
+					expect(filtered).to.be.an('array');
+					expect(filtered.length).to.equal(3);
+				});
+
+				it('countriesBlackList', function() {
+
+					var options = {
+						filterMode: 'loose',
+						countriesBlackList: { 'de': true, 'gb': true }
+					};
+
+					var toBeFiltered = [
+						{
+							ipAddress: '127.22.231.1',
+							port: 8080,
+							country: 'us'
+						},
+						{
+							ipAddress: '127.1.2.2',
+							port: 8888,
+							country: 'gb'
+						},
+						{
+							ipAddress: '127.1.1.4',
+							port: 6000,
+							country: null
+						},
+						{
+							ipAddress: '127.1.81.4',
+							port: 6000
+						}
+					];
+
+					var filtered = ProxyLists.filterProxies(toBeFiltered, options);
+					expect(filtered).to.be.an('array');
+					expect(filtered.length).to.equal(3);
+				});
+
+				it('anonymityLevels', function() {
+
+					var options = {
+						filterMode: 'loose',
+						anonymityLevels: ['elite']
+					};
+
+					var toBeFiltered = [
+						{
+							ipAddress: '127.22.231.1',
+							port: 8080,
+							anonymityLevel: 'anonymous'
+						},
+						{
+							ipAddress: '127.1.2.2',
+							port: 8888,
+							anonymityLevel: 'elite'
+						},
+						{
+							ipAddress: '127.1.1.4',
+							port: 6000,
+							anonymityLevel: null
+						},
+						{
+							ipAddress: '127.1.81.4',
+							port: 6000
+						}
+					];
+
+					var filtered = ProxyLists.filterProxies(toBeFiltered, options);
+					expect(filtered).to.be.an('array');
+					expect(filtered.length).to.equal(3);
+				});
+
+				it('protocols', function() {
+
+					var options = {
+						filterMode: 'loose',
+						protocols: ['http', 'https']
+					};
+
+					var toBeFiltered = [
+						{
+							ipAddress: '127.22.231.1',
+							port: 8080,
+							protocols: ['socks4']
+						},
+						{
+							ipAddress: '127.1.2.2',
+							port: 8888,
+							protocols: ['https']
+						},
+						{
+							ipAddress: '127.1.1.4',
+							port: 6000,
+							protocols: null
+						},
+						{
+							ipAddress: '127.1.81.4',
+							port: 6000
+						}
+					];
+
+					var filtered = ProxyLists.filterProxies(toBeFiltered, options);
+					expect(filtered).to.be.an('array');
+					expect(filtered.length).to.equal(3);
+				});
+			});
+		});
 	});
 });
