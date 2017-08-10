@@ -6,6 +6,7 @@ var _ = require('underscore');
 describe('source.coolproxy', function() {
 
 	var coolproxy = require('../../../sources/coolproxy');
+
 	describe('decodeProxy(html)', function() {
 
 		it('should be a function', function() {
@@ -16,25 +17,6 @@ describe('source.coolproxy', function() {
 			var unencryptedProxy = '212.227.10.147';
 			var encryptedProxy = '<script type="text/javascript">document.write(Base64.decode(str_rot13("ZwRlYwVlAl4kZP4kAQp=")))</script>';
 			expect(coolproxy.decodeProxy(encryptedProxy)).to.equal(unencryptedProxy);
-		});
-	});
-
-	describe('getPageLinks(cb)', function() {
-
-		it('should be a function', function() {
-			expect(coolproxy.getPageLinks).to.be.a('function');
-		});
-
-		it('should return page links', function(done) {
-			coolproxy.getPageLinks(function(error, links) {
-				try {
-					expect(error).to.equal(null);
-					expect(links).to.be.an('array');
-				} catch (error) {
-					return done(error);
-				}
-				done();
-			});
 		});
 	});
 

@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var async = require('async');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 module.exports = {
 
@@ -19,12 +18,12 @@ module.exports = {
 
 		var emitter = new EventEmitter();
 
-		var fn = async.seq(
-			this.getData,
-			this.parseResponseData
+		var getProxyData = async.seq(
+			this.getData.bind(this),
+			this.parseResponseData.bind(this)
 		);
 
-		fn(options, function(error, proxies) {
+		getProxyData(options, function(error, proxies) {
 
 			if (error) {
 				emitter.emit('error', error);
@@ -40,7 +39,7 @@ module.exports = {
 
 	getData: function(options, cb) {
 
-		var requestOptions = {
+		options.request({
 			method: 'GET',
 			url: 'https://bitproxies.eu/api/v2/proxies',
 			qs: {
@@ -49,9 +48,7 @@ module.exports = {
 				protocols: options.protocols.join(','),
 				countries: _.keys(options.countries).join(','),
 			}
-		};
-
-		request(requestOptions, function(error, response, data) {
+		}, function(error, response, data) {
 
 			if (error) {
 				return cb(error);

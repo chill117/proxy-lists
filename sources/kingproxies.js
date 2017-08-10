@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var async = require('async');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 module.exports = {
 
@@ -56,7 +55,7 @@ module.exports = {
 			requestOptions.qs.new = 'true';
 		}
 
-		request(requestOptions, function(error, response, data) {
+		options.request(requestOptions, function(error, response, data) {
 
 			if (error) {
 				return cb(error);

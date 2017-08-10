@@ -5,6 +5,7 @@ var async = require('async');
 var EventEmitter = require('events').EventEmitter || require('events');
 var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
+var request = require('request');
 
 var ProxyLists = module.exports = {
 
@@ -80,7 +81,15 @@ var ProxyLists = module.exports = {
 			To include both ipv4 and ipv6:
 			['ipv4', 'ipv6']
 		*/
-		ipTypes: ['ipv4']
+		ipTypes: ['ipv4'],
+
+		/*
+			Default request module options. For example you could pass the 'proxy' option in this way.
+
+			See for more info:
+			https://github.com/request/request#requestdefaultsoptions
+		*/
+		defaultRequestOptions: null
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
@@ -370,6 +379,8 @@ var ProxyLists = module.exports = {
 				return [code, this._countries[code]];
 			}, this));
 		}
+
+		options.request = request.defaults(options.defaultRequestOptions || {});
 
 		return options;
 	},

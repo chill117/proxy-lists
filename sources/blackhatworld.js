@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var threadUrls = [
 	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
@@ -26,7 +25,7 @@ module.exports = {
 
 		async[asyncMethod](threadUrls, function(threadUrl, nextThread) {
 
-			getProxiesFromThread(threadUrl, function(error, proxies) {
+			getProxiesFromThread(threadUrl, options, function(error, proxies) {
 
 				if (error) {
 					return nextThread(error);
@@ -52,13 +51,21 @@ module.exports = {
 		return emitter;
 	},
 
-	getProxiesFromLastPostInThread: function(threadUrl, cb) {
+	getProxiesFromLastPostInThread: function(threadUrl, options, cb) {
 
-		async.seq(
-			this.getThreadLastPageUrl.bind(this),
+		var getProxiesFromLastPageOfThread = async.seq(
 			this.getHtml.bind(this),
 			this.parseLastPageOfThreadHtml.bind(this)
-		)(threadUrl, cb);
+		);
+
+		this.getThreadLastPageUrl(threadUrl, options, function(error, lastPageUrl) {
+
+			if (error) {
+				return cb(error);
+			}
+
+			getProxiesFromLastPageOfThread(lastPageUrl, options, cb);
+		});
 	},
 
 	parseLastPageOfThreadHtml: function(html, cb) {
@@ -85,12 +92,12 @@ module.exports = {
 		cb(null, proxies);
 	},
 
-	getThreadLastPageUrl: function(threadUrl, cb) {
+	getThreadLastPageUrl: function(threadUrl, options, cb) {
 
 		async.seq(
 			this.getHtml.bind(this),
 			this.parseForumThreadHtml.bind(this)
-		)(threadUrl, cb);
+		)(threadUrl, options, cb);
 	},
 
 	parseForumThreadHtml: function(html, cb) {
@@ -123,11 +130,11 @@ module.exports = {
 		cb(null, lastPageUrl);
 	},
 
-	getHtml: function(url, cb) {
+	getHtml: function(uri, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
-			url: url,
+			url: uri,
 			headers: {
 				'User-Agent': 'proxy-lists-module'
 			}

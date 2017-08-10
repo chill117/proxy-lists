@@ -1,8 +1,9 @@
-var EventEmitter = require('events');
-var async = require('async');
-var request = require('request');
+'use strict';
+
 var _ = require('underscore');
+var async = require('async');
 var cheerio = require('cheerio');
+var EventEmitter = require('events').EventEmitter || require('events');
 
 var decodeProxyRegex = /str_rot13\("(.+)"\)/;
 
@@ -10,15 +11,20 @@ module.exports = {
 
 	homeUrl: 'http://www.cool-proxy.net/proxies/http_proxy_list',
 
-	getProxies: function() {
+	getProxies: function(options) {
+
+		options || (options = {});
+
 		var emitter = new EventEmitter();
+
 		var getProxiesFromPage = async.seq(
 			_.bind(this.getPage, this),
 			_.bind(this.parsePage, this)
 		);
-		this.getPageLinks(function(error, links) {
+
+		this.getPageLinks(options, function(error, links) {
 			async.each(links, function(link, next) {
-				getProxiesFromPage(link, function(error, proxies) {
+				getProxiesFromPage(link, options, function(error, proxies) {
 					if (error) {
 						emitter.emit('error', error);
 					} else {
@@ -30,18 +36,23 @@ module.exports = {
 				emitter.emit('end');
 			});
 		});
+
 		return emitter;
 	},
 
-	getPageLinks: function(cb) {
+	getPageLinks: function(options, cb) {
+
 		var homeUrl = this.homeUrl;
-		request({
+
+		options.request({
 			method: 'GET',
-			url: homeUrl,
+			url: homeUrl
 		}, function(error, res, body) {
+
 			if (error) {
 				return cb(error);
 			}
+
 			try {
 				var $ = cheerio.load(body);
 				$('span.next').remove();
@@ -53,24 +64,30 @@ module.exports = {
 			} catch (error) {
 				return cb(error);
 			}
+
 			cb(null, links);
 		});
 	},
 
-	getPage: function(link, cb) {
-		request({
+	getPage: function(link, options, cb) {
+
+		options.request({
 			method: 'GET',
-			url: link,
+			url: link
 		}, function(error, res, html) {
+
 			if (error) {
 				return cb(error);
 			}
-			return cb(null, html);
+
+			cb(null, html);
 		});
 	},
 
 	parsePage: function(html, cb) {
+
 		var decodeProxy = _.bind(this.decodeProxy, this);
+
 		_.defer(function() {
 			try {
 				var $ = cheerio.load(html);
@@ -98,12 +115,14 @@ module.exports = {
 	},
 
 	decodeProxy: function(html) {
+
 		var strRot13 = function(str) {
 			return (str + '').replace(/[a-z]/gi, function(s) {
 				return String.fromCharCode(s.charCodeAt(0) + (s.toLowerCase() < 'n' ? 13 : -13));
 			});
 		};
 		var hash = html.match(decodeProxyRegex);
+
 		return Buffer.from(strRot13(hash[1]), 'base64').toString();
 	}
 };

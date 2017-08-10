@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var protocolToListLabel = {
 	'http': 'free proxy server list',
@@ -25,24 +24,24 @@ module.exports = {
 		var startPages = this.prepareStartingPages(options);
 
 		var getStartingPage = async.seq(
-			this.getStartingPageHtml,
-			this.parseStartingPageHtml
+			this.getStartingPageHtml.bind(this),
+			this.parseStartingPageHtml.bind(this)
 		);
 
 		var getList = async.seq(
-			this.getListPageHtml,
-			this.parseListPageHtml
+			this.getListPageHtml.bind(this),
+			this.parseListPageHtml.bind(this)
 		);
 
 		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
 		async[asyncMethod](startPages, function(startingPage, nextStartingPage) {
 
-			getStartingPage(startingPage, function(error, lists) {
+			getStartingPage(startingPage, options, function(error, lists) {
 
 				async[asyncMethod](lists, function(list, nextList) {
 
-					getList(list, function(error, proxies) {
+					getList(list, options, function(error, proxies) {
 
 						if (error) {
 							emitter.emit('error', error);
@@ -57,7 +56,6 @@ module.exports = {
 			});
 
 		}, function() {
-
 			emitter.emit('end');
 		});
 
@@ -104,9 +102,9 @@ module.exports = {
 		return startingPages;
 	},
 
-	getStartingPageHtml: function(startingPage, cb) {
+	getStartingPageHtml: function(startingPage, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: startingPage.url
 		}, function(error, response, data) {
@@ -161,9 +159,9 @@ module.exports = {
 		cb(null, lists);
 	},
 
-	getListPageHtml: function(list, cb) {
+	getListPageHtml: function(list, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: list.url
 		}, function(error, response, data) {

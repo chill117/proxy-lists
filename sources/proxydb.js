@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var anonymityLevelFixes = {
 	'Transparent': 'transparent',
@@ -95,7 +94,7 @@ module.exports = {
 			requestOptions.qs.anonlvl.push(4);
 		}
 
-		request(requestOptions, function(error, response, html) {
+		options.request(requestOptions, function(error, response, html) {
 
 			if (error) {
 				return cb(error);
