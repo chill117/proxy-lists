@@ -298,51 +298,8 @@ gettingProxies.once('end', function() {
 	// Done getting proxies.
 });
 ```
+See [getProxies](#getproxies) for all available options.
 
-All available options:
-```js
-var options = {
-	/*
-		Get proxies for the specified countries.
-
-		To get all proxies, regardless of country, set this option to NULL.
-
-		See:
-		https://en.wikipedia.org/wiki/ISO_3166-1
-
-		Only USA and Canada:
-		['us', 'ca']
-	*/
-	countries: null,
-
-	/*
-		Get proxies that use the specified protocols.
-
-		To get all proxies, regardless of protocol, set this option to NULL.
-	*/
-	protocols: ['http', 'https'],
-
-	/*
-		Anonymity level.
-
-		To get all proxies, regardless of anonymity level, set this option to NULL.
-	*/
-	anonymityLevels: ['anonymous', 'elite'],
-
-	/*
-		Set to TRUE to have all asynchronous operations run in series.
-	*/
-	series: false,
-
-	/*
-		Load GeoIp data for these types of IP addresses. Default is only ipv4.
-
-		To include both ipv4 and ipv6:
-		['ipv4', 'ipv6']
-	*/
-	ipTypes: ['ipv4']
-};
-```
 
 ### addSource
 
