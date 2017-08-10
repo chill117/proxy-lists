@@ -86,5 +86,31 @@ describe('filterProxies([options, ]cb)', function() {
 				});
 			});
 		});
+
+		describe('countriesBlackList', function() {
+
+			var countriesBlackList = ['ca', 'sk', 'de'];
+
+			_.each(countriesBlackList, function(country) {
+
+				it('should exclude proxies from ' + ProxyLists._countries[country], function() {
+
+					var options = {
+						countriesBlackList: {}
+					};
+
+					options.countriesBlackList[country] = true;
+
+					var filtered = ProxyLists.filterProxies(proxies, options);
+
+					expect(filtered).to.be.an('array');
+					expect(filtered.length > 0).to.equal(true);
+
+					_.each(filtered, function(proxy) {
+						expect(proxy.country).to.not.equal(country);
+					});
+				});
+			});
+		});
 	});
 });

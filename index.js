@@ -23,6 +23,14 @@ var ProxyLists = module.exports = {
 		countries: null,
 
 		/*
+			Exclude proxies from the specified countries.
+
+			To exclude Germany and Great Britain:
+			['de', 'gb']
+		*/
+		countriesBlackList: null,
+
+		/*
 			Get proxies that use the specified protocols.
 
 			To get all proxies, regardless of protocol, set this option to NULL.
@@ -230,6 +238,7 @@ var ProxyLists = module.exports = {
 		options || (options = {});
 
 		var countriesTest;
+		var countriesBlackListTest;
 		var protocolsTest;
 		var anonymityLevelsTest;
 
@@ -242,19 +251,30 @@ var ProxyLists = module.exports = {
 			countriesTest = options.countries;
 		}
 
-		if (options.protocols) {
+		if (options.countriesBlackList) {
 
+			if (_.isArray(options.countriesBlackList) || !_.isObject(options.countriesBlackList)) {
+				throw new Error('Invalid option "countriesBlackList": Object expected.');
+			}
+
+			countriesBlackListTest = options.countriesBlackList;
+		}
+
+		if (options.protocols) {
 			protocolsTest = arrayToHash(options.protocols);
 		}
 
 		if (options.anonymityLevels) {
-
 			anonymityLevelsTest = arrayToHash(options.anonymityLevels);
 		}
 
 		return _.filter(proxies, function(proxy) {
 
 			if (countriesTest && !countriesTest[proxy.country]) {
+				return false;
+			}
+
+			if (countriesBlackListTest && !!countriesBlackListTest[proxy.country]) {
 				return false;
 			}
 
@@ -300,6 +320,14 @@ var ProxyLists = module.exports = {
 			throw new Error('Invalid option "countries": Array or object expected.');
 		}
 
+		if (
+			options.countriesBlackList &&
+			!_.isArray(options.countriesBlackList) &&
+			!_.isObject(options.countriesBlackList)
+		) {
+			throw new Error('Invalid option "countriesBlackList": Array or object expected.');
+		}
+
 		if (!_.isArray(options.protocols)) {
 			throw new Error('Invalid option "protocols": Array expected.');
 		}
@@ -309,8 +337,13 @@ var ProxyLists = module.exports = {
 		}
 
 		if (options.countries && _.isArray(options.countries)) {
-
 			options.countries = _.object(_.map(options.countries, function(code) {
+				return [code, this._countries[code]];
+			}, this));
+		}
+
+		if (options.countriesBlackList && _.isArray(options.countriesBlackList)) {
+			options.countriesBlackList = _.object(_.map(options.countriesBlackList, function(code) {
 				return [code, this._countries[code]];
 			}, this));
 		}

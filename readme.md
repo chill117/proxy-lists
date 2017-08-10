@@ -184,6 +184,14 @@ var options = {
 	countries: null,
 
 	/*
+		Exclude proxies from the specified countries.
+
+		To exclude Germany and Great Britain:
+		['de', 'gb']
+	*/
+	countriesBlackList: null,
+
+	/*
 		Get proxies that use the specified protocols.
 
 		To get all proxies, regardless of protocol, set this option to NULL.

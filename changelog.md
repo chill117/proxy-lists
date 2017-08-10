@@ -1,5 +1,7 @@
 # Changelog
 
+* TBD:
+  * Added `countriesBlackList` option
 * v1.13.0:
   * Added source (premproxy)
   * Fixed source (proxydb)
