@@ -5,7 +5,6 @@ var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
 var parseXml = require('xml2js').parseString;
-var request = require('request');
 
 var baseUrl = 'http://www.freeproxylists.com';
 
@@ -21,16 +20,21 @@ var Source = module.exports = {
 		var startingPageUrls = this.prepareStartingPageUrls(options);
 		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		async[asyncMethod](_.keys(startingPageUrls), _.bind(function(key, nextStartingPage) {
+		var getStartingPage = async.seq(
+			this.getStartingPageHtml.bind(this),
+			this.parseStartingPageHtml.bind(this)
+		);
+
+		var getList = async.seq(
+			this.getListData.bind(this),
+			this.parseListData.bind(this)
+		);
+
+		async[asyncMethod](_.keys(startingPageUrls), function(key, nextStartingPage) {
 
 			var startingPageUrl = startingPageUrls[key];
 
-			var fn = async.seq(
-				this.getStartingPageHtml,
-				this.parseStartingPageHtml
-			);
-
-			fn(startingPageUrl, _.bind(function(error, listUrls) {
+			getStartingPage(startingPageUrl, options, function(error, listUrls) {
 
 				if (error) {
 					emitter.emit('error', error);
@@ -42,14 +46,9 @@ var Source = module.exports = {
 					listUrls = listUrls.slice(0, 1);
 				}
 
-				async[asyncMethod](listUrls, _.bind(function(listUrl, nextList) {
+				async[asyncMethod](listUrls, function(listUrl, nextList) {
 
-					var fn = async.seq(
-						this.getListData,
-						this.parseListData
-					);
-
-					fn(listUrl, function(error, proxies) {
+					getList(listUrl, options, function(error, proxies) {
 
 						if (error) {
 							emitter.emit('error', error);
@@ -59,13 +58,10 @@ var Source = module.exports = {
 
 						nextList();
 					});
+				}, nextStartingPage);
+			});
 
-				}, this), nextStartingPage);
-
-			}, this));
-
-		}, this), function() {
-
+		}, function() {
 			emitter.emit('end');
 		});
 
@@ -103,9 +99,9 @@ var Source = module.exports = {
 		return startingPageUrls;
 	},
 
-	getStartingPageHtml: function(startingPageUrl, cb) {
+	getStartingPageHtml: function(startingPageUrl, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: startingPageUrl
 		}, function(error, response, data) {
@@ -141,11 +137,11 @@ var Source = module.exports = {
 		cb(null, listUrls);
 	},
 
-	getListData: function(listUrl, cb) {
+	getListData: function(listUrl, options, cb) {
 
 		var dataUrl = Source.listUrlToDataUrl(listUrl);
 
-		request({
+		options.request({
 			method: 'GET',
 			url: dataUrl
 		}, function(error, response, data) {

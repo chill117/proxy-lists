@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var anonymityLevelFixes = {
 	'No': 'transparent',
@@ -37,8 +36,8 @@ module.exports = {
 		var emitter = new EventEmitter();
 
 		var getPageData = async.seq(
-			this.getPageHtml,
-			this.parsePageHtml
+			this.getPageHtml.bind(this),
+			this.parsePageHtml.bind(this)
 		);
 
 		var done = _.once(function(error) {
@@ -114,7 +113,7 @@ module.exports = {
 
 		// Cannot use country filter, because it flags the request as a "bot".
 
-		request(requestOptions, function(error, response, html) {
+		options.request(requestOptions, function(error, response, html) {
 
 			if (error) {
 				return cb(error);

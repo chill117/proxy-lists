@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 module.exports = {
 
@@ -19,20 +18,12 @@ module.exports = {
 		// This proxy source only has socks proxies.
 		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
 
-			var basePageUrl = 'http://sockslist.net/proxy/server-socks-hide-ip-address/{page}';
-
 			var getProxiesFromPage = async.seq(
-
-				function(page, cb) {
-					var listUrl = basePageUrl.replace('{page}', page);
-					cb(null, listUrl);
-				},
-
-				this.getListHtml,
-				this.parseListHtml
+				this.getListHtml.bind(this),
+				this.parseListHtml.bind(this)
 			);
 
-			getProxiesFromPage(1, function(error, proxies, numPages) {
+			getProxiesFromPage(1, options, function(error, proxies, numPages) {
 
 				if (error) {
 					emitter.emit('error', error);
@@ -49,7 +40,7 @@ module.exports = {
 				var asyncMethod = options.series === true ? 'timesSeries' : 'times';
 				async[asyncMethod](numPages - 1, function(index, nextPage) {
 					var pageNumber = index + 2;
-					getProxiesFromPage(pageNumber, function(error, proxies) {
+					getProxiesFromPage(pageNumber, options, function(error, proxies) {
 						if (error) {
 							emitter.emit('error', error);
 						} else {
@@ -72,9 +63,15 @@ module.exports = {
 		return emitter;
 	},
 
-	getListHtml: function(listUrl, cb) {
+	getListUrl: function(page) {
+		return 'http://sockslist.net/proxy/server-socks-hide-ip-address/' + page;
+	},
 
-		request({
+	getListHtml: function(page, options, cb) {
+
+		var listUrl = this.getListUrl(page);
+
+		options.request({
 			method: 'GET',
 			url: listUrl
 		}, function(error, response, data) {

@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var anonymityLevels = {
 	'elite proxy': 'elite',
@@ -22,14 +21,14 @@ module.exports = {
 		var listUrls = this.prepareListUrls(options);
 		var asyncMethod = options.series === true ? 'eachSeries' : 'each';
 
-		async[asyncMethod](listUrls, _.bind(function(listUrl, next) {
+		var getList = async.seq(
+			this.getListHtml.bind(this),
+			this.parseListHtml.bind(this)
+		);
 
-			var fn = async.seq(
-				this.getListHtml,
-				this.parseListHtml
-			);
+		async[asyncMethod](listUrls, function(listUrl, next) {
 
-			fn(listUrl, function(error, proxies) {
+			getList(listUrl, options, function(error, proxies) {
 
 				if (error) {
 					emitter.emit('error', error);
@@ -40,7 +39,7 @@ module.exports = {
 				next();
 			});
 
-		}, this), function() {
+		}, function() {
 
 			emitter.emit('end');
 		});
@@ -76,9 +75,9 @@ module.exports = {
 		return listUrls;
 	},
 
-	getListHtml: function(listUrl, cb) {
+	getListHtml: function(listUrl, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: listUrl
 		}, function(error, response, data) {

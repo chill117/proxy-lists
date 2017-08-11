@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 var querystring = require('querystring');
 
 var users = [
@@ -20,7 +19,7 @@ var users = [
 	{ email: 'justsomeemail2@binkmail.com', password: '!(9(JEa3' }
 ];
 
-var Source = module.exports = {
+module.exports = {
 
 	homeUrl: 'http://www.gatherproxy.com',
 
@@ -31,11 +30,11 @@ var Source = module.exports = {
 		var emitter = new EventEmitter();
 
 		async.seq(
-			Source.login,
-			Source.getDownloadLink,
-			Source.downloadData,
-			Source.parseData
-		)(function(error, proxies) {
+			this.login.bind(this),
+			this.getDownloadLink.bind(this),
+			this.downloadData.bind(this),
+			this.parseData.bind(this)
+		)(options, function(error, proxies) {
 
 			if (error) {
 				emitter.emit('error', error);
@@ -54,19 +53,19 @@ var Source = module.exports = {
 		return emitter;
 	},
 
-	getDownloadLink: function(cookie, cb) {
+	getDownloadLink: function(cookie, options, cb) {
 
 		async.seq(
-			Source.getDownloadPage.bind(Source, cookie),
-			Source.parseDownloadPageHtml
-		)(function(error, downloadLink) {
-			cb(error, downloadLink, cookie);
+			this.getDownloadPage.bind(this),
+			this.parseDownloadPageHtml.bind(this)
+		)(cookie, options, function(error, downloadLink) {
+			cb(error, downloadLink, cookie, options);
 		});
 	},
 
-	getDownloadPage: function(cookie, cb) {
+	getDownloadPage: function(cookie, options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: 'http://www.gatherproxy.com/subscribe/infos',
 			headers: {
@@ -107,15 +106,15 @@ var Source = module.exports = {
 		});
 	},
 
-	downloadData: function(downloadLink, cookie, cb) {
+	downloadData: function(downloadLink, cookie, options, cb) {
 
-		if (downloadLink.substr(0, Source.homeUrl.length) !== Source.homeUrl) {
-			downloadLink = Source.homeUrl + downloadLink;
+		if (downloadLink.substr(0, this.homeUrl.length) !== this.homeUrl) {
+			downloadLink = this.homeUrl + downloadLink;
 		}
 
 		var query = querystring.parse(downloadLink.split('?')[1]);
 
-		request({
+		options.request({
 			method: 'POST',
 			url: downloadLink,
 			headers: {
@@ -163,11 +162,11 @@ var Source = module.exports = {
 		});
 	},
 
-	login: function(cb) {
+	login: function(options, cb) {
 
-		var user = Source.getRandomUser();
+		var user = this.getRandomUser();
 
-		Source.getLoginCaptchaSolutionAndCookie(function(error, captchaSolution, cookie) {
+		this.getLoginCaptchaSolutionAndCookie(options, function(error, captchaSolution, cookie) {
 
 			if (error) {
 				return cb(error);
@@ -177,7 +176,7 @@ var Source = module.exports = {
 				return cb(new Error('Missing required session cookie.'));
 			}
 
-			request({
+			options.request({
 				method: 'POST',
 				url: 'http://www.gatherproxy.com/subscribe/login',
 				headers: {
@@ -210,21 +209,23 @@ var Source = module.exports = {
 					return cb(error);
 				}
 
-				cb(null, cookie);
+				cb(null, cookie, options);
 			});
 		});
 	},
 
-	getLoginCaptchaSolutionAndCookie: function(cb) {
+	getLoginCaptchaSolutionAndCookie: function(options, cb) {
 
-		Source.getLoginPageCaptchaQuestionAndCookie(function(error, captcha, cookie) {
+		var solveCaptcha = this.solveCaptcha.bind(this);
+
+		this.getLoginPageCaptchaQuestionAndCookie(options, function(error, captcha, cookie) {
 
 			if (error) {
 				return cb(error);
 			}
 
 			try {
-				var solution = Source.solveCaptcha(captcha);
+				var solution = solveCaptcha(captcha);
 			} catch (error) {
 				return cb(error);
 			}
@@ -233,9 +234,11 @@ var Source = module.exports = {
 		});
 	},
 
-	getLoginPageCaptchaQuestionAndCookie: function(cb) {
+	getLoginPageCaptchaQuestionAndCookie: function(options, cb) {
 
-		request({
+		var getSessionCookie = this.getSessionCookie.bind(this);
+
+		options.request({
 			method: 'GET',
 			url: 'http://www.gatherproxy.com/subscribe/login'
 		}, function(error, response, html) {
@@ -246,7 +249,7 @@ var Source = module.exports = {
 
 			var $ = cheerio.load(html);
 			var captcha = $('.label .blue').text().trim();
-			var cookie = Source.getSessionCookie(response.headers['set-cookie']);
+			var cookie = getSessionCookie(response.headers['set-cookie']);
 
 			cb(null, captcha, cookie);
 		});

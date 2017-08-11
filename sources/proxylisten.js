@@ -4,7 +4,6 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
-var request = require('request');
 
 var anonymityLevelFixes = {
 	'1': 'elite',
@@ -23,11 +22,11 @@ module.exports = {
 		var emitter = new EventEmitter();
 
 		var getProxiesFromList = async.seq(
-			this.getListHtml,
-			this.parseListHtml
+			this.getListHtml.bind(this),
+			this.parseListHtml.bind(this)
 		);
 
-		this.getInfo(function(error, info) {
+		this.getInfo(options, function(error, info) {
 
 			if (error) {
 				emitter.emit('error', error);
@@ -113,7 +112,7 @@ module.exports = {
 						listFilters.next = 'next page';
 					}
 
-					getProxiesFromList(list.type, numPerPage, info.hiddenField, listFilters, function(error, proxies) {
+					getProxiesFromList(list.type, numPerPage, info.hiddenField, listFilters, options, function(error, proxies) {
 
 						if (error) {
 							emitter.emit('error', error);
@@ -140,19 +139,17 @@ module.exports = {
 		- Number of proxies of various types.
 		- Required hidden form value.
 	*/
-	getInfo: function(cb) {
+	getInfo: function(options, cb) {
 
-		var fn = async.seq(
+		async.seq(
 			this.getInfoPageHtml,
 			this.parseInfoPageHtml
-		);
-
-		fn(cb);
+		)(options, cb);
 	},
 
-	getInfoPageHtml: function(cb) {
+	getInfoPageHtml: function(options, cb) {
 
-		request({
+		options.request({
 			method: 'GET',
 			url: 'http://www.proxy-listen.de/Proxy/Proxyliste.html'
 		}, function(error, response, data) {
@@ -208,7 +205,7 @@ module.exports = {
 		cb(null, info);
 	},
 
-	getListHtml: function(type, numPerPage, hiddenField, filters, cb) {
+	getListHtml: function(type, numPerPage, hiddenField, filters, options, cb) {
 
 		var requestOptions = {
 			method: 'POST',
@@ -228,7 +225,7 @@ module.exports = {
 
 		requestOptions.form[hiddenField.name] = hiddenField.value;
 
-		request(requestOptions, function(error, response, data) {
+		options.request(requestOptions, function(error, response, data) {
 
 			if (error) {
 				return cb(error);

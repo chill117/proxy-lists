@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
@@ -13,7 +14,7 @@ describe('prepareOptions([options])', function() {
 	it('should return default options when none are provided', function() {
 		var options = ProxyLists.prepareOptions();
 		var defaultOptions = ProxyLists.prepareOptions(ProxyLists.defaultOptions);
-		expect(options).to.deep.equal(defaultOptions);
+		expect(_.omit(options, 'request')).to.deep.equal(_.omit(defaultOptions, 'request'));
 	});
 
 	describe('countries', function() {
