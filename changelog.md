@@ -1,6 +1,6 @@
 # Changelog
 
-* TBD:
+* v1.14.0:
   * Added options: `countriesBlackList`, `filterMode`, `defaultRequestOptions`
 * v1.13.0:
   * Added source (premproxy)
