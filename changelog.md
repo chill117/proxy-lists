@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.14.1:
+  * Fix for regression in CLI
 * v1.14.0:
   * Added options: `countriesBlackList`, `filterMode`, `defaultRequestOptions`
 * v1.13.0:
