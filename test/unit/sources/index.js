@@ -81,8 +81,8 @@ describe('source.getProxies([options, ]cb)', function() {
 				});
 
 				options = ProxyLists.prepareOptions(options);
-
-				var gettingProxies = source.getProxies(options);
+				var sourceOptions = ProxyLists.prepareOptionsForSource(options);
+				var gettingProxies = source.getProxies(sourceOptions);
 
 				gettingProxies.on('data', function(proxies) {
 

@@ -38,22 +38,14 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 		expect(thrownError.message).to.equal('Proxy source does not exist: "' + name + '"');
 	});
 
-	it('should call getProxies() method of the specified source', function() {
-
-		var name = 'somewhere';
-		var called = false;
-
+	it('should call getProxies() method of the specified source', function(done) {
+		var name = 'some-source';
 		ProxyLists.addSource(name, {
 			getProxies: function() {
-				called = true;
-				var emitter = new EventEmitter();
-				return emitter;
+				done();
 			}
 		});
-
 		ProxyLists.getProxiesFromSource(name);
-
-		expect(called).to.equal(true);
 	});
 
 	/*

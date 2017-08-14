@@ -101,7 +101,7 @@ var ProxyLists = module.exports = {
 	// Get proxies from all sources.
 	getProxies: function(options) {
 
-		options = this.prepareOptions(options || {});
+		options = ProxyLists.prepareOptions(options);
 
 		var emitter = new EventEmitter();
 		var sources = this.listSources(options);
@@ -136,7 +136,7 @@ var ProxyLists = module.exports = {
 			throw new Error('Proxy source does not exist: "' + name + '"');
 		}
 
-		options = this.prepareOptions(options || {});
+		options = this.prepareOptions(options);
 
 		var source = this._sources[name];
 
@@ -167,7 +167,8 @@ var ProxyLists = module.exports = {
 				return onEnd();
 			}
 
-			var gettingProxies = source.getProxies(ProxyLists.deepClone(options));
+			var optionsForSource = ProxyLists.prepareOptionsForSource(options);
+			var gettingProxies = source.getProxies(optionsForSource);
 
 			gettingProxies.on('data', function(proxies) {
 
@@ -329,9 +330,22 @@ var ProxyLists = module.exports = {
 		});
 	},
 
+	prepareOptionsForSource: function(options) {
+
+		// Deep clone the options object before passing to the source's getProxies method.
+		// This prevents mutating the original options object.
+		options = JSON.parse(JSON.stringify(options));
+
+		// Prepare request wrapper for the source.
+		options.request = request.defaults(options.defaultRequestOptions || {});
+
+		return options;
+	},
+
 	prepareOptions: function(options) {
 
-		options = _.extend({}, this.defaultOptions, options || {});
+		// Set default options.
+		options = _.defaults(options || {}, this.defaultOptions);
 
 		if (_.isNull(options.countries)) {
 			// Use all countries.
@@ -380,8 +394,6 @@ var ProxyLists = module.exports = {
 			}, this));
 		}
 
-		options.request = request.defaults(options.defaultRequestOptions || {});
-
 		return options;
 	},
 
@@ -425,11 +437,6 @@ var ProxyLists = module.exports = {
 	isValidIpAddress: function(ipAddress) {
 
 		return net.isIP(ipAddress) !== 0;
-	},
-
-	deepClone: function(object) {
-
-		return JSON.parse(JSON.stringify(object));
 	}
 };
 
