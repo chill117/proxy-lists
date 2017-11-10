@@ -98,6 +98,9 @@ module.exports = {
 						return null;
 					}
 					var ip = decodeProxy($(tds[0]).html());
+					if (!ip) {
+						return null;
+					}
 					var port = $(tds[1]).html();
 					var anonymity = $(tds[5]).html() === 'Anonymous' ? 'anonymous' : 'transparent';
 					return {
@@ -115,14 +118,12 @@ module.exports = {
 	},
 
 	decodeProxy: function(html) {
-
 		var strRot13 = function(str) {
 			return (str + '').replace(/[a-z]/gi, function(s) {
 				return String.fromCharCode(s.charCodeAt(0) + (s.toLowerCase() < 'n' ? 13 : -13));
 			});
 		};
 		var hash = html.match(decodeProxyRegex);
-
-		return Buffer.from(strRot13(hash[1]), 'base64').toString();
+		return hash && Buffer.from(strRot13(hash[1]), 'base64').toString() || null;
 	}
 };

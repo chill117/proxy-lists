@@ -1,5 +1,6 @@
-                        var x = '.76.771'.split('').reverse().join('');
-                        var y = '83.62';
-                        var p = -52765 + 60845;
-                        document.write('<a href="/' + x + y + '/' + p + '#https" title="host13.transportws.com.br">' + x + y + String.fromCharCode(58) + p + '</a>');
-                        proxies.push(x + y + String.fromCharCode(58) + p);
+
+                        var b = '881.222'.split('').reverse().join('');
+                        var yy = '.10.1';
+                        var pp = -21646 + 22726;
+                        document.write('<a href="/' + b + yy + '/' + pp + '#socks4" title="">' + b + yy + String.fromCharCode(58) + pp + '</a>');
+                        proxies.push(b + yy + String.fromCharCode(58) + pp);

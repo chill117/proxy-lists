@@ -147,11 +147,18 @@ module.exports = {
 
 	parseHostFromScriptObfuscation: function(content) {
 
+		/*
+			var p = '1.631.312'.split('').reverse().join('');
+			var yy = '05.62';
+			var pp = -32784 + 35912;
+			document.write('<a href="/' + p + yy + '/' + pp + '#http" title="lsocit-213.136.105.62.aviso.ci">' + p + yy + String.fromCharCode(58) + pp + '</a>');
+			proxies.push(p + yy + String.fromCharCode(58) + pp);
+		*/
 		try {
 			var parts = content.trim().split('\n');
-			var ipAddressPart1 = parts[0].trim().match(/var x = '([^']+)'\.split\(''\)\.reverse\(\)\.join\(''\);/)[1].split('').reverse().join('');
-			var ipAddressPart2 = parts[1].trim().match(/var y = '([^']+)';/)[1];
-			var portMatches = parts[2].trim().match(/var p = -([0-9]+) \+ ([0-9]+);/);
+			var ipAddressPart1 = parts[0].trim().match(/var [a-zA-Z_]+ = '([^']+)'\.split/)[1].split('').reverse().join('');
+			var ipAddressPart2 = parts[1].trim().match(/var yy = '([^']+)';/)[1];
+			var portMatches = parts[2].trim().match(/var pp = -([0-9]+) \+ ([0-9]+);/);
 			var port = parseInt(portMatches[2]) - parseInt(portMatches[1]);
 			var host = ipAddressPart1 + ipAddressPart2 + ':' + port;
 		} catch (error) {
