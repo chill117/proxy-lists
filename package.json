@@ -47,5 +47,6 @@
     "load-grunt-config": "0.19.2",
     "mocha": "3.5.0",
     "time-grunt": "1.4.0"
-  }
+  },
+  "types": "proxy-lists.d.ts"
 }
