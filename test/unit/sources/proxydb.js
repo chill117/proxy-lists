@@ -4,6 +4,9 @@ var _ = require('underscore');
 var async = require('async');
 var expect = require('chai').expect;
 
+// Mock the atob() function, since it's a WebAPI
+global.atob = function atob(value) { return Buffer.from(value, 'base64').toString() };
+
 describe('source.proxydb', function() {
 
 	var Source = require('../../../sources/proxydb');
@@ -11,7 +14,6 @@ describe('source.proxydb', function() {
 	describe('parseHostFromScriptObfuscation(content)', function() {
 
 		it('should parse the host from the obfuscated script contents', function() {
-
 			var samples = require('../../samples/proxydb/obfuscatedScriptContents');
 
 			_.each(samples, function(sample) {
