@@ -146,20 +146,32 @@ module.exports = {
 	},
 
 	parseHostFromScriptObfuscation: function(content) {
+		function convertCharCodeToChar() {
+			return String.fromCharCode(parseInt(arguments[1], 16))
+		}
+
+		/**
+         * Decodes a Base64-encoded string.
+         * Polyfill for the WindowOrWorkerGlobalScope.atob() WebAPI.
+         */
+		function atob(value) {
+			return Buffer.from(value, 'base64').toString()
+		}
 
 		/*
-			var b = '41.87.76'.split('').reverse().join('');
-			var yy = atob('\x4d\x79\x34\x78\x4f\x44\x49\x3d'.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
-			var pp = -12530 + 20610 -1;
-			pp++;
-			document.write('<a href="/' + b + yy + '/' + pp + '#https">' + b + yy + String.fromCharCode(58) + pp + '</a>');
-		*/
+            var b = '41.87.76'.split('').reverse().join('');
+            var yy = atob('\x4d\x79\x34\x78\x4f\x44\x49\x3d'.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
+            var pp = -12530 + 20610 -1;
+            pp++;
+            document.write('<a href="/' + b + yy + '/' + pp + '#https">' + b + yy + String.fromCharCode(58) + pp + '</a>');
+        */
 
 		try {
 			var parts = content.trim().split('\n');
 			var ipAddressPart1 = parts[0].trim().match(/var [a-zA-Z_]+ = '([^']+)'\.split/)[1].split('').reverse().join('');
-			var ipAddressPart2 = atob(parts[1].trim().match(/var yy = atob\('([^']+)'\.replace/)[1]
-				.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
+			var ipAddressPart2 = parts[1].trim().match(/var yy = atob\('([^']+)'\.replace/)[1];
+			ipAddressPart2 = ipAddressPart2.replace(/\\x([0-9A-Fa-f]{2})/g, convertCharCodeToChar);
+			ipAddressPart2 = atob(ipAddressPart2);
 			var portMatches = parts[2].trim().match(/var pp = -([0-9]+) \+ ([0-9]+) -1/);
 			var port = parseInt(portMatches[2]) - parseInt(portMatches[1]);
 			var host = ipAddressPart1 + ipAddressPart2 + ':' + port;
