@@ -6,13 +6,14 @@ var expect = require('chai').expect;
 
 describe('source.proxydb', function() {
 
+	var ProxyLists = require('../../..');
 	var Source = require('../../../sources/proxydb');
 
 	describe('parseHostFromScriptObfuscation(content)', function() {
 
 		it('should parse the host from the obfuscated script contents', function() {
-			var samples = require('../../samples/proxydb/obfuscatedScriptContents');
 
+			var samples = require('../../samples/proxydb/obfuscatedScriptContents');
 			_.each(samples, function(sample) {
 				var host = Source.parseHostFromScriptObfuscation(sample.toString());
 				expect(host).to.not.equal(null);
@@ -52,6 +53,9 @@ describe('source.proxydb', function() {
 							expect(proxy.port).to.be.a('number');
 							expect(proxy.port).to.equal(parseInt(proxy.port));
 							expect(proxy.protocols).to.be.an('array');
+							if (!ProxyLists.isValidProxy(proxy)) {
+								throw new Error('Invalid proxy:\n' + JSON.stringify(proxy));
+							}
 						});
 
 					} catch (error) {

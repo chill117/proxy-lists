@@ -111,17 +111,18 @@ module.exports = {
 			var proxies = [];
 			var $ = cheerio.load(html);
 			var parseHostFromScriptObfuscation = this.parseHostFromScriptObfuscation.bind(this);
+			var portModifier = $('div[data-numz]').attr('data-numz');
 
 			$('table tbody tr').each(function() {
 
 				var $tr = $(this);
 				var scriptContent = $tr.find('script').html();
-				var host = parseHostFromScriptObfuscation(scriptContent);
+				var host = parseHostFromScriptObfuscation(scriptContent, portModifier);
 
 				if (host) {
 
 					host = host.split(':');
-					var protocol = $tr.find('td:nth-child(2)').text().trim().toLowerCase();
+					var protocol = $tr.find('td:nth-child(5)').text().trim().toLowerCase();
 					var anonymityLevel = $tr.find('td:nth-child(3)').text().trim();
 
 					var proxy = {
@@ -145,35 +146,35 @@ module.exports = {
 		cb(null, proxies);
 	},
 
-	parseHostFromScriptObfuscation: function(content) {
-		function convertCharCodeToChar() {
-			return String.fromCharCode(parseInt(arguments[1], 16))
-		}
+	decodeBase64: function(encoded) {
 
-		/**
-         * Decodes a Base64-encoded string.
-         * Polyfill for the WindowOrWorkerGlobalScope.atob() WebAPI.
-         */
-		function atob(value) {
-			return Buffer.from(value, 'base64').toString()
-		}
+		return Buffer.from(encoded, 'base64').toString();
+	},
 
-		/*
-            var b = '41.87.76'.split('').reverse().join('');
-            var yy = atob('\x4d\x79\x34\x78\x4f\x44\x49\x3d'.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
-            var pp = -12530 + 20610 -1;
-            pp++;
-            document.write('<a href="/' + b + yy + '/' + pp + '#https">' + b + yy + String.fromCharCode(58) + pp + '</a>');
-        */
+	convertCharCodeToChar: function(charCode) {
+
+		return String.fromCharCode(parseInt(charCode, 16));
+	},
+
+	parseHostFromScriptObfuscation: function(content, portModifier) {
+
+		if (_.isUndefined(portModifier)) {
+			portModifier = 0;
+		} else {
+			portModifier = parseInt(portModifier);
+		}
 
 		try {
-			var parts = content.trim().split('\n');
-			var ipAddressPart1 = parts[0].trim().match(/var [a-zA-Z_]+ = '([^']+)'\.split/)[1].split('').reverse().join('');
-			var ipAddressPart2 = parts[1].trim().match(/var yy = atob\('([^']+)'\.replace/)[1];
-			ipAddressPart2 = ipAddressPart2.replace(/\\x([0-9A-Fa-f]{2})/g, convertCharCodeToChar);
-			ipAddressPart2 = atob(ipAddressPart2);
-			var portMatches = parts[2].trim().match(/var pp = -([0-9]+) \+ ([0-9]+) -1/);
-			var port = parseInt(portMatches[2]) - parseInt(portMatches[1]);
+			var ipAddressPart1 = content.match(/var[\s]+[a-zA-Z_]+[\s]+=[^=']*'([^']+)'\.split/)[1].split('').reverse().join('');
+			var ipAddressPart2 = content.match(/var[\s]+yy[\s]+=[^=a]*atob\('([^']+)'\.replace/)[1];
+			var convertCharCodeToChar = this.convertCharCodeToChar.bind(this);
+			ipAddressPart2 = ipAddressPart2.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
+				return convertCharCodeToChar(arguments['1']);
+			});
+			ipAddressPart2 = this.decodeBase64(ipAddressPart2);
+			var portMatches = content.match(/var[\s]+pp[\s]+=[^=(]*\(([0-9]+) /);
+			// (3111 - ([]+[]))/**/ +  (+document.querySelector('[data-numz]').getAttribute('data-numz'))-[]+[];
+			var port = parseInt(portMatches[1]) - portModifier;
 			var host = ipAddressPart1 + ipAddressPart2 + ':' + port;
 		} catch (error) {
 			// Do nothing with the error.
