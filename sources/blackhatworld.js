@@ -7,7 +7,13 @@ var EventEmitter = require('events').EventEmitter || require('events');
 
 var threadUrls = [
 	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
-	'https://www.blackhatworld.com/seo/gscraper-proxies.703493/'
+	'https://www.blackhatworld.com/seo/gscraper-proxies.703493/',
+	'https://www.blackhatworld.com/seo/port-scanned-proxies.988868/',
+	'https://www.blackhatworld.com/seo/gsa-proxies-proxygo.830325/',
+	'https://www.blackhatworld.com/seo/socks-proxies-occasional-update.803039/',
+	'https://www.blackhatworld.com/seo/ssl-proxies-occasional-update.927669/',
+	'https://www.blackhatworld.com/seo/anonymous-proxies.806981/',
+	'https://www.blackhatworld.com/seo/tunnel-connect-proxies.951125/',
 ];
 
 module.exports = {
