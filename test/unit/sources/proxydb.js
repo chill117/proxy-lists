@@ -4,7 +4,7 @@ var _ = require('underscore');
 var async = require('async');
 var expect = require('chai').expect;
 
-describe.only('source.proxydb', function() {
+describe('source.proxydb', function() {
 
 	var Source = require('../../../sources/proxydb');
 
