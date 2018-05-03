@@ -1,6 +1,6 @@
 
-            var p = '1.631.312'.split('').reverse().join('');
-            var yy = '05.62';
-            var pp = -32784 + 35912;
-            document.write('<a href="/' + p + yy + '/' + pp + '#http" title="lsocit-213.136.105.62.aviso.ci">' + p + yy + String.fromCharCode(58) + pp + '</a>');
-            proxies.push(p + yy + String.fromCharCode(58) + pp);
+                            var  v =
+                             '2.86.831'.split('').reverse().join('');
+                            var yy =/* */ atob('\x4d\x7a\x49\x75\x4e\x44\x45\x3d'.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
+                            var pp = (3111 - ([]+[]))/**/ +  (+document.querySelector('[data-numz]').getAttribute('data-numz'))-[]+[];
+                            document.write('<a href="/' + v + yy + '/' + pp + '#http">' + v + yy + String.fromCharCode(58) + pp + '</a>');

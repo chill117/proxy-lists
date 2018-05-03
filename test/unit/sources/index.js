@@ -9,10 +9,6 @@ describe('source.getProxies([options, ]cb)', function() {
 
 	_.each(_.keys(ProxyLists._sources), function(name) {
 
-		if (!_.contains(['proxydb'], name)) {
-			return;
-		}
-
 		var source = ProxyLists._sources[name];
 
 		describe('source.' + name, function() {

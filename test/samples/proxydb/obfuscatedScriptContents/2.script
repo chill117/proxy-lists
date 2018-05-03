@@ -1,6 +1,6 @@
 
-                        var b = '881.222'.split('').reverse().join('');
-                        var yy = '.10.1';
-                        var pp = -21646 + 22726;
-                        document.write('<a href="/' + b + yy + '/' + pp + '#socks4" title="">' + b + yy + String.fromCharCode(58) + pp + '</a>');
-                        proxies.push(b + yy + String.fromCharCode(58) + pp);
+                            var  x =
+                             '42.86.831'.split('').reverse().join('');
+                            var yy =/* */ atob('\x4d\x43\x34\x79\x4d\x54\x67\x3d'.replace(/\\x([0-9A-Fa-f]{2})/g,function(){return String.fromCharCode(parseInt(arguments[1], 16))}));
+                            var pp = (3111 - ([]+[]))/**/ +  (+document.querySelector('[data-numz]').getAttribute('data-numz'))-[]+[];
+                            document.write('<a href="/' + x + yy + '/' + pp + '#http">' + x + yy + String.fromCharCode(58) + pp + '</a>');
