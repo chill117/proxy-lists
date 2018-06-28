@@ -1,8 +1,10 @@
 env:
-  - TRAVIS_CI="true"
+  - TRAVIS_CI=1
 
 language: node_js
 node_js:
+  - "8"
+  - "6"
   - "4"
 
 before_install: npm install -g grunt-cli

@@ -1,5 +1,7 @@
 # Changelog
 
+* TBD:
+  * Upgraded dependencies
 * v1.14.1:
   * Fix for regression in CLI
 * v1.14.0:
