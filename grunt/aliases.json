@@ -4,9 +4,6 @@
 		"test:unit",
 		"test:code-style"
 	],
-	"test:benchmarks": [
-		"mochaTest:benchmarks"
-	],
 	"test:code-style": [
 		"eslint"
 	],

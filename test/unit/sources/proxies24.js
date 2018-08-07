@@ -44,9 +44,9 @@ describe('source.proxies24', function() {
 						expect(lists.length > 0).to.equal(true);
 
 						_.each(lists, function(list) {
-							expect(list.protocol).to.not.equal(undefined);
+							expect(list.protocol).to.not.be.undefined;
 							expect(_.contains(startingPage.protocols, list.protocol)).to.equal(true);
-							expect(list.url).to.not.equal(undefined);
+							expect(list.url).to.not.be.undefined;
 						});
 					} catch (error) {
 						return next(error);
@@ -95,9 +95,9 @@ describe('source.proxies24', function() {
 						expect(proxies.length > 0).to.equal(true);
 
 						_.each(proxies, function(proxy) {
-							expect(proxy.ipAddress).to.not.equal(undefined);
+							expect(proxy.ipAddress).to.not.be.undefined;
 							expect(proxy.ipAddress).to.be.a('string');
-							expect(proxy.port).to.not.equal(undefined);
+							expect(proxy.port).to.not.be.undefined;
 							expect(proxy.port).to.be.a('number');
 							expect(proxy.port).to.equal(parseInt(proxy.port));
 							expect(_.contains(proxy.protocols, list.protocol)).to.equal(true);

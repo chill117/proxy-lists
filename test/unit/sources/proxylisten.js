@@ -30,8 +30,8 @@ describe('source.proxylisten', function() {
 						expect(error).to.equal(null);
 						expect(info).to.be.an('object');
 						expect(info.hiddenField).to.be.an('object');
-						expect(info.hiddenField.name).to.not.equal(undefined);
-						expect(info.hiddenField.value).to.not.equal(undefined);
+						expect(info.hiddenField.name).to.not.be.undefined;
+						expect(info.hiddenField.value).to.not.be.undefined;
 						expect(info.stats).to.be.an('object');
 
 						_.each(info.stats, function(stat) {

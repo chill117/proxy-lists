@@ -36,26 +36,50 @@ describe('Command-line interface', function() {
 
 	describe('getProxies', function() {
 
+		var outputFilePath;
+		before(function() {
+			outputFilePath = path.join(__dirname, '..', '..', 'proxies.txt');
+		});
+
+		var proxies;
+		before(function() {
+			proxies = require('../fixtures/proxies');
+		});
+
+		afterEach(function(done) {
+			fs.stat(outputFilePath, function(error) {
+				if (error) return done();
+				fs.unlink(outputFilePath, done);
+			});
+		});
+
 		it('simple usage', function(done) {
 
 			done = _.once(done);
 
+			var env = Object.create(process.env);
+			env.PROXY_LISTS_SOURCES_DIR = path.join(__dirname, '..', 'sources');
+			env.DEBUG = 'data-sourcer*';
+
 			var cmd = spawn('./cli.js', [
 				'getProxies',
-				'--sample',
-				'--sources-white-list', 'freeproxylist'
-			]);
+				'--sources-white-list', 'cli-test'
+			], { env: env });
+
+			// When debugging, uncomment the following:
+			// cmd.stdout.on('data', function(data) {
+			// 	console.log(data.toString());
+			// });
 
 			cmd.stderr.on('data', function(error) {
 				done(new Error(error));
 			});
 
 			cmd.on('close', function() {
-				var outputFilePath = path.join(__dirname, '..', '..', 'proxies.txt');
 				fs.readFile(outputFilePath, function(error, contents) {
 					if (error) return done(error);
-					var hosts = contents.toString().split('\n');
-					expect(hosts.length > 0).to.equal(true);
+					var hosts = _.compact(contents.toString().split('\n'));
+					expect(hosts).to.have.length(proxies.length);
 					try {
 						_.each(hosts, function(host) {
 							if (host.indexOf(':') === -1 || !net.isIP(host.split(':')[0])) {
@@ -65,7 +89,7 @@ describe('Command-line interface', function() {
 					} catch (error) {
 						return done(error);
 					}
-					fs.unlink(outputFilePath, done);
+					done();
 				});
 			});
 		});

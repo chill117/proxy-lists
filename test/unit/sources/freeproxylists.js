@@ -50,7 +50,7 @@ describe('source.freeproxylists', function() {
 					var startingPageUrls = freeproxylists.prepareStartingPageUrls(options);
 
 					expect(startingPageUrls).to.be.an('object');
-					expect(startingPageUrls.transparent).to.not.equal(undefined);
+					expect(startingPageUrls.transparent).to.not.be.undefined;
 					expect(startingPageUrls.transparent).to.be.a('string');
 					expect(_.values(startingPageUrls)).to.have.length(1);
 				});
@@ -65,7 +65,7 @@ describe('source.freeproxylists', function() {
 					var startingPageUrls = freeproxylists.prepareStartingPageUrls(options);
 
 					expect(startingPageUrls).to.be.an('object');
-					expect(startingPageUrls.socks).to.not.equal(undefined);
+					expect(startingPageUrls.socks).to.not.be.undefined;
 					expect(startingPageUrls.socks).to.be.a('string');
 					expect(_.values(startingPageUrls)).to.have.length(1);
 				});

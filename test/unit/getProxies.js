@@ -11,11 +11,11 @@ describe('getProxies([options, ]cb)', function() {
 	var sourcesBefore;
 
 	beforeEach(function() {
-		sourcesBefore = _.clone(ProxyLists._sources);
+		sourcesBefore = _.clone(ProxyLists.sourcer.sources);
 	});
 
 	afterEach(function() {
-		ProxyLists._sources = sourcesBefore;
+		ProxyLists.sourcer.sources = sourcesBefore;
 	});
 
 	it('should be a function', function() {
@@ -28,7 +28,7 @@ describe('getProxies([options, ]cb)', function() {
 		var testSources = ['somewhere', 'somewhere-else'];
 		var called = {};
 
-		ProxyLists._sources = {};
+		ProxyLists.sourcer.sources = {};
 
 		_.each(testSources, function(name) {
 			ProxyLists.addSource(name, {
@@ -58,7 +58,7 @@ describe('getProxies([options, ]cb)', function() {
 
 	it('source with ipv6 addresses', function(done) {
 
-		ProxyLists._sources = {};
+		ProxyLists.sourcer.sources = {};
 
 		ProxyLists.addSource('ipv6test', {
 			getProxies: function() {
@@ -104,7 +104,7 @@ describe('getProxies([options, ]cb)', function() {
 						called[name] = true;
 					};
 
-					ProxyLists._sources = {};
+					ProxyLists.sourcer.sources = {};
 
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
@@ -137,19 +137,18 @@ describe('getProxies([options, ]cb)', function() {
 
 			describe('FALSE', function() {
 
-				it('should get proxies from all sources in parallel', function() {
+				it('should get proxies from all sources in parallel', function(done) {
 
 					var testSources = ['somewhere', 'somewhere-else'];
 					var gettingProxiesFromSource = {};
 
-					ProxyLists._sources = {};
+					ProxyLists.sourcer.sources = {};
 
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
 							getProxies: function() {
-								var emitter = new EventEmitter();
 								gettingProxiesFromSource[name] = true;
-								return emitter;
+								return new EventEmitter();
 							}
 						});
 					});
@@ -160,8 +159,11 @@ describe('getProxies([options, ]cb)', function() {
 
 					ProxyLists.getProxies(options);
 
-					_.each(testSources, function(name) {
-						expect(gettingProxiesFromSource[name]).to.equal(true);
+					_.defer(function() {
+						_.each(testSources, function(name) {
+							expect(gettingProxiesFromSource[name]).to.equal(true);
+						});
+						done();
 					});
 				});
 			});

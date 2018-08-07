@@ -7,28 +7,11 @@ var ProxyLists = require('../../index');
 
 describe('listSources([options])', function() {
 
-	var sourcesBefore;
-
-	beforeEach(function() {
-		sourcesBefore = _.clone(ProxyLists._sources);
-	});
-
-	afterEach(function() {
-		ProxyLists._sources = sourcesBefore;
-	});
-
-	it('should be a function', function() {
-		expect(ProxyLists.listSources).to.be.a('function');
-	});
-
 	it('should return an array of all available sources', function() {
 
 		var sources = ProxyLists.listSources();
-		var sourceNames = _.keys(require('../../sources'));
-
 		expect(sources).to.be.an('array');
-		expect(sources).to.have.length(sourceNames.length);
-
+		expect(sources).to.have.length(_.size(ProxyLists.sourcer.sources));
 		_.each(sources, function(source) {
 			expect(_.has(source, 'name')).to.equal(true);
 			expect(source.name).to.be.a('string');
@@ -48,12 +31,9 @@ describe('listSources([options])', function() {
 				];
 
 				_.each(sourcesWhiteLists, function(sourcesWhiteList) {
-
 					var sources = ProxyLists.listSources({ sourcesWhiteList: sourcesWhiteList });
-
 					expect(sources).to.be.an('array');
 					expect(sources).to.have.length(sourcesWhiteList.length);
-
 					_.each(sources, function(source) {
 						expect(_.contains(sourcesWhiteList, source.name)).to.equal(true);
 					});
@@ -71,12 +51,9 @@ describe('listSources([options])', function() {
 				];
 
 				_.each(sourcesBlackLists, function(sourcesBlackList) {
-
 					var sources = ProxyLists.listSources({ sourcesBlackList: sourcesBlackList });
-
 					expect(sources).to.be.an('array');
-					expect(sources).to.have.length(_.keys(ProxyLists._sources).length - sourcesBlackList.length);
-
+					expect(sources).to.have.length(_.size(ProxyLists.sourcer.sources) - sourcesBlackList.length);
 					_.each(sources, function(source) {
 						expect(!_.contains(sourcesBlackList, source.name)).to.equal(true);
 					});

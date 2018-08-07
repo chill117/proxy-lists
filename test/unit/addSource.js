@@ -7,34 +7,35 @@ var ProxyLists = require('../../index');
 
 describe('addSource(name, source)', function() {
 
-	it('should be a function', function() {
+	var sourcesBefore;
 
+	beforeEach(function() {
+		sourcesBefore = _.clone(ProxyLists.sourcer.sources);
+	});
+
+	afterEach(function() {
+		ProxyLists.sourcer.sources = sourcesBefore;
+	});
+
+	var validDummySource = {
+		homeUrl: 'https://somewhere',
+		getProxies: function() {}
+	};
+
+	it('should be a function', function() {
 		expect(ProxyLists.addSource).to.be.a('function');
 	});
 
 	it('should throw an error when source name is invalid', function() {
-
-		var invalidNames = [ '', null, undefined, {} ];
-
-		_.each(invalidNames, function(invalidName) {
-
-			var thrownError;
-
-			try {
-
-				ProxyLists.addSource(invalidName, { getProxies: function() {} });
-
-			} catch (error) {
-
-				thrownError = error;
-			}
-
-			if (!thrownError) {
-				throw new Error('Expected name to be invalid: ' + JSON.stringify(invalidName));
-			}
-
-			expect(thrownError.message).to.equal('Invalid source name.');
-		});
+		var thrownError;
+		try {
+			ProxyLists.addSource('', validDummySource);
+		} catch (error) {
+			thrownError = error;
+		}
+		expect(thrownError).to.not.be.undefined;
+		expect(thrownError instanceof Error).to.equal(true);
+		expect(thrownError.message).to.equal('Invalid source name: ""');
 	});
 
 	it('should throw an error when a source already exists with the given name', function() {
@@ -44,15 +45,13 @@ describe('addSource(name, source)', function() {
 		var thrownError;
 
 		try {
-
 			ProxyLists.addSource(name, function() {});
 
 		} catch (error) {
-
 			thrownError = error;
 		}
 
-		expect(thrownError).to.not.equal(undefined);
+		expect(thrownError).to.not.be.undefined;
 		expect(thrownError instanceof Error).to.equal(true);
 		expect(thrownError.message).to.equal('Source already exists: "' + name + '"');
 	});
@@ -64,20 +63,13 @@ describe('addSource(name, source)', function() {
 		_.each(invalidSources, function(invalidSource) {
 
 			var thrownError;
-
 			try {
-
 				ProxyLists.addSource('some-new-source', invalidSource);
-
 			} catch (error) {
-
 				thrownError = error;
 			}
-
-			if (!thrownError) {
-				throw new Error('Expected source to be invalid: ' + JSON.stringify(invalidSource));
-			}
-
+			expect(thrownError).to.not.be.undefined;
+			expect(thrownError instanceof Error).to.equal(true);
 			expect(thrownError.message).to.equal('Expected "source" to be an object.');
 		});
 	});
@@ -85,19 +77,14 @@ describe('addSource(name, source)', function() {
 	it('should throw an error when "getProxies" is not a function', function() {
 
 		var thrownError;
-
 		try {
-
 			ProxyLists.addSource('some-new-source', {});
-
 		} catch (error) {
-
 			thrownError = error;
 		}
-
-		expect(thrownError).to.not.equal(undefined);
+		expect(thrownError).to.not.be.undefined;
 		expect(thrownError instanceof Error).to.equal(true);
-		expect(thrownError.message).to.equal('Source missing required "getProxies" method.');
+		expect(thrownError.message).to.equal('Source missing required method: "getProxies"');
 	});
 
 	it('should add source to list of sources', function() {
@@ -118,10 +105,8 @@ describe('addSource(name, source)', function() {
 		expect(_.findWhere(sources, { name: name })).to.deep.equal({
 			name: name,
 			homeUrl: source.homeUrl,
+			defaultOptions: {},
 			requiredOptions: source.requiredOptions
 		});
-
-		// Clean-up.
-		delete ProxyLists._sources[name];
 	});
 });

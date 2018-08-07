@@ -11,11 +11,11 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 	var sourcesBefore;
 
 	beforeEach(function() {
-		sourcesBefore = _.clone(ProxyLists._sources);
+		sourcesBefore = _.clone(ProxyLists.sourcer.sources);
 	});
 
 	afterEach(function() {
-		ProxyLists._sources = sourcesBefore;
+		ProxyLists.sourcer.sources = sourcesBefore;
 	});
 
 	it('should be a function', function() {
@@ -33,16 +33,17 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 			thrownError = error;
 		}
 
-		expect(thrownError).to.not.equal(undefined);
+		expect(thrownError).to.not.be.undefined;
 		expect(thrownError instanceof Error).to.equal(true);
-		expect(thrownError.message).to.equal('Proxy source does not exist: "' + name + '"');
+		expect(thrownError.message).to.equal('Data source does not exist: "' + name + '"');
 	});
 
 	it('should call getProxies() method of the specified source', function(done) {
 		var name = 'some-source';
 		ProxyLists.addSource(name, {
 			getProxies: function() {
-				done();
+				_.defer(done);
+				return new EventEmitter();
 			}
 		});
 		ProxyLists.getProxiesFromSource(name);
@@ -58,7 +59,7 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
 		var name = 'alter-options';
 
-		ProxyLists._sources = {};
+		ProxyLists.sourcer.sources = {};
 
 		ProxyLists.addSource(name, {
 			getProxies: function(options) {
@@ -98,8 +99,7 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 			ProxyLists.addSource(name, {
 				requiredOptions: requiredOptions,
 				getProxies: function() {
-					var emitter = new EventEmitter();
-					return emitter;
+					return new EventEmitter();
 				}
 			});
 
@@ -111,9 +111,9 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 				thrownError = error;
 			}
 
-			expect(thrownError).to.not.equal(undefined);
+			expect(thrownError).to.not.be.undefined;
 			expect(thrownError instanceof Error).to.equal(true);
-			expect(thrownError.message).to.equal('Missing required option (`option.' + name + '.something`): ' + requiredOptions.something);
+			expect(thrownError.message).to.equal('Missing required option (`option.sourceOptions.' + name + '.something`): ' + requiredOptions.something);
 		});
 	});
 });
