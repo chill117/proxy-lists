@@ -69,7 +69,7 @@ module.exports = {
 				});
 			});
 
-			if (options.countries.length === 1) {
+			if (options.countries && options.countries.length === 1) {
 				filters.filter_country = options.countries[0];
 			}
 
