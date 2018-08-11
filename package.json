@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "Get proxies from publicly available proxy lists.",
   "keywords": [
     "proxies",
@@ -33,7 +33,7 @@
     "cheerio": "1.0.0-rc.2",
     "commander": "2.15.1",
     "css": "2.2.3",
-    "data-sourcer": "1.4.0",
+    "data-sourcer": "1.5.0",
     "geoip-native-lite": "0.3.0",
     "request": "2.87.0",
     "underscore": "1.9.1",
