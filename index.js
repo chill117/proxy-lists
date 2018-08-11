@@ -165,14 +165,14 @@ var ProxyLists = module.exports = {
 		};
 
 		_.each(['countries', 'protocols', 'anonymityLevels'], function(field) {
-			if (_.isNull(options[field]) && _.isArray(options[field])) {
-				sourcerOptions.include[field] = _.clone(options[field]);
+			if (!_.isNull(options[field]) && _.isArray(options[field])) {
+				sourcerOptions.filter.include[field] = _.clone(options[field]);
 			}
 		});
 
 		_.each(['countriesBlackList'], function(field) {
-			if (_.isNull(options[field]) && _.isArray(options[field])) {
-				sourcerOptions.exclude[field] = _.clone(options[field]);
+			if (!_.isNull(options[field]) && _.isArray(options[field])) {
+				sourcerOptions.filter.exclude[field] = _.clone(options[field]);
 			}
 		});
 
