@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "Get proxies from publicly available proxy lists.",
   "keywords": [
     "proxies",
