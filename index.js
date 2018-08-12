@@ -159,20 +159,28 @@ var ProxyLists = module.exports = {
 		var sourcerOptions = _.omit(options, 'filterMode', 'countries', 'countriesBlackList', 'protocols', 'anonymityLevels', 'ipTypes');
 
 		sourcerOptions.filter = {
-			mode: options.filterMode || 'strict',
+			mode: options.filterMode || this.defaultOptions.filterMode,
 			include: {},
 			exclude: {},
 		};
 
-		_.each(['countries', 'protocols', 'anonymityLevels'], function(field) {
-			if (_.isNull(options[field]) && _.isArray(options[field])) {
-				sourcerOptions.include[field] = _.clone(options[field]);
+		_.each({
+			country: 'countries',
+			protocols: 'protocols',
+			anonymityLevel: 'anonymityLevels',
+		}, function(oldKey, newKey) {
+			var optionValue = options[oldKey];
+			if (!_.isUndefined(optionValue) && !_.isNull(optionValue) && _.isArray(optionValue)) {
+				sourcerOptions.filter.include[newKey] = _.clone(optionValue);
 			}
 		});
 
-		_.each(['countriesBlackList'], function(field) {
-			if (_.isNull(options[field]) && _.isArray(options[field])) {
-				sourcerOptions.exclude[field] = _.clone(options[field]);
+		_.each({
+			country: 'countriesBlackList',
+		}, function(oldKey, newKey) {
+			var optionValue = options[oldKey];
+			if (!_.isUndefined(optionValue) && !_.isNull(optionValue) && _.isArray(optionValue)) {
+				sourcerOptions.filter.exclude[newKey] = _.clone(optionValue);
 			}
 		});
 
@@ -238,6 +246,11 @@ var ProxyLists = module.exports = {
 // For manual testing sources:
 // ProxyLists.getProxies({
 // 	sourcesWhiteList: ['hidemyname'],
+// 	filter: {
+// 		include: {
+
+// 		}
+// 	},
 // 	sample: true,
 // 	series: true,
 // })
