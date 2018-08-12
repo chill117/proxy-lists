@@ -117,8 +117,6 @@ program
 			writeStream = fs.createWriteStream(outputFile);
 		} else {
 			outputFile = 'STDOUT';
-			var logFile = process.cwd() + '/' + this.logFile;
-			var logStream = fs.createWriteStream(logFile);
 			writeStream = {
 				write: function(data) {
 					process.stdout.write(data + '\n');
@@ -128,16 +126,12 @@ program
 			};
 		}
 
+		var logFile = process.cwd() + '/' + this.logFile;
+		var logStream = fs.createWriteStream(logFile);
 		function log(message) {
-
-			if (stdout) {
-				logStream.write(message + '\n');
-			} else {
-				console.log(message);
-			}
+			logStream.write(message + '\n');
 		}
 
-		writeStream.on('error', console.error.bind(console));
 		var numWriting = 0;
 		var wroteData = false;
 		var ended = false;
@@ -251,8 +245,6 @@ program
 			'series',
 			'ipTypes'
 		]);
-
-		console.log(options);
 
 		ProxyLists.getProxies(options)
 			.on('data', onData)
