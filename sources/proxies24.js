@@ -189,9 +189,11 @@ module.exports = {
 			var proxies = _.chain(hosts).map(function(host) {
 				if (host.indexOf(':') === -1) return null;
 				var parts = host.split(':');
+				var port = parseInt(parts[1]);
+				if (_.isNaN(port)) return null;
 				return {
 					ipAddress: parts[0],
-					port: parseInt(parts[1]),
+					port: port,
 					protocols: [protocol],
 				};
 			}).compact().value();

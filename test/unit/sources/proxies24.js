@@ -23,14 +23,6 @@ describe('source.proxies24', function() {
 				{
 					html: samples.http,
 					protocols: ['http']
-				},
-				{
-					html: samples.https,
-					protocols: ['https']
-				},
-				{
-					html: samples.socks,
-					protocols: ['socks5']
 				}
 			];
 
@@ -74,14 +66,6 @@ describe('source.proxies24', function() {
 				{
 					html: samples.http,
 					protocol: 'http'
-				},
-				{
-					html: samples.https,
-					protocol: 'https'
-				},
-				{
-					html: samples.socks,
-					protocol: 'socks5'
 				}
 			];
 
