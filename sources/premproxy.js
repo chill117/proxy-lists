@@ -15,6 +15,7 @@ module.exports = {
 			itemAttributes: {
 				ipAddress: 'td:first-child',
 				port: 'td:first-child',
+				anonymityLevel: 'td:nth-child(2)',
 			},
 			nextLink: '.pagination .active + li a',
 		},
@@ -27,6 +28,7 @@ module.exports = {
 				if (_.isNaN(port)) return null;
 				return port;
 			},
+			anonymityLevel: 'Anonymity Type: ([a-z]+) ',
 		},
 	},
 };

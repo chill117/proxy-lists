@@ -15,6 +15,8 @@ module.exports = {
 			itemAttributes: {
 				ipAddress: 'td:first-child a',
 				port: 'td:first-child a',
+				protocols: 'td:nth-child(5)',
+				anonymityLevel: 'td:nth-child(6)',
 			},
 			nextLink: '.pagination li:nth-child(2) a',
 		},
@@ -26,6 +28,12 @@ module.exports = {
 				port = parseInt(match[1]);
 				if (_.isNaN(port)) return null;
 				return port;
+			},
+			protocols: function(protocols) {
+				return [protocols.trim().toLowerCase()];
+			},
+			anonymityLevel: function(anonymityLevel) {
+				return anonymityLevel.trim().toLowerCase();
 			},
 		},
 	},
