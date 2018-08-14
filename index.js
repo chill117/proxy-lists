@@ -245,12 +245,7 @@ var ProxyLists = module.exports = {
 
 // For manual testing sources:
 // ProxyLists.getProxies({
-// 	sourcesWhiteList: ['hidemyname'],
-// 	filter: {
-// 		include: {
-
-// 		}
-// 	},
+// 	sourcesWhiteList: ['rosinstrument'],
 // 	sample: true,
 // 	series: true,
 // })
