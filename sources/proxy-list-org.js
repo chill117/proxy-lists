@@ -19,7 +19,7 @@ var parseProxyText = function(text) {
 	var parts = text.split('\'');
 	if (!parts || parts.length !== 3) return null;
 	var addr = Buffer.from(parts[1], 'base64').toString('utf8');
-	var match = addr.match(/([0-9\.]+):([0-9]+)$/);
+	var match = addr.match(/([0-9.]+):([0-9]+)$/);
 	if (!match || !match[1] || !match[2]) return null;
 	return {
 		ipAddress: match[1],

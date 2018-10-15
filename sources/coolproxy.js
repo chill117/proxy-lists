@@ -28,7 +28,7 @@ module.exports = {
 		},
 		parseAttributes: {
 			ipAddress: function(ipAddress) {
-				var match = ipAddress.match(/([^\)]+)$/);
+				var match = ipAddress.match(/([^)]+)$/);
 				return match && match[1] || null;
 			},
 			port: function(port) {

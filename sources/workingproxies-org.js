@@ -2,17 +2,6 @@
 
 var _ = require('underscore');
 
-var convert = {
-	anonymityLevels: {
-		'elite proxy': 'elite',
-		'anonymous': 'anonymous',
-		'transparent': 'transparent',
-	},
-	protocols: {
-		'yes': ['https'],
-	},
-};
-
 module.exports = {
 	homeUrl: 'http://www.workingproxies.org/',
 	defaultOptions: {
