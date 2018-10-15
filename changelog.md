@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.16.0:
+  * Fixed-up several sources, getting anonymityLevel and protocols where possible.
 * v1.15.0:
   * Upgraded dependencies
   * Fixed sources: hidemyname (formerly incloak), premproxy, proxydb

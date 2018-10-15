@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.15.3",
+  "version": "1.16.0",
   "description": "Get proxies from publicly available proxy lists.",
   "keywords": [
     "proxies",
@@ -31,18 +31,17 @@
   "dependencies": {
     "async": "2.6.1",
     "cheerio": "1.0.0-rc.2",
-    "commander": "2.15.1",
-    "css": "2.2.3",
-    "data-sourcer": "1.5.1",
+    "commander": "2.19.0",
+    "data-sourcer": "1.6.0",
     "geoip-native-lite": "0.3.0",
-    "request": "2.87.0",
+    "request": "2.88.0",
     "underscore": "1.9.1",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "chai": "4.1.2",
+    "chai": "4.2.0",
     "grunt": "1.0.3",
-    "grunt-eslint": "20.1.0",
+    "grunt-eslint": "21.0.0",
     "grunt-mocha-test": "0.13.3",
     "load-grunt-config": "0.19.2",
     "mocha": "5.2.0",
