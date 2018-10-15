@@ -1,31 +1,10 @@
 # proxy-lists
 
-Node.js module for getting proxies from publicly available proxy lists.
-
 [![Build Status](https://travis-ci.org/chill117/proxy-lists.svg?branch=master)](https://travis-ci.org/chill117/proxy-lists) [![Status of Dependencies](https://david-dm.org/chill117/proxy-lists.svg)](https://david-dm.org/chill117/proxy-lists)
 
+Node.js module for getting proxies from publicly available proxy lists. Support for more than two dozen different proxy lists. You can see the full list of proxy sources [here](https://github.com/chill117/proxy-lists/tree/master/sources).
 
-## Supported Proxy Lists
-
-* blackhatworld - Specific forum threads are scraped:
-  * [100-scrapebox-proxies](https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574)
-  * [gscraper-proxies](https://www.blackhatworld.com/seo/gscraper-proxies.703493/)
-* [coolproxy](http://www.cool-proxy.net/proxies/http_proxy_list)
-* [freeproxylist](http://free-proxy-list.net/)
-* [freeproxylists](http://www.freeproxylists.com/)
-* [gatherproxy](http://gatherproxy.com/)
-* [incloak](https://incloak.com/)
-* [premproxy](https://premproxy.com/list/)
-* proxies24 - [http](http://proxyserverlist-24.blogspot.com/)
-* [proxydb](http://proxydb.net/)
-* [proxylisten](http://www.proxy-listen.de/)
-* [sockslist](http://sockslist.net/)
-
-Proxy lists that require an API key:
-* [bitproxies](https://bitproxies.eu/)
-* [kingproxies](http://kingproxies.com/)
-
-Missing a proxy list that you think should be here? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
+Missing a proxy list that you think should be supported? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
 
 
 ## Installation
