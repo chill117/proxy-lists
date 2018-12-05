@@ -10,7 +10,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "lint": "eslint --config .eslintrc.js *.js sources/*.js test/**/*.js",
+    "prepublish": "npm run test # runs before `npm publish`",
+    "pretest": "npm run lint # runs before `npm test`",
+    "test": "mocha test/unit/ --recursive --reporter spec --ui bdd"
   },
   "bin": {
     "proxy-lists": "cli.js"
@@ -39,12 +42,6 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "chai": "4.2.0",
-    "grunt": "1.0.3",
-    "grunt-eslint": "21.0.0",
-    "grunt-mocha-test": "0.13.3",
-    "load-grunt-config": "0.19.2",
-    "mocha": "5.2.0",
-    "time-grunt": "1.4.0"
+    "chai": "4.2.0"
   }
 }
