@@ -4,6 +4,7 @@ var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
+var UserAgent = require('user-agents');
 
 var threadUrls = [
 	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
@@ -142,7 +143,7 @@ module.exports = {
 			method: 'GET',
 			url: uri,
 			headers: {
-				'User-Agent': 'proxy-lists-module'
+				'User-Agent': (new UserAgent()).toString(),
 			}
 		}, function(error, response, html) {
 

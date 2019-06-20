@@ -73,6 +73,7 @@ describe('source.getProxies([options, ]cb)', function() {
 				});
 
 				options = _.extend(options, {
+					filterMode: 'loose',
 					anonymityLevels: ['anonymous', 'elite', 'transparent'],
 					protocols: ['http', 'https', 'socks4', 'socks5'],
 					sample: true
