@@ -241,14 +241,14 @@ var ProxyLists = module.exports = {
 
 	isValidProxyProtocols: function(protocols) {
 
-		return _.isArray(protocols) && protocols.length > 0 && _.every(protocols, function(protocol) {
+		return _.isArray(protocols) && _.every(protocols, function(protocol) {
 			return ProxyLists.isValidProxyProtocol(protocol);
 		});
 	},
 
 	isValidProxyProtocol: function(protocol) {
 
-		return _.contains(this._protocols, protocol);
+		return _.iString(protocol) && _.contains(this._protocols, protocol);
 	},
 
 	isValidAnonymityLevel: function(anonymityLevel) {

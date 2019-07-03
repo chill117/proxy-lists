@@ -63,7 +63,7 @@ module.exports = {
 			},
 			protocols: function(protocols) {
 				protocols = protocols && protocols.trim().toLowerCase() || null;
-				return protocols && convert.protocols[protocols] || [];
+				return protocols && convert.protocols[protocols] || null;
 			},
 		},
 	},

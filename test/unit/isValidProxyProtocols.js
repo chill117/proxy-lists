@@ -14,7 +14,6 @@ describe('isValidProxyProtocols(protocols)', function() {
 	it('should return FALSE for invalid examples', function() {
 
 		var invalidExamples = [
-			[],
 			['invalid'],
 			['http', 'invalid'],
 			'string is invalid',
@@ -34,6 +33,7 @@ describe('isValidProxyProtocols(protocols)', function() {
 	it('should return TRUE for valid examples', function() {
 
 		var validExamples = [
+			[],
 			['http'],
 			['https', 'socks5']
 		];
