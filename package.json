@@ -10,10 +10,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "lint": "eslint --config .eslintrc.js *.js sources/*.js test/**/*.js",
+    "lint": "./node_modules/.bin/eslint --config .eslintrc.js *.js sources/*.js test/**/*.js",
     "prepublish": "npm run test # runs before `npm publish`",
     "pretest": "npm run lint # runs before `npm test`",
-    "test": "mocha test/unit/ --recursive --reporter spec --ui bdd"
+    "test": "./node_modules/.bin/mocha test/unit/ --recursive --reporter spec --ui bdd"
   },
   "bin": {
     "proxy-lists": "cli.js"
@@ -42,6 +42,8 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "chai": "4.2.0"
+    "chai": "4.2.0",
+    "eslint": "6.0.1",
+    "mocha": "6.1.4"
   }
 }
