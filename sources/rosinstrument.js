@@ -1,13 +1,14 @@
 'use strict';
 
 var _ = require('underscore');
+var UserAgent = require('user-agents');
 
 var defineFeed = function(url) {
 	return {
 		requestOptions: {
 			url: url,
 			headers: {
-				'User-Agent': 'Mozilla/5.0 Chrome/70.0.3000.60',
+				'User-Agent': (new UserAgent()).toString(),
 			}
 		},
 		paths: {
@@ -19,7 +20,12 @@ var defineFeed = function(url) {
 			},
 		},
 		parseAttributes: {
-			ipAddress: '(.+):[0-9]+',
+			ipAddress: function(ipAddress) {
+				var match = ipAddress.match(/([0-9]{1,3}[\.\-][0-9]{1,3}[\.\-][0-9]{1,3}[\.\-][0-9]{1,3})/);
+				if (!match || !match[1]) return null;
+				ipAddress = match[1].replace(/-/g, '.');
+				return ipAddress;
+			},
 			port: function(port) {
 				var match = port.match(/.+:([0-9]+)/);
 				if (!match || !match[1]) return null;
