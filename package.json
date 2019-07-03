@@ -11,8 +11,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint --config .eslintrc.js *.js sources/*.js test/**/*.js",
-    "prepublish": "npm run test # runs before `npm publish`",
-    "pretest": "npm run lint # runs before `npm test`",
+    "prepublish": "npm run test",
+    "pretest": "npm run lint",
     "test": "./node_modules/.bin/mocha test/unit/ --recursive --reporter spec --ui bdd"
   },
   "bin": {
