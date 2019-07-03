@@ -5,13 +5,9 @@ addons:
 
 language: node_js
 node_js:
+  - "12"
   - "10"
   - "8"
-  - "6"
-
-before_install:
-  - npm install -g mocha
-  - npm install -g eslint
 
 env:
   - TRAVIS_CI=1
