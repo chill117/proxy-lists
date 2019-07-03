@@ -37,12 +37,7 @@ describe('source.getProxies([options, ]cb)', function() {
 				switch (source.name) {
 
 					case 'bitproxies':
-						if (!process.env.PROXY_LISTS_BITPROXIES_API_KEY) {
-							console.log('Skipping this test because bitproxies API key was not found.');
-							return this.skip();
-						}
-						options.bitproxies = {};
-						options.bitproxies.apiKey = process.env.PROXY_LISTS_BITPROXIES_API_KEY;
+						options.bitproxies = { apiKey: 'TEST_API_KEY' };
 						break;
 
 					case 'kingproxies':
