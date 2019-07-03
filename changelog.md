@@ -1,5 +1,9 @@
 # Changelog
 
+* TBD:
+  * Fixed sources: blackhatworld
+* v1.16.1:
+  * Updated dependencies (vulnerability warnings)
 * v1.16.0:
   * Fixed-up several sources, getting anonymityLevel and protocols where possible.
 * v1.15.0:
