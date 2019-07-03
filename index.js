@@ -156,7 +156,15 @@ var ProxyLists = module.exports = {
 	toSourcerOptions: function(options) {
 
 		options = options || {};
-		var sourcerOptions = _.omit(options, 'filterMode', 'countries', 'countriesBlackList', 'protocols', 'anonymityLevels', 'ipTypes');
+
+		var sourcerOptions = _.omit(options,
+			'filterMode',
+			'countries',
+			'countriesBlackList',
+			'protocols',
+			'anonymityLevels',
+			'ipTypes'
+		);
 
 		sourcerOptions.filter = {
 			mode: options.filterMode || this.defaultOptions.filterMode,
@@ -171,7 +179,7 @@ var ProxyLists = module.exports = {
 		}, function(oldKey, newKey) {
 			var optionValue = options[oldKey];
 			if (!_.isUndefined(optionValue) && !_.isNull(optionValue) && _.isArray(optionValue)) {
-				sourcerOptions.filter.include[newKey] = _.clone(optionValue);
+				sourcerOptions.filter.include[newKey] = _.invoke(optionValue, 'toLowerCase');
 			}
 		});
 
@@ -180,7 +188,7 @@ var ProxyLists = module.exports = {
 		}, function(oldKey, newKey) {
 			var optionValue = options[oldKey];
 			if (!_.isUndefined(optionValue) && !_.isNull(optionValue) && _.isArray(optionValue)) {
-				sourcerOptions.filter.exclude[newKey] = _.clone(optionValue);
+				sourcerOptions.filter.exclude[newKey] = _.invoke(optionValue, 'toLowerCase');
 			}
 		});
 
