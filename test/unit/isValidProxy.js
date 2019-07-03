@@ -46,7 +46,7 @@ describe('isValidProxy(proxy)', function() {
 			{
 				ipAddress: '127.0.0.1',
 				port: 8888,
-				protocols: null
+				protocols: ['invalid'],
 			},
 			{
 				ipAddress: '127.0.0.1',
@@ -63,7 +63,7 @@ describe('isValidProxy(proxy)', function() {
 			{
 				ipAddress: '127.0.0.1',
 				port: 80,
-				anonymityLevel: null
+				anonymityLevel: 'invalid'
 			}
 		];
 
