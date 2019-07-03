@@ -16,9 +16,9 @@ module.exports = {
 	},
 	abstract: 'scraper-paginated-list',
 	config: {
-		startPageUrl: 'https://www.cool-proxy.net/proxies/http_proxy_list',
+		startPageUrl: 'https://www.cool-proxy.net/',
 		selectors: {
-			item: '#main table tbody tr',
+			item: '#main table tbody tr:not(:first-child)',
 			itemAttributes: {
 				ipAddress: 'td:nth-child(1)',
 				port: 'td:nth-child(2)',
@@ -28,8 +28,9 @@ module.exports = {
 		},
 		parseAttributes: {
 			ipAddress: function(ipAddress) {
-				var match = ipAddress.match(/([^)]+)$/);
-				return match && match[1] || null;
+				var match = ipAddress.match(/\)\)\)([0-9\.]+)$/);
+				if (!match) return null;
+				return match[1];
 			},
 			port: function(port) {
 				port = parseInt(port);
