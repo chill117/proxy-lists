@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var UserAgent = require('user-agents');
 
 var convert = {
 	anonymityLevels: {
@@ -25,7 +26,7 @@ module.exports = {
 					headers: {
 						'Accept': 'application/xml',
 						'Host': 'www.proxylists.net',
-						'User-Agent': 'Mozilla/5.0 Chrome/70.0.3000.60',
+						'User-Agent': (new UserAgent()).toString(),
 					}
 				},
 				paths: {

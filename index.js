@@ -214,13 +214,24 @@ var ProxyLists = module.exports = {
 			validateIp: true
 		});
 
-		// 'ipAddress' and 'port' are required.
-		return !!proxy.ipAddress && (!options.validateIp || this.isValidIpAddress(proxy.ipAddress)) &&
-				!!proxy.port && this.isValidPort(proxy.port) &&
-				// 'protocols' is not required, but if it's set it should be valid.
-				(_.isUndefined(proxy.protocols) || this.isValidProxyProtocols(proxy.protocols)) &&
-				// 'anonymityLevel' is not required, but if it's set it should be valid.
-				(_.isUndefined(proxy.anonymityLevel) || this.isValidAnonymityLevel(proxy.anonymityLevel));
+		// 'ipAddress' is required.
+		if (!proxy.ipAddress) return false;
+		// Valid 'ipAddress' is optional.
+		if (options.validateIp && !this.isValidIpAddress(proxy.ipAddress)) return false;
+		// 'port' is required.
+		if (!proxy.port) return false;
+		// Valid port is required.
+		if (!this.isValidPort(proxy.port)) return false;
+		// 'protocols' is not required, but if it's set it should be valid.
+		if (!_.isUndefined(proxy.protocols) && !_.isNull(proxy.protocols)) {
+			if (!this.isValidProxyProtocols(proxy.protocols)) return false;
+		}
+		// 'anonymityLevel' is not required, but if it's set it should be valid.
+		if (!_.isUndefined(proxy.anonymityLevel) && !_.isNull(proxy.anonymityLevel)) {
+			if (!this.isValidAnonymityLevel(proxy.anonymityLevel)) return false;
+		}
+		// Valid proxy.
+		return true;
 	},
 
 	isValidPort: function(port) {
