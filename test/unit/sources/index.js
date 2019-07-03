@@ -7,12 +7,21 @@ var ProxyLists = require('../../../index');
 
 describe('source.getProxies([options, ]cb)', function() {
 
-	_.each(ProxyLists.sourcer.sources, function(source, name) {
+	var sourceNames = (process.env.SOURCES && process.env.SOURCES.split(',')) || null;
 
-		describe('source.' + name, function() {
+	var sources = _.chain(ProxyLists.sourcer.sources).map(function(source, name) {
+		source = _.clone(source);
+		source.name = name;
+		return source;
+	}).filter(function(source) {
+		return !sourceNames || _.contains(sourceNames, source.name);
+	}).value();
 
-			it('should be a function', function() {
+	_.each(sources, function(source) {
 
+		describe('source.' + source.name, function() {
+
+			it('"getProxies" function exists', function() {
 				expect(source.getProxies).to.be.a('function');
 			});
 
@@ -25,7 +34,7 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				var options = {};
 
-				switch (name) {
+				switch (source.name) {
 
 					case 'bitproxies':
 						if (!process.env.PROXY_LISTS_BITPROXIES_API_KEY) {
@@ -49,7 +58,7 @@ describe('source.getProxies([options, ]cb)', function() {
 				this.timeout(30000);
 
 				// Don't validate IP addresses for some sources.
-				var validateIp = ['bitproxies', 'kingproxies'].indexOf(name) === -1;
+				var validateIp = ['bitproxies', 'kingproxies'].indexOf(source.name) === -1;
 
 				function isValidProxy(proxy) {
 
@@ -74,12 +83,13 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				options = _.extend(options, {
 					filterMode: 'loose',
-					anonymityLevels: ['anonymous', 'elite', 'transparent'],
-					protocols: ['http', 'https', 'socks4', 'socks5'],
-					sample: true
+					countries: null,
+					anonymityLevels: null,
+					protocols: null,
+					sample: true,
 				});
 
-				ProxyLists.getProxiesFromSource(name, options)
+				ProxyLists.getProxiesFromSource(source.name, options)
 					.on('data', function(proxies) {
 
 						gotProxies = true;
@@ -107,7 +117,7 @@ describe('source.getProxies([options, ]cb)', function() {
 							if (percentInvalid > 40) {
 								// Print up to 10 invalid proxies for debugging.
 								console.log(invalidProxies.slice(0, Math.min(10, invalidProxies.length)));
-								throw new Error('Too many invalid proxies from source: "' + name + '"');
+								throw new Error('Too many invalid proxies from source: "' + source.name + '"');
 							}
 
 						} catch (error) {
