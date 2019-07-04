@@ -11,6 +11,9 @@ GeoIpNativeLite.loadDataSync({ ipv4: true, ipv6: true, cache: true });
 var ProxyLists = module.exports = {
 
 	sourcer: new DataSourcer({
+		// browser: {
+		// 	headless: false,
+		// },
 		getDataMethodName: 'getProxies',
 		sourcesDir: process.env.PROXY_LISTS_SOURCES_DIR || path.join(__dirname, 'sources'),
 	}),

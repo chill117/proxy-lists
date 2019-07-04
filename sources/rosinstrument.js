@@ -21,7 +21,7 @@ var defineFeed = function(url) {
 		},
 		parseAttributes: {
 			ipAddress: function(ipAddress) {
-				var match = ipAddress.match(/([0-9]{1,3}[\.\-][0-9]{1,3}[\.\-][0-9]{1,3}[\.\-][0-9]{1,3})/);
+				var match = ipAddress.match(/([0-9]{1,3}[.-][0-9]{1,3}[.-][0-9]{1,3}[.-][0-9]{1,3})/);
 				if (!match || !match[1]) return null;
 				ipAddress = match[1].replace(/-/g, '.');
 				return ipAddress;

@@ -30,7 +30,8 @@ module.exports = {
 				return port;
 			},
 			protocols: function(protocols) {
-				return [protocols.trim().toLowerCase()];
+				protocols = protocols.trim();
+				return protocols && [protocols.toLowerCase()] || null;
 			},
 			anonymityLevel: function(anonymityLevel) {
 				return anonymityLevel.trim().toLowerCase();

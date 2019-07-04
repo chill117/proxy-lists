@@ -32,31 +32,12 @@ describe('source.getProxies([options, ]cb)', function() {
 					return this.skip();
 				}
 
-				var options = {};
-
-				switch (source.name) {
-
-					case 'bitproxies':
-						options.bitproxies = { apiKey: 'TEST_API_KEY' };
-						break;
-
-					case 'kingproxies':
-						if (!process.env.PROXY_LISTS_KINGPROXIES_API_KEY) {
-							console.log('Skipping this test because kingproxies API key was not found.');
-							return this.skip();
-						}
-						options.kingproxies = {};
-						options.kingproxies.apiKey = process.env.PROXY_LISTS_KINGPROXIES_API_KEY;
-						break;
-				}
-
 				this.timeout(30000);
 
 				// Don't validate IP addresses for some sources.
-				var validateIp = ['bitproxies', 'kingproxies'].indexOf(source.name) === -1;
+				var validateIp = ['bitproxies'].indexOf(source.name) === -1;
 
 				function isValidProxy(proxy) {
-
 					return ProxyLists.isValidProxy(proxy, {
 						validateIp: validateIp
 					});
@@ -75,6 +56,14 @@ describe('source.getProxies([options, ]cb)', function() {
 
 					done();
 				});
+
+				var options = { sourceOptions: {} };
+
+				switch (source.name) {
+					case 'bitproxies':
+						options.sourceOptions.bitproxies = { apiKey: 'TEST_API_KEY' };
+						break;
+				}
 
 				options = _.extend(options, {
 					filterMode: 'loose',
