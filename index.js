@@ -248,7 +248,7 @@ var ProxyLists = module.exports = {
 
 	isValidProxyProtocol: function(protocol) {
 
-		return _.iString(protocol) && _.contains(this._protocols, protocol);
+		return _.isString(protocol) && _.contains(this._protocols, protocol);
 	},
 
 	isValidAnonymityLevel: function(anonymityLevel) {

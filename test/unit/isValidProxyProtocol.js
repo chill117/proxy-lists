@@ -13,7 +13,7 @@ describe('isValidProxyProtocol(protocol)', function() {
 
 	it('should return FALSE when proxy protocol is not valid', function() {
 
-		var invalidProxyProtocols = [ 'invalid', '', 80 ];
+		var invalidProxyProtocols = [ 'invalid', '', 80, null ];
 
 		_.each(invalidProxyProtocols, function(invalidProxyProtocol) {
 			try {

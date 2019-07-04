@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var convert = {
 	protocols: {
 		'4': ['socks4'],
@@ -26,7 +28,13 @@ module.exports = {
 			nextLink: '#pages .current + a',
 		},
 		parseAttributes: {
-			port: '([0-9]+)[\n ]+$',
+			port: function(port) {
+				var match = port.trim().match(/([0-9]+)$/);
+				if (!match || !match[1]) return null;
+				port = parseInt(match[1]);
+				if (_.isNaN(port)) return null;
+				return port;
+			},
 			protocols: function(protocols) {
 				return convert.protocols[protocols.trim()] || [];
 			},
