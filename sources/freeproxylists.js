@@ -5,6 +5,7 @@ var async = require('async');
 var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter || require('events');
 var parseXml = require('xml2js').parseString;
+var UserAgent = require('user-agents');
 
 var baseUrl = 'http://www.freeproxylists.com';
 
@@ -70,26 +71,12 @@ var Source = module.exports = {
 
 	prepareStartingPageUrls: function(options) {
 
-		var startingPageUrls = {};
-
-		if (_.contains(options.protocols, 'http') || _.contains(options.protocols, 'https')) {
-
-			if (_.contains(options.anonymityLevels, 'transparent')) {
-				startingPageUrls.transparent = baseUrl + '/non-anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'anonymous')) {
-				startingPageUrls.anonymous = baseUrl + '/anonymous.html';
-			}
-
-			if (_.contains(options.anonymityLevels, 'elite')) {
-				startingPageUrls.elite = baseUrl + '/elite.html';
-			}
-		}
-
-		if (_.contains(options.protocols, 'socks4') || _.contains(options.protocols, 'socks5')) {
-			startingPageUrls.socks = baseUrl + '/socks.html';
-		}
+		var startingPageUrls = {
+			transparent: baseUrl + '/non-anonymous.html',
+			anonymous: baseUrl + '/anonymous.html',
+			elite: baseUrl + '/elite.html',
+			socks: baseUrl + '/socks.html',
+		};
 
 		if (options.sample) {
 			// When sampling, only use one URL.
@@ -103,13 +90,12 @@ var Source = module.exports = {
 
 		options.request({
 			method: 'GET',
-			url: startingPageUrl
+			url: startingPageUrl,
+			headers: {
+				'User-Agent': (new UserAgent()).toString(),
+			},
 		}, function(error, response, data) {
-
-			if (error) {
-				return cb(error);
-			}
-
+			if (error) return cb(error);
 			cb(null, data);
 		});
 	},
@@ -143,13 +129,12 @@ var Source = module.exports = {
 
 		options.request({
 			method: 'GET',
-			url: dataUrl
+			url: dataUrl,
+			headers: {
+				'User-Agent': (new UserAgent()).toString(),
+			},
 		}, function(error, response, data) {
-
-			if (error) {
-				return cb(error);
-			}
-
+			if (error) return cb(error);
 			cb(null, data, listUrl);
 		});
 	},
