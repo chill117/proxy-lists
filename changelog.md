@@ -1,7 +1,7 @@
 # Changelog
 
-* TBD:
-  * Fixed sources: blackhatworld
+* v1.17.0:
+  * Fixed sources
   * Can now use mixed upper/lower casing for filter options - see [#92](https://github.com/chill117/proxy-lists/issues/92) for more details
 * v1.16.1:
   * Updated dependencies (vulnerability warnings)
