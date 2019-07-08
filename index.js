@@ -117,7 +117,6 @@ var ProxyLists = module.exports = {
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
-	_countries: require('./countries'),
 	_ipTypes: ['ipv4', 'ipv6'],
 
 	// Get proxies from all sources.
