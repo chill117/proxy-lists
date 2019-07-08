@@ -45,26 +45,17 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				var gotProxies = false;
 				var cb = _.once(function(error) {
-
-					if (error) {
-						return done(error);
-					}
-
-					if (!gotProxies) {
-						return done(new Error('Expected to get some proxies.'));
-					}
-
+					if (error) return done(error);
+					if (!gotProxies) return done(new Error('Scraped zero proxies!'));
 					done();
 				});
 
 				var options = { sourceOptions: {} };
-
 				switch (source.name) {
 					case 'bitproxies':
 						options.sourceOptions.bitproxies = { apiKey: 'TEST_API_KEY' };
 						break;
 				}
-
 				options = _.extend(options, {
 					filterMode: 'loose',
 					countries: null,
@@ -75,35 +66,21 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				ProxyLists.getProxiesFromSource(source.name, options)
 					.on('data', function(proxies) {
-
 						gotProxies = true;
-
 						var invalidProxies = [];
-
 						try {
-
 							expect(proxies).to.be.an('array');
-
-							if (!(proxies.length > 0)) {
-								throw new Error('Expected at least one proxy.');
-							}
-							_.each(proxies, function(proxy) {
-								try {
-									expect(isValidProxy(proxy)).to.equal(true);
-								} catch (error) {
-									invalidProxies.push(proxy);
-								}
+							expect(proxies).to.not.have.length(0);
+							var invalidProxies = _.reject(proxies, function(proxy) {
+								return isValidProxy(proxy);
 							});
-
 							var percentInvalid = (invalidProxies.length / proxies.length) * 100;
-
 							// Allow up to 40% of the proxies to be invalid.
 							if (percentInvalid > 40) {
 								// Print up to 10 invalid proxies for debugging.
 								console.log(invalidProxies.slice(0, Math.min(10, invalidProxies.length)));
 								throw new Error('Too many invalid proxies from source: "' + source.name + '"');
 							}
-
 						} catch (error) {
 							return cb(error);
 						}
