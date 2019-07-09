@@ -10,9 +10,6 @@ var anonymityLevels = {
 
 module.exports = {
 	homeUrl: 'https://hidemyna.me/',
-	defaultOptions: {
-		numPagesToScrape: 10,
-	},
 	abstract: 'scraper-paginated-list',
 	config: {
 		startPageUrl: 'https://hidemyna.me/en/proxy-list',

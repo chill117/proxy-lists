@@ -15,9 +15,6 @@ var convert = {
 
 module.exports = {
 	homeUrl: 'https://free-proxy-list.net/',
-	defaultOptions: {
-		numPagesToScrape: 10,
-	},
 	abstract: 'scraper-paginated-list',
 	config: {
 		startPageUrl: 'https://free-proxy-list.net/',
@@ -29,7 +26,7 @@ module.exports = {
 				port: 'td:nth-child(2)',
 				protocols: 'td:nth-child(7)',
 			},
-			nextLink: '#proxylisttable .pagination li.active + li a',
+			nextLink: '#proxylisttable_next > a',
 		},
 		parseAttributes: {
 			anonymityLevel: function(anonymityLevel) {

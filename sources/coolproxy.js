@@ -24,14 +24,9 @@ module.exports = {
 				port: 'td:nth-child(2)',
 				anonymityLevel: 'td:nth-child(6)',
 			},
-			nextLink: '#main table .pagination span.current + span a',
+			nextLink: '#main ul.pagination > li:nth-last-child(2) > a',
 		},
 		parseAttributes: {
-			ipAddress: function(ipAddress) {
-				var match = ipAddress.match(/\)\)\)([0-9.]+)$/);
-				if (!match) return null;
-				return match[1];
-			},
 			port: function(port) {
 				port = parseInt(port);
 				if (_.isNaN(port)) return null;

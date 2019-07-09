@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
-var DataSourcer = require('data-sourcer');
+var DataSourcer = require('../data-sourcer');
 var GeoIpNativeLite = require('geoip-native-lite');
 var net = require('net');
 var path = require('path');
@@ -263,16 +263,3 @@ var ProxyLists = module.exports = {
 		return net.isIP(ipAddress) !== 0;
 	}
 };
-
-// For manual testing sources:
-// ProxyLists.getProxies({
-// 	sourcesWhiteList: ['rosinstrument'],
-// 	sample: true,
-// 	series: true,
-// })
-// 	.on('data', console.log)
-// 	.on('error', console.log)
-// 	.once('end', function() {
-// 		console.log('done!');
-// 		process.exit();
-// 	});

@@ -21,7 +21,13 @@ module.exports = {
 			'.PageNav nav .PageNavNext + a',
 		],
 		list: {
-			selector: 'li.message:last-child > div.messageInfo.primaryContent pre',
+			selector: [
+				'li.message:last-child > div.messageInfo.primaryContent pre',
+				'li.message:nth-last-child(2) > div.messageInfo.primaryContent pre',
+				'li.message:nth-last-child(3) > div.messageInfo.primaryContent pre',
+				'li.message:nth-last-child(4) > div.messageInfo.primaryContent pre',
+				'li.message:nth-last-child(5) > div.messageInfo.primaryContent pre',
+			].join(','),
 			parse: function(text) {
 				return text.trim().split('\n').map(function(item) {
 					var match = item.trim().match(/^([0-9.]+):([0-9]+)/);
