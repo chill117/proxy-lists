@@ -21,7 +21,7 @@ module.exports = {
 		},
 		parseAttributes: {
 			ipAddress: function(text) {
-				return text.split(':')[0];
+				return text.split(' ')[1].split(':')[0];
 			},
 			port: function(port) {
 				port = parseInt(port);
@@ -29,7 +29,7 @@ module.exports = {
 				return port;
 			},
 			anonymityLevel: function(anonymityLevel) {
-				return anonymityLevel.trim();
+				return anonymityLevel.trim().split(': ')[1];
 			},
 		},
 	},

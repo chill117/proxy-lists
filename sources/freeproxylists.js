@@ -16,7 +16,7 @@ module.exports = {
 			'http://www.freeproxylists.com/socks.html',
 		],
 		listLinks: [
-			'body > table > tbody > tr:nth-child(4) > td:nth-child(3) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:not(:first-child) > td:first-child > a',
+			'body > table > tbody > tr:nth-child(4) > td:nth-child(3) > table > tbody > tr:nth-child(2) > td table > tbody > tr:not(:first-child) > td:first-child > a',
 		],
 		items: {
 			selector: '#dataID > table tbody tr:nth-child(n+3)',
