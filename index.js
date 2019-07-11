@@ -263,16 +263,3 @@ var ProxyLists = module.exports = {
 		return net.isIP(ipAddress) !== 0;
 	}
 };
-
-// For manual testing sources:
-// ProxyLists.getProxies({
-// 	sourcesWhiteList: ['rosinstrument'],
-// 	sample: true,
-// 	series: true,
-// })
-// 	.on('data', console.log)
-// 	.on('error', console.log)
-// 	.once('end', function() {
-// 		console.log('done!');
-// 		process.exit();
-// 	});
