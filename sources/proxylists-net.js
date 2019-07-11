@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var UserAgent = require('user-agents');
 
 var convert = {
 	anonymityLevels: {
@@ -21,13 +20,12 @@ module.exports = {
 	config: {
 		feeds: [
 			{
+				url: 'http://www.proxylists.net/proxylists.xml',
 				requestOptions: {
-					url: 'http://www.proxylists.net/proxylists.xml',
 					headers: {
 						'Accept': 'application/xml',
 						'Host': 'www.proxylists.net',
-						'User-Agent': (new UserAgent()).toString(),
-					}
+					},
 				},
 				paths: {
 					group: 'rss/channel/0/item',

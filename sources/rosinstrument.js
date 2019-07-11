@@ -1,16 +1,10 @@
 'use strict';
 
 var _ = require('underscore');
-var UserAgent = require('user-agents');
 
 var defineFeed = function(url) {
 	return {
-		requestOptions: {
-			url: url,
-			headers: {
-				'User-Agent': (new UserAgent()).toString(),
-			}
-		},
+		url: url,
 		paths: {
 			group: 'rss/channel',
 			item: 'item',
