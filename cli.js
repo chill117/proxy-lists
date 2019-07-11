@@ -6,7 +6,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var program = require('commander');
 
-var pkg = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
+var pkg = require('./package.json');
 var ProxyLists = require('./index');
 var validOutputFormats = ['json', 'csv', 'txt'];
 var proxyFieldNames = ['source', 'ipAddress', 'port', 'country', 'protocols', 'anonymityLevel'];
@@ -111,66 +111,59 @@ program
 		var outputFormat = this.outputFormat;
 		var stdout = this.stdout;
 		var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
-		var writeStream;
-
+		var outputStream;
 		if (!stdout) {
-			writeStream = fs.createWriteStream(outputFile);
+			outputStream = fs.createWriteStream(outputFile);
 		} else {
 			outputFile = 'STDOUT';
-			writeStream = {
+			outputStream = {
 				write: function(data) {
 					process.stdout.write(data + '\n');
 				},
-				end: function() {},
-				on: function() {}
+				end: function(cb) {
+					cb();
+				},
+				on: function() {},
 			};
 		}
 
 		var logFile = process.cwd() + '/' + this.logFile;
 		var logStream = fs.createWriteStream(logFile);
-		function log(message) {
+		function log() {
+			var args = Array.prototype.slice.call(arguments);
+			var message = args.join(' ');
 			logStream.write(message + '\n');
 		}
 
 		var numWriting = 0;
 		var wroteData = false;
-		var ended = false;
 
 		function onData(data) {
 
 			if (!_.isEmpty(data)) {
-
 				numWriting++;
-
 				switch (outputFormat) {
-
 					case 'json':
-
 						data = _.map(data, function(row) {
 							return JSON.stringify(row);
 						});
-
-						writeStream.write((wroteData ? ',' : '') + data.join(','));
+						outputStream.write((wroteData ? ',' : '') + data.join(','));
 						break;
 
 					case 'csv':
-
 						data = _.map(data, function(row) {
 							return _.map(proxyFieldNames, function(fieldName) {
 								return _.isArray(row[fieldName]) ? row[fieldName].join('/') : row[fieldName];
 							}).join(',');
 						});
-
-						writeStream.write('\n' + data.join('\n'));
+						outputStream.write('\n' + data.join('\n'));
 						break;
 
 					case 'txt':
-
 						data = _.map(data, function(row) {
 							return row.ipAddress + ':' + row.port;
 						});
-
-						writeStream.write((wroteData ? '\n' : '') + data.join('\n'));
+						outputStream.write((wroteData ? '\n' : '') + data.join('\n'));
 						break;
 				}
 
@@ -178,57 +171,62 @@ program
 				wroteData = true;
 			}
 
-			endIfDoneWritingData();
+			tryEndOutput();
 		}
 
-		function onError(error) {
-
-			log(error);
-		}
-
-		function onEnd() {
-
-			ended = true;
-			endIfDoneWritingData();
-		}
-
-		function endIfDoneWritingData() {
-
-			if (ended && !numWriting) {
+		function tryEndOutput() {
+			if (canEndOutput()) {
 				endOutput();
 			}
 		}
 
+		function canEndOutput() {
+			return doneScrapingAllSources() && !isWriting();
+		}
+
+		function isWriting() {
+			return numWriting > 0;
+		}
+
+		function doneScrapingAllSources() {
+			return !!_.every(sources, function(source) {
+				return !!sourcesDone[source.name];
+			});
+		}
+
 		var startOutput = _.once(function() {
-
 			log('Writing output to ' + outputFile);
-
 			switch (outputFormat) {
-
 				case 'json':
-					writeStream.write('[');
+					outputStream.write('[');
 					break;
 
 				case 'csv':
-					writeStream.write(proxyFieldNames.join(','));
+					outputStream.write(proxyFieldNames.join(','));
 					break;
 			}
 		});
 
 		var endOutput = _.once(function() {
-
+			log('Closing output stream...');
 			switch (outputFormat) {
 				case 'json':
-					writeStream.write(']');
+					outputStream.write(']');
 					break;
 			}
+			outputStream.end(function() {
+				log('Output stream closed');
+				log('Closing log stream...');
+				if (logStream) {
+					logStream.end(done);
+				} else {
+					done();
+				}
+			});
+		});
 
-			writeStream.end();
-			log('Done!');
-
-			if (logStream) {
-				logStream.end();
-			}
+		var done = _.once(function() {
+			process.exit();
 		});
 
 		log('Getting proxies...');
@@ -246,10 +244,25 @@ program
 			'ipTypes'
 		]);
 
-		ProxyLists.getProxies(options)
-			.on('data', onData)
-			.on('error', onError)
-			.once('end', onEnd);
+		var sources = ProxyLists.listSources(options);
+		var sourceOptions = _.omit(options, 'sourcesWhiteList', 'sourcesBlackList');
+		var sourcesDone = {};
+		_.each(sources, function(source) {
+			try {
+				ProxyLists.getProxiesFromSource(source.name, sourceOptions)
+					.on('data', onData)
+					.on('error', function(error) {
+						log('Error while scraping', source.name + ':', error);
+					})
+					.once('end', function() {
+						log('Finished scraping from', source.name);
+						sourcesDone[source.name] = true;
+						tryEndOutput();
+					});
+			} catch (error) {
+				log(error);
+			}
+		});
 
 		startOutput();
 	});
