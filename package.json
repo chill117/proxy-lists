@@ -34,13 +34,13 @@
   },
   "dependencies": {
     "async": "3.1.0",
-    "cheerio": "1.0.0-rc.2",
-    "commander": "2.19.0",
+    "cheerio": "1.0.0-rc.3",
+    "commander": "2.20.0",
     "data-sourcer": "1.7.1",
-    "geoip-native-lite": "0.3.1",
+    "geoip-native-lite": "1.0.0",
     "request": "2.88.0",
     "underscore": "1.9.1",
-    "user-agents": "1.0.306",
+    "user-agents": "1.0.314",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
