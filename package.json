@@ -45,6 +45,7 @@
   "devDependencies": {
     "chai": "4.2.0",
     "eslint": "6.0.1",
+    "mkdirp": "0.5.1",
     "mocha": "6.1.4"
   }
 }

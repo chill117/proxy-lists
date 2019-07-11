@@ -1,5 +1,8 @@
 # Changelog
 
+* TBD:
+  * CLI:
+    * `--output-file` and `--log-file` can now accept absolute file paths
 * v1.18.0:
   * Fixed more sources
   * CLI tool now exits properly

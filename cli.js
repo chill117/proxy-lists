@@ -4,6 +4,7 @@
 
 var _ = require('underscore');
 var fs = require('fs');
+var path = require('path');
 var program = require('commander');
 
 var pkg = require('./package.json');
@@ -110,7 +111,16 @@ program
 
 		var outputFormat = this.outputFormat;
 		var stdout = this.stdout;
-		var outputFile = process.cwd() + '/' + this.outputFile + '.' + this.outputFormat;
+		var outputFile = this.outputFile;
+
+		if (outputFile.indexOf('/') === -1) {
+			outputFile = path.join(process.cwd(), outputFile);
+		}
+
+		if (!path.extname(outputFile)) {
+			outputFile = outputFile + '.' + outputFormat;
+		}
+
 		var outputStream;
 		if (!stdout) {
 			outputStream = fs.createWriteStream(outputFile);
@@ -127,7 +137,12 @@ program
 			};
 		}
 
-		var logFile = process.cwd() + '/' + this.logFile;
+		var logFile = this.logFile;
+
+		if (logFile.indexOf('/') === -1) {
+			logFile = path.join(process.cwd(), logFile);
+		}
+
 		var logStream = fs.createWriteStream(logFile);
 		function log() {
 			var args = Array.prototype.slice.call(arguments);

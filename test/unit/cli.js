@@ -7,7 +7,17 @@ var net = require('net');
 var path = require('path');
 var spawn = require('child_process').spawn;
 
-describe('Command-line interface', function() {
+var helpers = require('../helpers');
+
+describe.only('Command-line interface', function() {
+
+	beforeEach(function(done) {
+		helpers.createTmpDir(done);
+	});
+
+	afterEach(function(done) {
+		helpers.destroyTmpDir(done);
+	});
 
 	it('--help', function(done) {
 
@@ -36,21 +46,14 @@ describe('Command-line interface', function() {
 
 	describe('getProxies', function() {
 
-		var outputFilePath;
-		before(function() {
-			outputFilePath = path.join(__dirname, '..', '..', 'proxies.txt');
-		});
-
+		var filePaths;
 		var proxies;
 		before(function() {
+			filePaths = {
+				output: path.join(helpers.directories.tmp, 'proxies.txt'),
+				log: path.join(helpers.directories.tmp, 'proxy-lists.log'),
+			};
 			proxies = require('../fixtures/proxies');
-		});
-
-		afterEach(function(done) {
-			fs.stat(outputFilePath, function(error) {
-				if (error) return done();
-				fs.unlink(outputFilePath, done);
-			});
 		});
 
 		it('simple usage', function(done) {
@@ -63,20 +66,22 @@ describe('Command-line interface', function() {
 
 			var cmd = spawn('./cli.js', [
 				'getProxies',
-				'--sources-white-list', 'cli-test'
+				'--sources-white-list', 'cli-test',
+				'--output-file', filePaths.output,
+				'--log-file', filePaths.log,
 			], { env: env });
 
 			// When debugging, uncomment the following:
-			// cmd.stdout.on('data', function(data) {
-			// 	console.log(data.toString());
-			// });
+			cmd.stdout.on('data', function(data) {
+				console.log(data.toString());
+			});
 
 			cmd.stderr.on('data', function(error) {
 				done(new Error(error));
 			});
 
 			cmd.on('close', function() {
-				fs.readFile(outputFilePath, function(error, contents) {
+				fs.readFile(filePaths.output, function(error, contents) {
 					if (error) return done(error);
 					var hosts = _.compact(contents.toString().split('\n'));
 					expect(hosts).to.have.length(proxies.length);
