@@ -113,7 +113,7 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
 			expect(thrownError).to.not.be.undefined;
 			expect(thrownError instanceof Error).to.equal(true);
-			expect(thrownError.message).to.equal('Missing required option (`option.sourceOptions.' + name + '.something`): ' + requiredOptions.something);
+			expect(thrownError.message).to.equal('Missing required option (`sourceOptions.' + name + '.something`): ' + requiredOptions.something);
 		});
 	});
 });
