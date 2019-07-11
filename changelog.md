@@ -1,5 +1,9 @@
 # Changelog
 
+* v1.18.0:
+  * Fixed more sources
+  * CLI tool now exits properly
+  * No end event issue should be resolved - see [#90](https://github.com/chill117/proxy-lists/issues/90)
 * v1.17.0:
   * Fixed sources
   * Can now use mixed upper/lower casing for filter options - see [#92](https://github.com/chill117/proxy-lists/issues/92) for more details
