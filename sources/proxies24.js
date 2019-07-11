@@ -11,7 +11,7 @@ module.exports = {
 		],
 		listLinks: [
 			'.blog-posts .post-outer:nth-child(1) h3 a',
-			'.blog-posts .post-outer:nth-child(2) h3 a',
+			'.blog-posts .post-outer:nth-child(3) h3 a',
 			'#Feed1_feedItemListDisplay > ul > li:nth-child(1) > span > a',
 			'#Feed1_feedItemListDisplay > ul > li:nth-child(2) > span > a',
 			'#Feed1_feedItemListDisplay > ul > li:nth-child(3) > span > a',
@@ -20,7 +20,7 @@ module.exports = {
 			'#Feed2_feedItemListDisplay > ul > li:nth-child(3) > span > a',
 		],
 		list: {
-			selector: 'pre',
+			selector: 'pre,textarea',
 			parse: function(text) {
 				return text.trim().split('\n').map(function(item) {
 					var match = item.trim().match(/^([0-9.]+):([0-9]+)/);

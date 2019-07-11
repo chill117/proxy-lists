@@ -18,14 +18,14 @@ module.exports = {
 				protocols: 'td:nth-child(5)',
 				anonymityLevel: 'td:nth-child(6)',
 			},
-			nextLink: '.pagination li:nth-child(2) a',
+			nextLink: '.pagination button',
 		},
 		parseAttributes: {
-			ipAddress: '(.+):[0-9]+',
-			port: function(port) {
-				var match = port.match(/.+:([0-9]+)/);
-				if (!match || !match[1]) return null;
-				port = parseInt(match[1]);
+			ipAddress: function(text) {
+				return text.split(':')[0];
+			},
+			port: function(text) {
+				var port = parseInt(text.split(':')[1]);
 				if (_.isNaN(port)) return null;
 				return port;
 			},
