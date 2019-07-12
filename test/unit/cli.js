@@ -9,7 +9,7 @@ var spawn = require('child_process').spawn;
 
 var helpers = require('../helpers');
 
-describe.only('Command-line interface', function() {
+describe('Command-line interface', function() {
 
 	beforeEach(function(done) {
 		helpers.createTmpDir(done);
