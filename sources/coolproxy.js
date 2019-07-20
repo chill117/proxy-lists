@@ -9,10 +9,19 @@ var convert = {
 	},
 };
 
+var ProxyLists;
+
 module.exports = {
 	homeUrl: 'https://www.cool-proxy.net/',
 	defaultOptions: {
-		numPagesToScrape: 10,
+		waitForValidData: {
+			test: function(item) {
+				ProxyLists = ProxyLists || require('../index');
+				return ProxyLists.isValidProxy(item);
+			},
+			checkFrequency: 50,
+			timeout: 2000,
+		},
 	},
 	abstract: 'scraper-paginated-list',
 	config: {
@@ -27,6 +36,11 @@ module.exports = {
 			nextLink: '#main ul.pagination > li:nth-last-child(2) > a',
 		},
 		parseAttributes: {
+			ipAddress: function(ipAddress) {
+				if (!ipAddress) return null;
+				var match = ipAddress && ipAddress.match(/([0-9.]+)/) || null;
+				return match && match[1] || null;
+			},
 			port: function(port) {
 				port = parseInt(port);
 				if (_.isNaN(port)) return null;

@@ -21,19 +21,29 @@ module.exports = {
 			nextLink: '.pagination button',
 		},
 		parseAttributes: {
-			ipAddress: function(text) {
-				return text.split(':')[0];
+			ipAddress: function(ipAddress) {
+				if (!ipAddress) return null;
+				if (ipAddress.indexOf(':') !== -1) {
+					ipAddress = ipAddress.split(':')[0];
+				}
+				return ipAddress;
 			},
-			port: function(text) {
-				var port = parseInt(text.split(':')[1]);
+			port: function(port) {
+				if (!port) return null;
+				if (port.indexOf(':') !== -1) {
+					port = port.split(':')[1];
+				}
+				port = parseInt(port);
 				if (_.isNaN(port)) return null;
 				return port;
 			},
 			protocols: function(protocols) {
+				if (!protocols) return null;
 				protocols = protocols.trim();
 				return protocols && [protocols.toLowerCase()] || null;
 			},
 			anonymityLevel: function(anonymityLevel) {
+				if (!anonymityLevel) return null;
 				return anonymityLevel.trim().toLowerCase();
 			},
 		},

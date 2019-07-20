@@ -5,7 +5,9 @@ var _ = require('underscore');
 module.exports = {
 	homeUrl: 'http://www.freeproxylists.com/',
 	abstract: 'list-crawler',
-	defaultOptions: {},
+	defaultOptions: {
+		defaultTimeout: 5000,
+	},
 	config: {
 		startUrls: [
 			'http://www.freeproxylists.com/elite.html',

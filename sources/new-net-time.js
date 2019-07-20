@@ -1,13 +1,21 @@
 'use strict';
 
 var _ = require('underscore');
+var ProxyLists;
 
 module.exports = {
 	homeUrl: 'http://www.nntime.com/',
-	defaultOptions: {
-		numPagesToScrape: 10,
-	},
 	abstract: 'scraper-paginated-list',
+	defaultOptions: {
+		waitForValidData: {
+			test: function(item) {
+				ProxyLists = ProxyLists || require('../index');
+				return ProxyLists.isValidProxy(item);
+			},
+			checkFrequency: 50,
+			timeout: 2000,
+		},
+	},
 	config: {
 		startPageUrl: 'http://www.nntime.com/',
 		selectors: {
@@ -24,6 +32,7 @@ module.exports = {
 				return match && match[1] || null;
 			},
 			port: function(port) {
+				if (!port) return null;
 				var match = port.match(/:([0-9]+)$/);
 				if (!match || !match[1]) return null;
 				port = parseInt(match[1]);

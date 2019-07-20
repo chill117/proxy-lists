@@ -29,6 +29,7 @@ module.exports = {
 		},
 		parseAttributes: {
 			port: function(port) {
+				if (!port) return null;
 				var match = port.trim().match(/([0-9]+)$/);
 				if (!match || !match[1]) return null;
 				port = parseInt(match[1]);
@@ -36,6 +37,7 @@ module.exports = {
 				return port;
 			},
 			protocols: function(protocols) {
+				if (!protocols) return null;
 				return convert.protocols[protocols.trim()] || [];
 			},
 		},
