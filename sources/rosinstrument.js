@@ -11,6 +11,8 @@ var defineFeed = function(url) {
 			attributes: {
 				ipAddress: 'title/0',
 				port: 'title/0',
+				anonymityLevel: 'description/0',
+				protocols: 'description/0',
 			},
 		},
 		parseAttributes: {
@@ -28,6 +30,28 @@ var defineFeed = function(url) {
 				port = parseInt(match[1]);
 				if (_.isNaN(port)) return null;
 				return port;
+			},
+			anonymityLevel: function(anonymityLevel) {
+				if (!anonymityLevel) return null;
+				var match = anonymityLevel.match(/(anonym|elite)/i);
+				if (!match || !match[1]) return null;
+				switch (match[1].toLowerCase()) {
+					case 'anonym':
+						return 'anonymous';
+					case 'elite':
+						return 'elite';
+				}
+				return null;
+			},
+			protocols: function(protocols) {
+				if (!protocols) return null;
+				var match = protocols.match(/(ssl|socks)/i);
+				if (!match || !match[1]) return null;
+				switch (match[1].toLowerCase()) {
+					case 'socks':
+						return ['socks4', 'socks5'];
+				}
+				return null;
 			},
 		},
 	};
