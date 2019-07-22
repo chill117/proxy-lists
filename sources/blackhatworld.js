@@ -5,6 +5,9 @@ var _ = require('underscore');
 module.exports = {
 	homeUrl: 'https://www.blackhatworld.com',
 	abstract: 'list-crawler',
+	defaultOptions: {
+		defaultTimeout: 5000,
+	},
 	config: {
 		startUrls: [
 			'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
