@@ -6,7 +6,7 @@ module.exports = {
 	homeUrl: 'http://www.freeproxylists.com/',
 	abstract: 'list-crawler',
 	defaultOptions: {
-		defaultTimeout: 5000,
+		defaultTimeout: 10000,
 	},
 	config: {
 		startUrls: [
@@ -34,6 +34,40 @@ module.exports = {
 						var port = parseInt(text);
 						if (_.isNaN(port)) return null;
 						return port;
+					},
+				},
+				{
+					name: 'anonymityLevel',
+					selector: 'title',
+					parse: function(anonymityLevel) {
+						if (!anonymityLevel) return null;
+						var match = anonymityLevel.match(/(anonymous|elite|spoiled)/i);
+						if (!match || !match[1]) return null;
+						switch (match[1].toLowerCase()) {
+							case 'anonymous':
+								return 'anonymous';
+							case 'elite':
+								return 'elite';
+							case 'spoiled':
+								return 'transparent';
+						}
+						return null;
+					},
+				},
+				{
+					name: 'protocols',
+					selector: 'title',
+					parse: function(protocols) {
+						if (!protocols) return null;
+						var match = protocols.match(/(ssl|socks)/i);
+						if (!match || !match[1]) return null;
+						switch (match[1].toLowerCase()) {
+							case 'ssl':
+								return ['https'];
+							case 'socks':
+								return ['socks4', 'socks5'];
+						}
+						return null;
 					},
 				},
 			],
