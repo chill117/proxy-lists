@@ -11,6 +11,9 @@ var anonymityLevels = {
 module.exports = {
 	homeUrl: 'https://hidemyna.me/',
 	abstract: 'scraper-paginated-list',
+	defaultOptions: {
+		defaultTimeout: 10000,
+	},
 	config: {
 		startPageUrl: 'https://hidemyna.me/en/proxy-list',
 		selectors: {
