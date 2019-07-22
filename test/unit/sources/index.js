@@ -62,6 +62,7 @@ describe('source.getProxies([options, ]cb)', function() {
 					anonymityLevels: null,
 					protocols: null,
 					sample: true,
+					sampleDataLimit: 200,
 				});
 
 				ProxyLists.getProxiesFromSource(source.name, options)
