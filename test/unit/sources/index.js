@@ -32,7 +32,7 @@ describe('source.getProxies([options, ]cb)', function() {
 					return this.skip();
 				}
 
-				this.timeout(30000);
+				this.timeout(60000);
 
 				// Don't validate IP addresses for some sources.
 				var validateIp = ['bitproxies'].indexOf(source.name) === -1;
@@ -42,13 +42,6 @@ describe('source.getProxies([options, ]cb)', function() {
 						validateIp: validateIp
 					});
 				}
-
-				var gotProxies = false;
-				var cb = _.once(function(error) {
-					if (error) return done(error);
-					if (!gotProxies) return done(new Error('Scraped zero proxies!'));
-					done();
-				});
 
 				var options = { sourceOptions: {} };
 				switch (source.name) {
@@ -65,11 +58,18 @@ describe('source.getProxies([options, ]cb)', function() {
 					sampleDataLimit: 200,
 				});
 
+				var proxies = [];
+				var errorMessages = [];
 				ProxyLists.getProxiesFromSource(source.name, options)
-					.on('data', function(proxies) {
-						gotProxies = true;
-						var invalidProxies = [];
+					.on('data', function(_proxies) {
+						proxies.push.apply(proxies, _proxies);
+					})
+					.on('error', function(error) {
+						errorMessages.push(error.message);
+					})
+					.once('end', function() {
 						try {
+							expect(errorMessages).to.deep.equal([]);
 							expect(proxies).to.be.an('array');
 							expect(proxies).to.not.have.length(0);
 							var invalidProxies = _.reject(proxies, function(proxy) {
@@ -83,11 +83,10 @@ describe('source.getProxies([options, ]cb)', function() {
 								throw new Error('Too many invalid proxies from source: "' + source.name + '"');
 							}
 						} catch (error) {
-							return cb(error);
+							return done(error);
 						}
-					})
-					.on('error', cb)
-					.once('end', cb);
+						done();
+					});
 			});
 		});
 	});
