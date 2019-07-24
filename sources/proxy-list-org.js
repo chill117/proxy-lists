@@ -10,6 +10,7 @@ var convert = {
 	},
 	protocols: {
 		'https': ['https'],
+		'http': ['http'],
 		'-': ['http'],
 	},
 };
@@ -30,41 +31,60 @@ var parseProxyText = function(text) {
 module.exports = {
 	homeUrl: 'https://proxy-list.org/',
 	defaultOptions: {
-		numPagesToScrape: 10,
+		defaultTimeout: 5000,
 	},
-	abstract: 'scraper-paginated-list',
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'https://proxy-list.org/english/index.php',
-		selectors: {
-			item: '#proxy-table .table ul',
-			itemAttributes: {
-				ipAddress: 'li.proxy',
-				port: 'li.proxy',
-				protocols: 'li.https',
-				anonymityLevel: 'li.type',
+		lists: [{
+			link: {
+				url: 'https://proxy-list.org/english/index.php',
 			},
-			nextLink: '.pagination li:nth-child(2) a, .table-menu a.next',
-		},
-		parseAttributes: {
-			anonymityLevel: function(anonymityLevel) {
-				anonymityLevel = anonymityLevel && anonymityLevel.trim().toLowerCase() || null;
-				return anonymityLevel && convert.anonymityLevels[anonymityLevel] || null;
+			items: [{
+				selector: '#proxy-table .table ul',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'li.proxy',
+						parse: function(text) {
+							var addr = parseProxyText(text);
+							return addr && addr.ipAddress || null;
+						},
+					},
+					{
+						name: 'port',
+						selector: 'li.proxy',
+						parse: function(text) {
+							var addr = parseProxyText(text);
+							if (!addr || !addr.port) return null;
+							var port = parseInt(addr.port);
+							if (!port || _.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'li.type',
+						parse: function(text) {
+							if (!text) return null;
+							return convert.anonymityLevels[text.trim().toLowerCase()] || null;
+						},
+					},
+					{
+						name: 'protocols',
+						selector: 'li.https',
+						parse: function(text) {
+							if (!text) return null;
+							return convert.protocols[text.trim().toLowerCase()] || null;
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '.pagination li:nth-child(2) a, .table-menu a.next',
+				},
 			},
-			ipAddress: function(ipAddress) {
-				var addr = parseProxyText(ipAddress);
-				return addr && addr.ipAddress || null;
-			},
-			port: function(port) {
-				var addr = parseProxyText(port);
-				if (!addr || !addr.port) return null;
-				port = parseInt(addr.port);
-				if (!port || _.isNaN(port)) return null;
-				return port;
-			},
-			protocols: function(protocols) {
-				protocols = protocols && protocols.trim().toLowerCase() || null;
-				return protocols && convert.protocols[protocols] || null;
-			},
-		},
+		}],
 	},
 };
+

@@ -14,41 +14,54 @@ var ProxyLists;
 module.exports = {
 	homeUrl: 'https://www.cool-proxy.net/',
 	defaultOptions: {
-		waitForValidData: {
+		scraping: {
 			test: function(item) {
 				ProxyLists = ProxyLists || require('../index');
 				return ProxyLists.isValidProxy(item);
 			},
-			checkFrequency: 50,
-			timeout: 2000,
 		},
 	},
-	abstract: 'scraper-paginated-list',
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'https://www.cool-proxy.net/',
-		selectors: {
-			item: '#main table tbody tr:not(:first-child)',
-			itemAttributes: {
-				ipAddress: 'td:nth-child(1)',
-				port: 'td:nth-child(2)',
-				anonymityLevel: 'td:nth-child(6)',
+		lists: [{
+			link: {
+				url: 'https://www.cool-proxy.net/',
 			},
-			nextLink: '#main ul.pagination > li:nth-last-child(2) > a',
-		},
-		parseAttributes: {
-			ipAddress: function(ipAddress) {
-				if (!ipAddress) return null;
-				var match = ipAddress && ipAddress.match(/([0-9.]+)/) || null;
-				return match && match[1] || null;
+			items: [{
+				selector: '#main table tbody tr:not(:first-child)',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(1)',
+						parse: function(text) {
+							if (!text) return null;
+							var match = text && text.match(/([0-9.]+)/) || null;
+							return match && match[1] || null;
+						},
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							var port = parseInt(text);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(6)',
+						parse: function(text) {
+							return text && convert.anonymityLevels[text.trim()] || null;
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '#main ul.pagination > li:nth-last-child(2) > a',
+				},
 			},
-			port: function(port) {
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
-			},
-			anonymityLevel: function(anonymityLevel) {
-				return anonymityLevel && convert.anonymityLevels[anonymityLevel.trim()] || null;
-			},
-		},
+		}],
 	},
 };

@@ -5,48 +5,63 @@ var ProxyLists;
 
 module.exports = {
 	homeUrl: 'https://premproxy.com/',
-	abstract: 'scraper-paginated-list',
 	defaultOptions: {
-		waitForValidData: {
+		defaultTimeout: 5000,
+		scraping: {
 			test: function(item) {
 				ProxyLists = ProxyLists || require('../index');
 				return ProxyLists.isValidProxy(item);
 			},
-			checkFrequency: 50,
-			timeout: 2000,
 		},
 	},
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'https://premproxy.com/list/',
-		selectors: {
-			item: '#proxylistt tbody tr[class]',
-			itemAttributes: {
-				ipAddress: 'td:first-child',
-				port: 'td:first-child',
-				anonymityLevel: 'td:nth-child(2)',
+		lists: [{
+			link: {
+				url: 'https://premproxy.com/list/',
 			},
-			nextLink: '#navbar ul.pagination li:last-child > a',
-		},
-		parseAttributes: {
-			ipAddress: function(ipAddress) {
-				if (!ipAddress) return null;
-				if (ipAddress.indexOf(':') !== -1) {
-					ipAddress = ipAddress.split(':')[0];
-				}
-				return ipAddress;
+			items: [{
+				selector: '#proxylistt tbody tr[class]',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(1)',
+						parse: function(ipAddress) {
+							if (!ipAddress) return null;
+							if (ipAddress.indexOf(':') !== -1) {
+								ipAddress = ipAddress.split(':')[0];
+							}
+							return ipAddress;
+						},
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(1)',
+						parse: function(port) {
+							if (!port) return null;
+							if (port.indexOf(':') !== -1) {
+								port = port.split(':')[1];
+							}
+							port = parseInt(port);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(2)',
+						parse: function(anonymityLevel) {
+							if (!anonymityLevel) return null;
+							return anonymityLevel.trim();
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '#navbar ul.pagination li:last-child > a',
+				},
 			},
-			port: function(port) {
-				if (!port) return null;
-				if (port.indexOf(':') !== -1) {
-					port = port.split(':')[1];
-				}
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
-			},
-			anonymityLevel: function(anonymityLevel) {
-				return anonymityLevel.trim();
-			},
-		},
+		}],
 	},
 };

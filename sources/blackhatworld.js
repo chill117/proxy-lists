@@ -2,27 +2,25 @@
 
 var _ = require('underscore');
 
-module.exports = {
-	homeUrl: 'https://www.blackhatworld.com',
-	abstract: 'list-crawler',
-	defaultOptions: {
-		defaultTimeout: 5000,
-	},
-	config: {
-		startUrls: [
-			'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
-			'https://www.blackhatworld.com/seo/gscraper-proxies.703493/',
-			'https://www.blackhatworld.com/seo/port-scanned-proxies.988868/',
-			'https://www.blackhatworld.com/seo/gsa-proxies-proxygo.830325/',
-			'https://www.blackhatworld.com/seo/socks-proxies-occasional-update.803039/',
-			'https://www.blackhatworld.com/seo/ssl-proxies-occasional-update.927669/',
-			'https://www.blackhatworld.com/seo/anonymous-proxies.806981/',
-			'https://www.blackhatworld.com/seo/tunnel-connect-proxies.951125/',
-		],
-		listLinks: [
-			'.PageNav nav .PageNavNext + a',
-		],
-		list: {
+var startUrls = [
+	'https://www.blackhatworld.com/seo/100-scrapebox-proxies.297574/',
+	'https://www.blackhatworld.com/seo/gscraper-proxies.703493/',
+	'https://www.blackhatworld.com/seo/port-scanned-proxies.988868/',
+	'https://www.blackhatworld.com/seo/gsa-proxies-proxygo.830325/',
+	'https://www.blackhatworld.com/seo/socks-proxies-occasional-update.803039/',
+	'https://www.blackhatworld.com/seo/ssl-proxies-occasional-update.927669/',
+	'https://www.blackhatworld.com/seo/anonymous-proxies.806981/',
+	'https://www.blackhatworld.com/seo/tunnel-connect-proxies.951125/',
+];
+
+var listDefinition = {
+	// Each list will have its own start URL.
+	link: { url: null },
+	lists: [{
+		link: {
+			selector: '.PageNav nav .PageNavNext + a',
+		},
+		items: [{
 			selector: [
 				'li.message:last-child > div.messageInfo.primaryContent pre',
 				'li.message:nth-last-child(2) > div.messageInfo.primaryContent pre',
@@ -43,6 +41,21 @@ module.exports = {
 					};
 				}).filter(Boolean);
 			},
-		},
+		}],
+	}],
+};
+
+module.exports = {
+	homeUrl: 'https://www.blackhatworld.com',
+	abstract: 'list-crawler',
+	defaultOptions: {
+		defaultTimeout: 5000,
+	},
+	config: {
+		lists: _.map(startUrls, function(startUrl) {
+			return _.extend({}, listDefinition, {
+				link: { url: startUrl },
+			});
+		}),
 	},
 };

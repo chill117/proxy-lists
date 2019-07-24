@@ -15,46 +15,62 @@ var convert = {
 
 module.exports = {
 	homeUrl: 'http://www.nntime.com/',
-	abstract: 'scraper-paginated-list',
 	defaultOptions: {
-		waitForValidData: {
+		defaultTimeout: 5000,
+		scraping: {
 			test: function(item) {
 				ProxyLists = ProxyLists || require('../index');
 				return ProxyLists.isValidProxy(item);
 			},
-			checkFrequency: 50,
-			timeout: 2000,
 		},
 	},
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'http://www.nntime.com/',
-		selectors: {
-			item: '#proxylist tbody tr',
-			itemAttributes: {
-				ipAddress: 'td:nth-child(2)',
-				port: 'td:nth-child(2)',
-				anonymityLevel: 'td:nth-child(3)',
+		lists: [{
+			link: {
+				url: 'http://www.nntime.com/',
 			},
-			nextLink: '#navigation .selected + a',
-		},
-		parseAttributes: {
-			ipAddress: function(ipAddress) {
-				var match = ipAddress.match(/^(.+)document/);
-				return match && match[1] || null;
+			items: [{
+				selector: '#proxylist tbody tr',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							if (!text) return null;
+							var match = text.match(/^(.+)document/);
+							return match && match[1] || null;
+						},
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							if (!text) return null;
+							var match = text.match(/:([0-9]+)$/);
+							if (!match || !match[1]) return null;
+							var port = parseInt(match[1]);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(3)',
+						parse: function(text) {
+							if (!text) return null;
+							return convert.anonymityLevels[text.trim().toLowerCase()] || null;
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '#navigation a:nth-last-of-type(1)',
+				},
 			},
-			port: function(port) {
-				if (!port) return null;
-				var match = port.match(/:([0-9]+)$/);
-				if (!match || !match[1]) return null;
-				port = parseInt(match[1]);
-				if (_.isNaN(port)) return null;
-				return port;
-			},
-			anonymityLevel: function(anonymityLevel) {
-				if (!anonymityLevel) return null;
-				anonymityLevel = anonymityLevel.trim().toLowerCase();
-				return anonymityLevel && convert.anonymityLevels[anonymityLevel] || null;
-			},
-		},
+		}],
 	},
 };
+
+

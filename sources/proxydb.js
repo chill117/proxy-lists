@@ -5,47 +5,64 @@ var _ = require('underscore');
 module.exports = {
 	homeUrl: 'http://proxydb.net/',
 	defaultOptions: {
-		numPagesToScrape: 10,
+		defaultTimeout: 5000,
 	},
-	abstract: 'scraper-paginated-list',
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'http://proxydb.net/',
-		selectors: {
-			item: 'table tbody tr',
-			itemAttributes: {
-				ipAddress: 'td:first-child a',
-				port: 'td:first-child a',
-				protocols: 'td:nth-child(5)',
-				anonymityLevel: 'td:nth-child(6)',
+		lists: [{
+			link: {
+				url: 'http://proxydb.net/',
 			},
-			nextLink: '.pagination button',
-		},
-		parseAttributes: {
-			ipAddress: function(ipAddress) {
-				if (!ipAddress) return null;
-				if (ipAddress.indexOf(':') !== -1) {
-					ipAddress = ipAddress.split(':')[0];
-				}
-				return ipAddress;
+			items: [{
+				selector: 'table tbody tr',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:first-child a',
+						parse: function(text) {
+							if (!text) return null;
+							if (text.indexOf(':') !== -1) {
+								text = text.split(':')[0];
+							}
+							return text;
+						},
+					},
+					{
+						name: 'port',
+						selector: 'td:first-child a',
+						parse: function(text) {
+							if (!text) return null;
+							if (text.indexOf(':') !== -1) {
+								text = text.split(':')[1];
+							}
+							var port = parseInt(text);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(6)',
+						parse: function(text) {
+							if (!text) return null;
+							return text.trim().toLowerCase();
+						},
+					},
+					{
+						name: 'protocols',
+						selector: 'td:nth-child(5)',
+						parse: function(text) {
+							if (!text) return null;
+							return [text.trim().toLowerCase()];
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '.pagination button',
+				},
 			},
-			port: function(port) {
-				if (!port) return null;
-				if (port.indexOf(':') !== -1) {
-					port = port.split(':')[1];
-				}
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
-			},
-			protocols: function(protocols) {
-				if (!protocols) return null;
-				protocols = protocols.trim();
-				return protocols && [protocols.toLowerCase()] || null;
-			},
-			anonymityLevel: function(anonymityLevel) {
-				if (!anonymityLevel) return null;
-				return anonymityLevel.trim().toLowerCase();
-			},
-		},
+		}],
 	},
 };

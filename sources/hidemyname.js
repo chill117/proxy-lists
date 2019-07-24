@@ -2,42 +2,64 @@
 
 var _ = require('underscore');
 
-var anonymityLevels = {
-	'No': 'transparent',
-	'Medium': 'anonymous',
-	'High': 'elite',
+var convert = {
+	anonymityLevels: {
+		'no': 'transparent',
+		'medium': 'anonymous',
+		'high': 'elite',
+	},
 };
 
 module.exports = {
 	homeUrl: 'https://hidemyna.me/',
-	abstract: 'scraper-paginated-list',
 	defaultOptions: {
 		defaultTimeout: 10000,
 	},
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'https://hidemyna.me/en/proxy-list',
-		selectors: {
-			item: '.proxy__t tbody tr',
-			itemAttributes: {
-				ipAddress: 'td:nth-child(1)',
-				port: 'td:nth-child(2)',
-				protocols: 'td:nth-child(5)',
-				anonymityLevel: 'td:nth-child(6)',
+		lists: [{
+			link: {
+				url: 'https://hidemyna.me/en/proxy-list',
 			},
-			nextLink: '.proxy__pagination .is-active + li a',
-		},
-		parseAttributes: {
-			port: function(port) {
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
+			items: [{
+				selector: '.proxy__t tbody tr',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(1)',
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							var port = parseInt(text);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(6)',
+						parse: function(text) {
+							if (!text) return null;
+							return convert.anonymityLevels[text.trim().toLowerCase()] || null;
+						},
+					},
+					{
+						name: 'protocols',
+						selector: 'td:nth-child(5)',
+						parse: function(text) {
+							if (!text) return null;
+							return [text.trim().toLowerCase()];
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '.proxy__pagination .is-active + li a',
+				},
 			},
-			protocols: function(protocols) {
-				return [protocols.trim().toLowerCase()];
-			},
-			anonymityLevel: function(anonymityLevel) {
-				return anonymityLevels[anonymityLevel.trim()] || null;
-			},
-		},
+		}],
 	},
 };

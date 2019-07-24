@@ -5,26 +5,37 @@ var _ = require('underscore');
 module.exports = {
 	homeUrl: 'http://www.workingproxies.org/',
 	defaultOptions: {
-		numPagesToScrape: 10,
+		defaultTimeout: 5000,
 	},
-	abstract: 'scraper-paginated-list',
+	abstract: 'list-crawler',
 	config: {
-		startPageUrl: 'http://www.workingproxies.org/',
-		selectors: {
-			item: '.proxies tbody tr:not(:last-child)',
-			itemAttributes: {
-				ipAddress: 'td:nth-child(1)',
-				port: 'td:nth-child(2)',
+		lists: [{
+			link: {
+				url: 'http://www.workingproxies.org/',
 			},
-			nextLink: '.paginator .page.current + .page:not(.current) a',
-		},
-		parseAttributes: {
-			port: function(port) {
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
+			items: [{
+				selector: '.proxies tbody tr:not(:last-child)',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(1)',
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							var port = parseInt(text);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '.paginator .page.current + .page:not(.current) a',
+				},
 			},
-		},
+		}],
 	},
 };
-

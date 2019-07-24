@@ -9,39 +9,63 @@ var convert = {
 		'transparent': 'transparent',
 	},
 	protocols: {
-		'yes': ['https'],
+		'yes': 'https',
 	},
 };
 
 module.exports = {
 	homeUrl: 'https://free-proxy-list.net/',
-	abstract: 'scraper-paginated-list',
+	abstract: 'list-crawler',
+	defaultOptions: {
+		defaultTimeout: 5000,
+	},
 	config: {
-		startPageUrl: 'https://free-proxy-list.net/',
-		selectors: {
-			item: '#proxylisttable tbody tr',
-			itemAttributes: {
-				anonymityLevel: 'td:nth-child(5)',
-				ipAddress: 'td:nth-child(1)',
-				port: 'td:nth-child(2)',
-				protocols: 'td:nth-child(7)',
+		lists: [{
+			link: {
+				url: 'https://free-proxy-list.net/',
 			},
-			nextLink: '#proxylisttable_next > a',
-		},
-		parseAttributes: {
-			anonymityLevel: function(anonymityLevel) {
-				anonymityLevel = anonymityLevel && anonymityLevel.trim().toLowerCase() || null;
-				return anonymityLevel && convert.anonymityLevels[anonymityLevel] || null;
+			items: [{
+				selector: '#proxylisttable tbody tr',
+				attributes: [
+					{
+						name: 'ipAddress',
+						selector: 'td:nth-child(1)',
+					},
+					{
+						name: 'port',
+						selector: 'td:nth-child(2)',
+						parse: function(text) {
+							var port = parseInt(text);
+							if (_.isNaN(port)) return null;
+							return port;
+						},
+					},
+					{
+						name: 'anonymityLevel',
+						selector: 'td:nth-child(5)',
+						parse: function(text) {
+							if (!text) return null;
+							text = text.trim().toLowerCase();
+							return convert.anonymityLevels[text] || null;
+						},
+					},
+					{
+						name: 'protocols',
+						selector: 'td:nth-child(7)',
+						parse: function(text) {
+							if (!text) return null;
+							text = text.trim().toLowerCase();
+							var protocol = convert.protocols[text] || 'http';
+							return [protocol];
+						},
+					},
+				],
+			}],
+			pagination: {
+				next: {
+					selector: '#proxylisttable_next > a',
+				},
 			},
-			port: function(port) {
-				port = parseInt(port);
-				if (_.isNaN(port)) return null;
-				return port;
-			},
-			protocols: function(protocols) {
-				protocols = protocols && protocols.trim().toLowerCase() || null;
-				return protocols && convert.protocols[protocols] || ['http'];
-			},
-		},
+		}],
 	},
 };
