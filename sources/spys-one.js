@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var ProxyLists;
 
 var convert = {
 	anonymityLevels: {

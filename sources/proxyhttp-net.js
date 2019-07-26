@@ -36,7 +36,6 @@ module.exports = {
 						name: 'port',
 						selector: 'td:nth-child(2)',
 						parse: function(text) {
-							console.log('text', '"' + text + '"')
 							var match = text.trim().match(/[^0-9]([0-9]+)$/);
 							if (!match || !match[1]) return null;
 							var port = parseInt(match[1]);
