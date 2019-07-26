@@ -1,6 +1,9 @@
 # Changelog
 
-* TBD:
+* v1.19.0:
+  * Several new sources, more info scraped from existing sources
+  * Close browser tabs used by source when it sends its end event
+  * Overall better error handling
   * CLI:
     * `--output-file` and `--log-file` can now accept absolute file paths
 * v1.18.0:
