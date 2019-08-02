@@ -8,14 +8,8 @@ var ProxyLists = require('../../index');
 
 describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
-	var sourcesBefore;
-
-	beforeEach(function() {
-		sourcesBefore = _.clone(ProxyLists.sourcer.sources);
-	});
-
 	afterEach(function() {
-		ProxyLists.sourcer.sources = sourcesBefore;
+		ProxyLists._sources = [];
 	});
 
 	it('should be a function', function() {
@@ -30,12 +24,10 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 		try {
 			ProxyLists.getProxiesFromSource(name);
 		} catch (error) {
-			thrownError = error;
+			thrownError = error.message;
 		}
 
-		expect(thrownError).to.not.be.undefined;
-		expect(thrownError instanceof Error).to.equal(true);
-		expect(thrownError.message).to.equal('Data source does not exist: "' + name + '"');
+		expect(thrownError).to.equal('Data source does not exist: "' + name + '"');
 	});
 
 	it('should call getProxies() method of the specified source', function(done) {
@@ -58,8 +50,6 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 	it('altering "options" in the source\'s getProxies(options) method', function(done) {
 
 		var name = 'alter-options';
-
-		ProxyLists.sourcer.sources = {};
 
 		ProxyLists.addSource(name, {
 			getProxies: function(options) {
@@ -108,12 +98,10 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 			try {
 				ProxyLists.getProxiesFromSource(name);
 			} catch (error) {
-				thrownError = error;
+				thrownError = error.message;
 			}
 
-			expect(thrownError).to.not.be.undefined;
-			expect(thrownError instanceof Error).to.equal(true);
-			expect(thrownError.message).to.equal('Missing required option (`sourceOptions.' + name + '.something`): ' + requiredOptions.something);
+			expect(thrownError).to.equal('Missing required option (`sourceOptions.' + name + '.something`): ' + requiredOptions.something);
 		});
 	});
 });

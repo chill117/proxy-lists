@@ -260,8 +260,8 @@ describe('filter', function() {
 	_.each(tests, function(test) {
 		it(test.description, function() {
 			var sourcerOptions = ProxyLists.toSourcerOptions(test.options);
-			var filterOptions = ProxyLists.sourcer.prepareFilterOptions(sourcerOptions.filter);
-			var filtered = ProxyLists.sourcer.filterData(test.in, filterOptions);
+			var filterOptions = ProxyLists.DataSourcer.prototype.prepareFilterOptions(sourcerOptions.filter);
+			var filtered = ProxyLists.DataSourcer.prototype.filterData(test.in, filterOptions);
 			expect(filtered).to.deep.equal(test.out);
 		});
 	});

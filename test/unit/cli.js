@@ -61,12 +61,12 @@ describe('Command-line interface', function() {
 			done = _.once(done);
 
 			var env = Object.create(process.env);
-			env.PROXY_LISTS_SOURCES_DIR = path.join(__dirname, '..', 'sources');
 			env.DEBUG = 'data-sourcer*';
 
 			var cmd = spawn('./cli.js', [
 				'getProxies',
-				'--sources-white-list', 'cli-test',
+				'--sources-white-list', 'simple',
+				'--sources-dir', path.join(__dirname, '..', 'sources', 'cli'),
 				'--output-file', filePaths.output,
 				'--log-file', filePaths.log,
 			], { env: env });

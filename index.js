@@ -10,13 +10,7 @@ GeoIpNativeLite.loadDataSync({ ipv4: true, ipv6: true, cache: true });
 
 var ProxyLists = module.exports = {
 
-	sourcer: new DataSourcer({
-		// browser: {
-		// 	headless: false,
-		// },
-		getDataMethodName: 'getProxies',
-		sourcesDir: process.env.PROXY_LISTS_SOURCES_DIR || path.join(__dirname, 'sources'),
-	}),
+	DataSourcer: DataSourcer,
 
 	defaultOptions: {
 		/*
@@ -88,6 +82,11 @@ var ProxyLists = module.exports = {
 		sourcesBlackList: null,
 
 		/*
+			Full path to the sources directory.
+		*/
+		sourcesDir: path.join(__dirname, 'sources'),
+
+		/*
 			Set to TRUE to have all asynchronous operations run in series.
 		*/
 		series: false,
@@ -119,40 +118,115 @@ var ProxyLists = module.exports = {
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
 	_ipTypes: ['ipv4', 'ipv6'],
 
+	// Sources that were added via ProxyLists.addSource(name, source)
+	_sources: [],
+
 	// Get proxies from all sources.
 	getProxies: function(options) {
 
+		options = options || {};
+		var emitter = DataSourcer.prototype.prepareSafeEventEmitter();
+		var onData = emitter.emit.bind(emitter, 'data');
+		var onError = emitter.emit.bind(emitter, 'error');
+		var onEnd = emitter.emit.bind(emitter, 'end');
 		var sourcerOptions = this.toSourcerOptions(options);
+		var dataSourcer = this.prepareDataSourcer(options);
 		sourcerOptions.process = this.processProxy.bind(this);
-		return this.sourcer.getData(sourcerOptions);
+		dataSourcer.getData(sourcerOptions)
+			.on('data', onData)
+			.on('error', onError)
+			.on('end', function() {
+				try {
+					dataSourcer.close(function(error) {
+						if (error) onError(error);
+						onEnd();
+					});
+				} catch (error) {
+					onError(error);
+					return onEnd();
+				}
+			});
+
+		return emitter;
 	},
 
 	// Get proxies from a single source.
 	getProxiesFromSource: function(name, options) {
 
+		options = options || {};
+		var emitter = DataSourcer.prototype.prepareSafeEventEmitter();
+		var onData = emitter.emit.bind(emitter, 'data');
+		var onError = emitter.emit.bind(emitter, 'error');
+		var onEnd = emitter.emit.bind(emitter, 'end');
 		var sourcerOptions = this.toSourcerOptions(options);
+		var dataSourcer = this.prepareDataSourcer(options);
 		sourcerOptions.process = this.processProxy.bind(this);
-		return this.sourcer.getDataFromSource(name, sourcerOptions);
+		dataSourcer.getDataFromSource(name, sourcerOptions)
+			.on('data', onData)
+			.on('error', onError)
+			.on('end', function() {
+				try {
+					dataSourcer.close(function(error) {
+						if (error) onError(error);
+						onEnd();
+					});
+				} catch (error) {
+					onError(error);
+					return onEnd();
+				}
+			});
+
+		return emitter;
+	},
+
+	listSources: function(options) {
+
+		options = options || {};
+		var sourcerOptions = this.toSourcerOptions(options);
+		var dataSourcer = this.prepareDataSourcer(options);
+		return dataSourcer.listSources(sourcerOptions);
+	},
+
+	addSource: function(name, source, options) {
+
+		options = options || {};
+		var alreadyAdded = !!_.findWhere(this._sources, { name: name });
+		if (alreadyAdded) {
+			throw new Error('Source already exists: "' + name + '"');
+		}
+		var dataSourcer = this.prepareDataSourcer(options);
+		dataSourcer.addSource(name, source);
+		this._sources.push({
+			name: name,
+			definition: source,
+		});
+	},
+
+	prepareDataSourcer: function(options) {
+
+		options = _.defaults(options || {}, {
+			getDataMethodName: 'getProxies',
+			sourcesDir: path.join(__dirname, 'sources'),
+		});
+
+		var dataSourcer = new DataSourcer(options);
+
+		_.each(this._sources, function(source) {
+			dataSourcer.addSource(source.name, source.definition);
+		});
+
+		return dataSourcer;
 	},
 
 	processProxy: function(proxy) {
+
 		try {
 			proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
 		} catch (error) {
 			return null;
 		}
+
 		return proxy;
-	},
-
-	addSource: function(name, source) {
-
-		this.sourcer.addSource(name, source);
-	},
-
-	listSources: function(options) {
-
-		var sourcerOptions = this.toSourcerOptions(options);
-		return this.sourcer.listSources(sourcerOptions);
 	},
 
 	toSourcerOptions: function(options) {
@@ -195,19 +269,6 @@ var ProxyLists = module.exports = {
 		});
 
 		return sourcerOptions;
-	},
-
-	sourceExists: function(name) {
-
-		return this.sourcer.sourceExists(name);
-	},
-
-	getSourceNames: function() {
-
-		var sources = this.listSources();
-		return _.map(sources, function(source) {
-			return source.name;
-		});
 	},
 
 	isValidProxy: function(proxy, options) {

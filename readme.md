@@ -6,6 +6,22 @@ Node.js module for getting proxies from publicly available proxy lists. Support 
 
 Missing a proxy list that you think should be supported? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
 
+* [Installation](#installation)
+* [Command-line interface](#command-line-interface)
+* [API](#api)
+  * [getProxies](#getproxies)
+    * [Options](#options-for-getproxies-method)
+    * [Proxy Object](#proxy-object)
+  * [getProxiesFromSource](#getproxiesfromsource)
+    * [Options](#options-for-getproxiesfromsource-method)
+  * [addSource](#addsource)
+  * [listSources](#listsources)
+    * [Options](#options-for-listsources-method)
+* [Contributing](#contributing)
+* [Tests](#tests)
+* [Changelog](#changelog)
+* [License](#license)
+
 
 ## Installation
 
@@ -19,17 +35,6 @@ Otherwise, you can add it to your existing node application like this:
 npm install proxy-lists --save
 ```
 This will install `proxy-lists` and add it to your application's `package.json` file.
-
-
-## Usage
-
-* [Command-line interface](#command-line-interface)
-* [API](#api)
-  * [getProxies](#getproxies)
-    * [Proxy Object](#proxy-object)
-  * [getProxiesFromSource](#getproxiesfromsource)
-  * [addSource](#addsource)
-  * [listSources](#listsources)
 
 
 ## Command-line interface
@@ -98,25 +103,24 @@ Usage:
 ```js
 var ProxyLists = require('proxy-lists');
 
-var options = {
+// `getProxies` returns an event emitter.
+ProxyLists.getProxies({
+	// options
 	countries: ['us', 'ca']
-};
-
-// `gettingProxies` is an event emitter object.
-var gettingProxies = ProxyLists.getProxies(options);
-
-gettingProxies.on('data', function(proxies) {
-	// Received some proxies.
-});
-
-gettingProxies.on('error', function(error) {
-	// Some error has occurred.
-	console.error(error);
-});
-
-gettingProxies.once('end', function() {
-	// Done getting proxies.
-});
+})
+	.on('data', function(proxies) {
+		// Received some proxies.
+		console.log('got some proxies');
+		console.log(proxies);
+	})
+	.on('error', function(error) {
+		// Some error has occurred.
+		console.log('error!', error);
+	})
+	.once('end', function() {
+		// Done getting proxies.
+		console.log('end!');
+	});
 ```
 
 Sample `proxies`:
@@ -146,7 +150,8 @@ Sample `proxies`:
 ]
 ```
 
-All available options:
+#### Options for getProxies Method
+
 ```js
 var options = {
 	/*
@@ -157,6 +162,15 @@ var options = {
 			'loose' mode will allow proxies that have the 'anonymityLevel' property of 'elite' as well as those that are missing the 'anonymityLevel' property.
 	*/
 	filterMode: 'strict',
+
+	/*
+		Options to pass to puppeteer when creating a new browser instance.
+	*/
+	browser: {
+		headless: true,
+		slowMo: 0,
+		timeout: 10000,
+	},
 
 	/*
 		Get proxies for the specified countries.
@@ -228,7 +242,12 @@ var options = {
 		See for more info:
 		https://github.com/request/request#requestdefaultsoptions
 	*/
-	defaultRequestOptions: null
+	defaultRequestOptions: null,
+
+	/*
+		Directory from which sources will be loaded.
+	*/
+	sourcesDir: null,
 };
 ```
 
@@ -244,7 +263,6 @@ The proxy object has the following properties:
   * __https__ - The proxy uses HTTPS.
   * __socks5__ - The proxy server uses the [socks5](https://en.wikipedia.org/wiki/SOCKS#SOCKS5) protocol.
   * __socks4__ - The proxy server uses the [socks4](https://en.wikipedia.org/wiki/SOCKS#SOCKS4) protocol.
-* __tunnel__ - _optional_ `boolean` Whether or not the proxy supports [tunneling](https://en.wikipedia.org/wiki/HTTP_tunnel) to HTTPS target URLs.
 * __anonymityLevel__ - _optional_ `string` The anonymity level of the proxy. Can be any one of the following:
   * __transparent__ - The proxy does not hide the requester's IP address.
   * __anonymous__ - The proxy hides the requester's IP address, but adds headers to the forwarded request that make it clear that the request was made using a proxy.
@@ -265,27 +283,28 @@ Usage:
 ```js
 var ProxyLists = require('proxy-lists');
 
-var options = {
+// `getProxiesFromSource` returns an event emitter.
+ProxyLists.getProxiesFromSource('freeproxylists', {
 	anonymityLevels: ['elite']
-};
-
-// `gettingProxies` is an event emitter object.
-var gettingProxies = ProxyLists.getProxiesFromSource('freeproxylists', options);
-
-gettingProxies.on('data', function(proxies) {
-	// Received some proxies.
-});
-
-gettingProxies.on('error', function(error) {
-	// Some error has occurred.
-	console.error(error);
-});
-
-gettingProxies.once('end', function() {
-	// Done getting proxies.
-});
+})
+	.on('data', function(proxies) {
+		// Received some proxies.
+		console.log('got some proxies');
+		console.log(proxies);
+	})
+	.on('error', function(error) {
+		// Some error has occurred.
+		console.log('error!', error);
+	})
+	.once('end', function() {
+		// Done getting proxies.
+		console.log('end!');
+	});
 ```
-See [getProxies](#getproxies) for all available options.
+
+#### Options for getProxiesFromSource Method
+
+See [Options for getProxies Method](#options-for-getproxies-method).
 
 
 ### addSource
@@ -306,19 +325,21 @@ ProxyLists.addSource('my-custom-source', {
 	homeUrl: 'https://somewhere.com',
 	getProxies: function(options) {
 
-		var emitter = new EventEmitter();
+		var emitter = options.newEventEmitter();
 
-		// When an error occurs, use the 'error' event.
-		// The 'error' event can be emitted more than once.
-		emitter.emit('error', new Error('Something bad happened!'));
+		_.defer(function() {
+			// When an error occurs, use the 'error' event.
+			// The 'error' event can be emitted more than once.
+			emitter.emit('error', new Error('Something bad happened!'));
 
-		// When proxies are ready, use the 'data' event.
-		// The 'data' event can be emitted more than once.
-		emitter.emit('data', proxies);
+			// When proxies are ready, use the 'data' event.
+			// The 'data' event can be emitted more than once.
+			emitter.emit('data', proxies);
 
-		// When done getting proxies, emit the 'end' event.
-		// The 'end' event should be emitted once.
-		emitter.emit('end');
+			// When done getting proxies, emit the 'end' event.
+			// The 'end' event should be emitted once.
+			emitter.emit('end');
+		});
 
 		// Must return an event emitter.
 		return emitter;
@@ -364,7 +385,8 @@ Sample `sources`:
 ]
 ```
 
-All available options:
+#### Options for listSources Method
+
 ```js
 var options = {
 	/*
@@ -402,3 +424,14 @@ To run all tests:
 ```
 npm test
 ```
+
+
+## Changelog
+
+See [changelog.md](https://github.com/chill117/proxy-lists/blob/master/changelog.md)
+
+
+## License
+
+This software is [MIT licensed](https://tldrlegal.com/license/mit-license):
+> A short, permissive software license. Basically, you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.  There are many variations of this license in use.

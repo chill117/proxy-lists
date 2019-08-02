@@ -8,57 +8,59 @@ var ProxyLists = require('../../index');
 
 describe('getProxies([options, ]cb)', function() {
 
-	var sourcesBefore;
-
+	var originalDataSourcerClose;
 	beforeEach(function() {
-		sourcesBefore = _.clone(ProxyLists.sourcer.sources);
+		originalDataSourcerClose = ProxyLists.DataSourcer.prototype.close;
 	});
 
 	afterEach(function() {
-		ProxyLists.sourcer.sources = sourcesBefore;
+		ProxyLists.DataSourcer.prototype.close = originalDataSourcerClose;
+		ProxyLists._sources = [];
 	});
 
 	it('should be a function', function() {
-
 		expect(ProxyLists.getProxies).to.be.a('function');
 	});
 
 	it('should call getProxies() for all sources', function(done) {
 
-		var testSources = ['somewhere', 'somewhere-else'];
-		var called = {};
+		try {
+			var testSources = ['somewhere', 'somewhere-else'];
+			var called = {};
 
-		ProxyLists.sourcer.sources = {};
-
-		_.each(testSources, function(name) {
-			ProxyLists.addSource(name, {
-				getProxies: function() {
-					var emitter = new EventEmitter();
-					called[name] = true;
-					var onEnd = _.bind(emitter.emit, emitter, 'end');
-					_.defer(onEnd);
-					return emitter;
-				}
-			});
-		});
-
-		ProxyLists.getProxies().on('end', function() {
-
-			try {
-				_.each(testSources, function(name) {
-					expect(called[name]).to.equal(true);
+			_.each(testSources, function(name) {
+				ProxyLists.addSource(name, {
+					getProxies: function(options) {
+						var emitter = options.newEventEmitter();
+						_.defer(function() {
+							called[name] = true;
+							emitter.emit('end');
+						});
+						return emitter;
+					}
 				});
-			} catch (error) {
-				return done(error);
-			}
+			});
 
-			done();
-		});
+			ProxyLists.getProxies({
+				sourcesDir: null,
+			}).on('end', function() {
+
+				try {
+					_.each(testSources, function(name) {
+						expect(called[name]).to.equal(true);
+					});
+				} catch (error) {
+					return done(error);
+				}
+
+				done();
+			});
+		} catch (error) {
+			return done(error);
+		}
 	});
 
 	it('source with ipv6 addresses', function(done) {
-
-		ProxyLists.sourcer.sources = {};
 
 		ProxyLists.addSource('ipv6test', {
 			getProxies: function() {
@@ -75,7 +77,10 @@ describe('getProxies([options, ]cb)', function() {
 			}
 		});
 
-		ProxyLists.getProxies({ ipTypes: ['ipv4', 'ipv6'] }).on('end', function() {
+		ProxyLists.getProxies({
+			sourcesDir: null,
+			ipTypes: ['ipv4', 'ipv6'],
+		}).on('end', function() {
 			done();
 		});
 	});
@@ -104,8 +109,6 @@ describe('getProxies([options, ]cb)', function() {
 						called[name] = true;
 					};
 
-					ProxyLists.sourcer.sources = {};
-
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
 							getProxies: function() {
@@ -119,7 +122,8 @@ describe('getProxies([options, ]cb)', function() {
 					});
 
 					var options = {
-						series: true
+						sourcesDir: null,
+						series: true,
 					};
 
 					ProxyLists.getProxies(options).on('end', function() {
@@ -142,8 +146,6 @@ describe('getProxies([options, ]cb)', function() {
 					var testSources = ['somewhere', 'somewhere-else'];
 					var gettingProxiesFromSource = {};
 
-					ProxyLists.sourcer.sources = {};
-
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
 							getProxies: function() {
@@ -154,7 +156,8 @@ describe('getProxies([options, ]cb)', function() {
 					});
 
 					var options = {
-						series: false
+						sourcesDir: null,
+						series: false,
 					};
 
 					ProxyLists.getProxies(options);
@@ -167,6 +170,39 @@ describe('getProxies([options, ]cb)', function() {
 					});
 				});
 			});
+		});
+	});
+
+	it('calls dataSourcer.close method after end event', function(done) {
+
+		var sourceNames = ['one', 'two', 'three'];
+		_.each(sourceNames, function(name) {
+			ProxyLists.addSource(name, {
+				getProxies: function(options) {
+					var emitter = options.newEventEmitter();
+					_.defer(function() {
+						emitter.emit('end');
+					});
+					return emitter;
+				}
+			});
+		});
+
+		var closeCalled = false;
+		ProxyLists.DataSourcer.prototype.close = function() {
+			closeCalled = true;
+			return originalDataSourcerClose.apply(this, arguments);
+		};
+
+		ProxyLists.getProxies({
+			sourcesDir: null,
+		}).on('end', function() {
+			try {
+				expect(closeCalled).to.equal(true);
+			} catch (error) {
+				return done(error);
+			}
+			done();
 		});
 	});
 });

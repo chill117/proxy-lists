@@ -11,7 +11,6 @@ var pkg = require('./package.json');
 var ProxyLists = require('./index');
 var validOutputFormats = ['json', 'csv', 'txt'];
 var proxyFieldNames = ['source', 'ipAddress', 'port', 'country', 'protocols', 'anonymityLevel'];
-var sourceNames = ProxyLists.getSourceNames();
 
 function list(value) {
 	return value.split(',');
@@ -59,15 +58,21 @@ program
 	)
 	.option(
 		'-s, --sources-white-list <list>',
-		'Get proxies from these sources only [' + sourceNames.join(', ') + ']',
+		'Get proxies from these sources only [some-source, another-source, somewhere, etc..]',
 		list,
 		null
 	)
 	.option(
 		'-x, --sources-black-list <list>',
-		'Do not get proxies from these sources [' + sourceNames.join(', ') + ']',
+		'Do not get proxies from these sources [some-source, another-source, somewhere, etc..]',
 		list,
 		null
+	)
+	.option(
+		'--sources-dir [value]',
+		'Full path to the sources directory',
+		value,
+		ProxyLists.defaultOptions.sourcesDir
 	)
 	.option(
 		'-i, --ip-types <list>',
@@ -254,6 +259,7 @@ program
 			'protocols',
 			'sourcesWhiteList',
 			'sourcesBlackList',
+			'sourcesDir',
 			'sample',
 			'series',
 			'ipTypes'

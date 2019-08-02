@@ -7,22 +7,20 @@ var ProxyLists = require('../../../index');
 
 describe('source.getProxies([options, ]cb)', function() {
 
-	var sourceNames = (process.env.SOURCES && process.env.SOURCES.split(',')) || null;
-
-	var sources = _.chain(ProxyLists.sourcer.sources).map(function(source, name) {
-		source = _.clone(source);
-		source.name = name;
-		return source;
-	}).filter(function(source) {
-		return !sourceNames || _.contains(sourceNames, source.name);
-	}).value();
+	var sourcesWhiteList = (process.env.SOURCES && process.env.SOURCES.split(',')) || null;
+	var dataSourcer = ProxyLists.prepareDataSourcer();
+	var sources = dataSourcer.listSources({
+		sourcesWhiteList: sourcesWhiteList,
+	});
 
 	_.each(sources, function(source) {
+
+		var definition = dataSourcer.sources[source.name];
 
 		describe('source.' + source.name, function() {
 
 			it('"getProxies" function exists', function() {
-				expect(source.getProxies).to.be.a('function');
+				expect(definition.getProxies).to.be.a('function');
 			});
 
 			it('should return valid proxies', function(done) {
@@ -56,6 +54,9 @@ describe('source.getProxies([options, ]cb)', function() {
 					protocols: null,
 					sample: true,
 					sampleDataLimit: 200,
+					browser: {
+						headless: false,
+					},
 				});
 
 				var proxies = [];

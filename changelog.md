@@ -1,5 +1,10 @@
 # Changelog
 
+* v1.20.0:
+  * Can now pass options to [dataSourcer](https://github.com/chill117/data-sourcer#getdata) when calling `getProxies` and `getProxiesFromSource`. Most relevant options:
+    * `browser` - Options object passed to [puppeteer.launch(options)](https://pptr.dev/#?product=Puppeteer&version=v1.19.0&show=api-puppeteerlaunchoptions)
+    * `sourcesDir` - Directory path where your sources are defined. Default is the "sources" directory included with the ProxyLists project.
+  * Calls to `getProxies` and `getProxiesFromSource` will now both clean-up by calling the `dataSourcer.close` method once all the sources have sent their end event. This has the effect of automatically closing any browser instances used by proxy sources.
 * v1.19.0:
   * Several new sources, more info scraped from existing sources
   * Close browser tabs used by source when it sends its end event
