@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var EventEmitter = require('events').EventEmitter || require('events');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
@@ -63,8 +62,8 @@ describe('getProxies([options, ]cb)', function() {
 	it('source with ipv6 addresses', function(done) {
 
 		ProxyLists.addSource('ipv6test', {
-			getProxies: function() {
-				var emitter = new EventEmitter();
+			getProxies: function(options) {
+				var emitter = options.newEventEmitter();
 				var onData = _.bind(emitter.emit, emitter, 'data');
 				var onEnd = _.bind(emitter.emit, emitter, 'end');
 				_.defer(onData, [{
@@ -111,8 +110,8 @@ describe('getProxies([options, ]cb)', function() {
 
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
-							getProxies: function() {
-								var emitter = new EventEmitter();
+							getProxies: function(options) {
+								var emitter = options.newEventEmitter();
 								var onEnd = _.bind(emitter.emit, emitter, 'end');
 								_.defer(_.bind(gettingProxiesCalledForSource, undefined, name));
 								_.defer(onEnd);
@@ -148,9 +147,9 @@ describe('getProxies([options, ]cb)', function() {
 
 					_.each(testSources, function(name) {
 						ProxyLists.addSource(name, {
-							getProxies: function() {
+							getProxies: function(options) {
 								gettingProxiesFromSource[name] = true;
-								return new EventEmitter();
+								return options.newEventEmitter();
 							}
 						});
 					});

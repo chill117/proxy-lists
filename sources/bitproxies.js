@@ -2,7 +2,6 @@
 
 var _ = require('underscore');
 var async = require('async');
-var EventEmitter = require('events').EventEmitter || require('events');
 
 module.exports = {
 
@@ -14,9 +13,7 @@ module.exports = {
 
 	getProxies: function(options) {
 
-		options || (options = {});
-
-		var emitter = new EventEmitter();
+		var emitter = options.newEventEmitter();
 
 		var getProxyData = async.seq(
 			this.getData.bind(this),

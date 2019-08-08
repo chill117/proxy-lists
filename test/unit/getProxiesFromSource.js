@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var EventEmitter = require('events').EventEmitter || require('events');
 var expect = require('chai').expect;
 
 var ProxyLists = require('../../index');
@@ -33,9 +32,9 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 	it('should call getProxies() method of the specified source', function(done) {
 		var name = 'some-source';
 		ProxyLists.addSource(name, {
-			getProxies: function() {
+			getProxies: function(options) {
 				_.defer(done);
-				return new EventEmitter();
+				return options.newEventEmitter();
 			}
 		});
 		ProxyLists.getProxiesFromSource(name);
@@ -54,7 +53,7 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 		ProxyLists.addSource(name, {
 			getProxies: function(options) {
 
-				var emitter = new EventEmitter();
+				var emitter = options.newEventEmitter();
 				var onData = _.bind(emitter.emit, emitter, 'data');
 
 				options.countries = 'invalid';
@@ -88,8 +87,8 @@ describe('getProxiesFromSource(name, [options, ]cb)', function() {
 
 			ProxyLists.addSource(name, {
 				requiredOptions: requiredOptions,
-				getProxies: function() {
-					return new EventEmitter();
+				getProxies: function(options) {
+					return options.newEventEmitter();
 				}
 			});
 

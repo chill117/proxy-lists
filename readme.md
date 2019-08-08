@@ -315,10 +315,6 @@ Add a custom proxy source to the list of available proxies. The new proxy source
 
 Usage:
 ```js
-// Core nodejs module.
-// See https://nodejs.org/api/events.html
-var EventEmitter = require('events').EventEmitter || require('events');
-
 var ProxyLists = require('proxy-lists');
 
 ProxyLists.addSource('my-custom-source', {

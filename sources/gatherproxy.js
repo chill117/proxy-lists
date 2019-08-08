@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var async = require('async');
 var cheerio = require('cheerio');
-var EventEmitter = require('events').EventEmitter || require('events');
 var querystring = require('querystring');
 
 var users = [
@@ -25,30 +24,32 @@ module.exports = {
 
 	getProxies: function(options) {
 
-		options || (options = {});
+		var emitter = options.newEventEmitter();
 
-		var emitter = new EventEmitter();
+		_.defer(function() {
 
-		async.seq(
-			this.login.bind(this),
-			this.getDownloadLink.bind(this),
-			this.downloadData.bind(this),
-			this.parseData.bind(this)
-		)(options, function(error, proxies) {
+			async.seq(
+				this.login.bind(this),
+				this.getDownloadLink.bind(this),
+				this.downloadData.bind(this),
+				this.parseData.bind(this)
+			)(options, function(error, proxies) {
 
-			if (error) {
-				emitter.emit('error', error);
-			} else {
+				if (error) {
+					emitter.emit('error', error);
+				} else {
 
-				if (options.sample) {
-					proxies = proxies.slice(0, 50);
+					if (options.sample) {
+						proxies = proxies.slice(0, 50);
+					}
+
+					emitter.emit('data', proxies);
 				}
 
-				emitter.emit('data', proxies);
-			}
+				emitter.emit('end');
+			});
 
-			emitter.emit('end');
-		});
+		}.bind(this));
 
 		return emitter;
 	},
