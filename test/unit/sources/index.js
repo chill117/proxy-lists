@@ -54,9 +54,9 @@ describe('source.getProxies([options, ]cb)', function() {
 					protocols: null,
 					sample: true,
 					sampleDataLimit: 200,
-					browser: {
-						headless: false,
-					},
+					// browser: {
+					// 	headless: false,
+					// },
 				});
 
 				var proxies = [];
