@@ -38,9 +38,7 @@
     "commander": "2.20.0",
     "data-sourcer": "1.8.1",
     "geoip-native-lite": "1.0.0",
-    "request": "2.88.0",
-    "underscore": "1.9.1",
-    "xml2js": "0.4.19"
+    "underscore": "1.9.1"
   },
   "devDependencies": {
     "chai": "4.2.0",
