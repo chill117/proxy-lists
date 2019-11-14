@@ -1,5 +1,8 @@
 # Changelog
 
+* v1.20.1:
+  * Upgraded dependencies:
+    * upgraded version of data-sourcer includes stability and error-handling improvements
 * v1.20.0:
   * Can now pass options to [dataSourcer](https://github.com/chill117/data-sourcer#getdata) when calling `getProxies` and `getProxiesFromSource`. Most relevant options:
     * `browser` - Options object passed to [puppeteer.launch(options)](https://pptr.dev/#?product=Puppeteer&version=v1.19.0&show=api-puppeteerlaunchoptions)
