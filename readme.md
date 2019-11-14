@@ -1,6 +1,6 @@
 # proxy-lists
 
-[![Build Status](https://travis-ci.org/chill117/proxy-lists.svg?branch=master)](https://travis-ci.org/chill117/proxy-lists) [![Status of Dependencies](https://david-dm.org/chill117/proxy-lists.svg)](https://david-dm.org/chill117/proxy-lists)
+[![Build Status](https://travis-ci.org/chill117/proxy-lists.svg?branch=master)](https://travis-ci.org/chill117/proxy-lists)
 
 Node.js module for getting proxies from publicly available proxy lists. Support for more than two dozen different proxy lists. You can see the full list of proxy sources [here](https://github.com/chill117/proxy-lists/tree/master/sources).
 
