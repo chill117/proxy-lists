@@ -58,7 +58,7 @@ module.exports = {
 				} catch( error ) {
 					emitter.emit( 'error', error );
 				}
-				if( page < data.response.pageCount )
+				if( page < pageCount )
 					request( page + 1);
 				else
 					emitter.emit( 'end' );
