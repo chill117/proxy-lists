@@ -32,7 +32,7 @@ module.exports = {
 			Unknown : 'transparent'
 		};
 		var pageCount = 1;
-		( function request() {
+		( function request( page ) {
 			options.request( {
 				url : 'http://api.foxtools.ru/v2/Proxy.json?page=' + page
 			}, function( error, response, data ) {
