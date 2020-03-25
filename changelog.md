@@ -1,5 +1,7 @@
 # Changelog
 
+* TBD:
+  * Upgraded dependencies
 * v1.20.1:
   * Upgraded dependencies:
     * upgraded version of data-sourcer includes stability and error-handling improvements
