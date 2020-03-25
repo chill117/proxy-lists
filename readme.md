@@ -21,6 +21,7 @@ Missing a proxy list that you think should be supported? [Open an issue](https:/
 * [Tests](#tests)
 * [Changelog](#changelog)
 * [License](#license)
+* [Funding](#funding)
 
 
 ## Installation
@@ -423,3 +424,9 @@ See [changelog.md](https://github.com/chill117/proxy-lists/blob/master/changelog
 
 This software is [MIT licensed](https://tldrlegal.com/license/mit-license):
 > A short, permissive software license. Basically, you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.  There are many variations of this license in use.
+
+
+## Funding
+
+This project is free and open-source. If you would like to show your appreciation by helping to fund the project's continued development and maintenance, you can find available options [here](https://degreesofzero.com/donate.html?project=proxy-lists).
+
