@@ -1,6 +1,6 @@
 {
   "name": "proxy-lists",
-  "version": "1.20.1",
+  "version": "1.20.2",
   "description": "Get proxies from publicly available proxy lists.",
   "keywords": [
     "proxies",
@@ -29,8 +29,8 @@
   },
   "license": "MIT",
   "funding": {
-    "type" : "individual",
-    "url" : "https://degreesofzero.com/donate.html?project=proxy-lists"
+    "type": "individual",
+    "url": "https://degreesofzero.com/donate.html?project=proxy-lists"
   },
   "readmeFilename": "readme.md",
   "bugs": {
@@ -40,7 +40,7 @@
     "async": "3.2.0",
     "cheerio": "1.0.0-rc.3",
     "commander": "5.0.0",
-    "data-sourcer": "1.9.0",
+    "data-sourcer": "1.9.1",
     "debug": "4.1.1",
     "geoip-lite": "1.4.1",
     "underscore": "1.9.2"
