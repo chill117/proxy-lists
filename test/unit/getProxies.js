@@ -78,7 +78,6 @@ describe('getProxies([options, ]cb)', function() {
 
 		ProxyLists.getProxies({
 			sourcesDir: null,
-			ipTypes: ['ipv4', 'ipv6'],
 		}).on('end', function() {
 			done();
 		});

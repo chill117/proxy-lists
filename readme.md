@@ -229,14 +229,6 @@ var options = {
 	series: false,
 
 	/*
-		Load GeoIp data for these types of IP addresses. Default is only ipv4.
-
-		To include both ipv4 and ipv6:
-		['ipv4', 'ipv6']
-	*/
-	ipTypes: ['ipv4'],
-
-	/*
 		Default request module options. For example you could pass the 'proxy' option in this way.
 
 		See for more info:

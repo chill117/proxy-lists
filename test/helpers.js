@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var async = require('async');
 var fs = require('fs');
-var mkdirp = require('mkdirp');
 var path = require('path');
 
 var directories = {
@@ -13,7 +12,7 @@ var directories = {
 module.exports = {
 	directories: directories,
 	createTmpDir: function(done) {
-		mkdirp(directories.tmp, done);
+		fs.mkdir(directories.tmp, { recursive: true }, done);
 	},
 	destroyTmpDir: function(done) {
 		fs.readdir(directories.tmp, function(error, files) {

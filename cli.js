@@ -75,12 +75,6 @@ program
 		ProxyLists.defaultOptions.sourcesDir
 	)
 	.option(
-		'-i, --ip-types <list>',
-		'Accepted IP types [' + ProxyLists._ipTypes.join(', ') + ']',
-		list,
-		['ipv4']
-	)
-	.option(
 		'-f, --output-file [value]',
 		'File to which the output will be written',
 		value,
@@ -262,7 +256,6 @@ program
 			'sourcesDir',
 			'sample',
 			'series',
-			'ipTypes'
 		]);
 
 		var sources = ProxyLists.listSources(options);

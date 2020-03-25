@@ -84,8 +84,8 @@ describe('Command-line interface', function() {
 				fs.readFile(filePaths.output, function(error, contents) {
 					if (error) return done(error);
 					var hosts = _.compact(contents.toString().split('\n'));
-					expect(hosts).to.have.length(proxies.length);
 					try {
+						expect(hosts).to.have.length(proxies.length);
 						_.each(hosts, function(host) {
 							if (host.indexOf(':') === -1 || !net.isIP(host.split(':')[0])) {
 								throw new Error('Invalid proxy host: "' + host + '"');

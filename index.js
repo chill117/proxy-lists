@@ -2,11 +2,13 @@
 
 var _ = require('underscore');
 var DataSourcer = require('data-sourcer');
-var GeoIpNativeLite = require('geoip-native-lite');
+var geoip = require('geoip-lite');
 var net = require('net');
 var path = require('path');
 
-GeoIpNativeLite.loadDataSync({ ipv4: true, ipv6: true, cache: true });
+var debug = {
+	error: require('debug')('proxy-lists:error'),
+};
 
 var ProxyLists = module.exports = {
 
@@ -56,14 +58,6 @@ var ProxyLists = module.exports = {
 			To get all proxies, regardless of anonymity level, set this option to NULL.
 		*/
 		anonymityLevels: ['anonymous', 'elite'],
-
-		/*
-			Load GeoIp data for these types of IP addresses. Default is only ipv4.
-
-			To include both ipv4 and ipv6:
-			['ipv4', 'ipv6']
-		*/
-		ipTypes: ['ipv4'],
 
 		/*
 			Include proxy sources by name.
@@ -116,7 +110,6 @@ var ProxyLists = module.exports = {
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
 	_anonymityLevels: ['transparent', 'anonymous', 'elite'],
-	_ipTypes: ['ipv4', 'ipv6'],
 
 	// Sources that were added via ProxyLists.addSource(name, source)
 	_sources: [],
@@ -220,13 +213,22 @@ var ProxyLists = module.exports = {
 
 	processProxy: function(proxy) {
 
+		proxy.country = this.lookupIpAddressCountry(proxy.ipAddress);
+		return proxy;
+	},
+
+	lookupIpAddressCountry: function() {
+
+		var country;
+
 		try {
-			proxy.country = GeoIpNativeLite.lookup(proxy.ipAddress);
+			var geo = geoip.lookup(proxy.ipAddress);
+			country = geo.country && geo.country.toLowerCase();
 		} catch (error) {
-			return null;
+			debug.error(error);
 		}
 
-		return proxy;
+		return country || null;
 	},
 
 	toSourcerOptions: function(options) {
@@ -238,8 +240,7 @@ var ProxyLists = module.exports = {
 			'countries',
 			'countriesBlackList',
 			'protocols',
-			'anonymityLevels',
-			'ipTypes'
+			'anonymityLevels'
 		);
 
 		sourcerOptions.filter = {
