@@ -18,7 +18,8 @@ Missing a proxy list that you think should be supported? [Open an issue](https:/
   * [listSources](#listsources)
     * [Options](#options-for-listsources-method)
 * [Contributing](#contributing)
-* [Tests](#tests)
+	* [Configure Local Environment](#configure-local-environment)
+	* [Tests](#tests)
 * [Changelog](#changelog)
 * [License](#license)
 * [Funding](#funding)
@@ -407,10 +408,26 @@ There are a number of ways you can contribute:
 * **Fix a bug** - Have a look at the [existing issues](https://github.com/chill117/proxy-lists/issues) for the project. If there's a bug in there that you'd like to tackle, please feel free to do so. I would ask that when fixing a bug, that you first create a failing test that proves the bug. Then to fix the bug, make the test pass. This should hopefully ensure that the bug never creeps into the project again. After you've done all that, you can [submit a pull request](https://github.com/chill117/proxy-lists/pulls/new) with your changes.
 
 
-## Tests
+### Configure Local Environment
 
-To run all tests:
+#### Step 1: Get the Code
+
+First, you'll need to pull down the code from GitHub:
 ```
+git clone https://github.com/chill117/proxy-lists.git
+```
+
+#### Step 2: Install Dependencies
+
+Second, you'll need to install the project dependencies as well as the dev dependencies. To do this, simply run the following from the directory you created in step 1:
+```bash
+npm install
+```
+
+### Tests
+
+This project includes an automated regression test suite. To run the tests:
+```bash
 npm test
 ```
 
