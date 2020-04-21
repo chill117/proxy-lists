@@ -24,7 +24,7 @@ var listDefinition = {
 		attributes: [
 			{
 				name: 'ipAddress',
-				selector: 'td:nth-child(1) font:nth-child(2)',
+				selector: 'td:nth-child(1) > font',
 				parse: function(text) {
 					if (!text) return null;
 					var match = text.match(/^([0-9]{1,3}[.-][0-9]{1,3}[.-][0-9]{1,3}[.-][0-9]{1,3})document\.write\(/);
@@ -33,7 +33,7 @@ var listDefinition = {
 			},
 			{
 				name: 'port',
-				selector: 'td:nth-child(1) font:nth-child(2)',
+				selector: 'td:nth-child(1) > font',
 				parse: function(text) {
 					if (!text) return null;
 					var match = text.match(/:([0-9]+)$/);
