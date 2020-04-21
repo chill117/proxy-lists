@@ -21,7 +21,7 @@ module.exports = {
 						selector: 'td:nth-child(1)',
 						parse: function(text) {
 							if (!text) return null;
-							var match = text.match(/\);([^; ]+) \n\t\t/);
+							var match = text.match(/\);(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
 							return match && match[1] || null;
 						},
 					},
