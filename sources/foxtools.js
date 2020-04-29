@@ -52,7 +52,7 @@ module.exports = {
 			if (numPages <= 0) return done();
 			var method = options.series ? 'timesSeries' : 'times';
 			async[method](numPages, (n, next) => {
-				var page = n + 1;
+				var page = n + 2;
 				this.getProxyPageViaApi(page, options, (error, proxies) => {
 					if (error) {
 						emitter.emit('error', error);
@@ -91,6 +91,6 @@ module.exports = {
 				return done(error);
 			}
 			done(null, proxies || [], pageCount);
-		} );
+		});
 	},
 };
