@@ -214,6 +214,7 @@ var ProxyLists = module.exports = {
 	processProxy: function(proxy) {
 
 		if (!this.isValidProxy(proxy)) return null;
+		proxy.port = parseInt(proxy.port);
 		proxy.country = this.lookupIpAddressCountry(proxy.ipAddress);
 		return proxy;
 	},
@@ -303,7 +304,8 @@ var ProxyLists = module.exports = {
 
 	isValidPort: function(port) {
 
-		return _.isNumber(port) && parseInt(port).toString() === port.toString();
+		var asInt = parseInt(port);
+		return !_.isNaN(asInt) && asInt.toString() === port.toString();
 	},
 
 	isValidProxyProtocols: function(protocols) {
