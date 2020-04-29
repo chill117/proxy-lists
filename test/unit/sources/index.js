@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 
 var ProxyLists = require('../../../index');
 
-describe.only('source.getProxies([options, ]cb)', function() {
+describe('source.getProxies([options, ]cb)', function() {
 
 	var sourcesWhiteList = (process.env.SOURCES && process.env.SOURCES.split(',')) || null;
 	var dataSourcer = ProxyLists.prepareDataSourcer();
