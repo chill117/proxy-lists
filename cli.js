@@ -2,6 +2,10 @@
 
 'use strict';
 
+// To fix "MaxListenersExceededWarning: Possible EventEmitter memory leak detected" warning.
+// Setting max listeners to a large yet reasonable number.
+process.setMaxListeners(1024);
+
 var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
