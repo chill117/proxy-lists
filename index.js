@@ -213,21 +213,25 @@ var ProxyLists = module.exports = {
 
 	processProxy: function(proxy) {
 
+		if (!this.isValidProxy(proxy)) return null;
+		proxy.port = parseInt(proxy.port);
 		proxy.country = this.lookupIpAddressCountry(proxy.ipAddress);
 		return proxy;
 	},
 
-	lookupIpAddressCountry: function() {
+	lookupIpAddressCountry: function(ipAddress) {
+
+		if (!_.isString(ipAddress)) {
+			throw new Error('Invalid argument ("ipAddress"): String expected');
+		}
 
 		var country;
-
 		try {
-			var geo = geoip.lookup(proxy.ipAddress);
+			var geo = geoip.lookup(ipAddress);
 			country = geo.country && geo.country.toLowerCase();
 		} catch (error) {
 			debug.error(error);
 		}
-
 		return country || null;
 	},
 
@@ -300,7 +304,8 @@ var ProxyLists = module.exports = {
 
 	isValidPort: function(port) {
 
-		return _.isNumber(port) && parseInt(port).toString() === port.toString();
+		var asInt = parseInt(port);
+		return !_.isNaN(asInt) && asInt.toString() === port.toString();
 	},
 
 	isValidProxyProtocols: function(protocols) {

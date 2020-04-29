@@ -1,5 +1,10 @@
 # Changelog
 
+* v1.21.0:
+  * Added new sources
+  * Removed sources that are broken or disappeared
+  * Fixed geoip-country lookups - [issue #115](https://github.com/chill117/proxy-lists/issues/115)
+  * Added run script to update geoip database - see [Update GeoIp Database](https://github.com/chill117/proxy-lists#update-geoip-database)
 * v1.20.2:
   * Upgraded dependencies
 * v1.20.1:

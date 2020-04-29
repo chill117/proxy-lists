@@ -3,37 +3,31 @@
 var _ = require('underscore');
 
 var linkSelectors = [
-	'.blog-posts .post-outer:nth-child(1) h3 a',
-	'.blog-posts .post-outer:nth-child(3) h3 a',
-	'#Feed1_feedItemListDisplay > ul > li:nth-child(1) > span > a',
-	'#Feed1_feedItemListDisplay > ul > li:nth-child(3) > span > a',
-	'#Feed2_feedItemListDisplay > ul > li:nth-child(1) > span > a',
-	'#Feed2_feedItemListDisplay > ul > li:nth-child(3) > span > a',
+	'.post-title a',
+	'#Feed1_feedItemListDisplay .item-title a',
+	'#Feed2_feedItemListDisplay .item-title a',
 ];
 
 var subListDefinition = {
 	// Each sub-list will have its own link selector.
 	link: { selector: null },
 	items: [{
-		selector: 'pre,textarea',
+		selector: '.post pre, .post textarea',
 		parse: function(text) {
-			return text.trim().split('\n').map(function(item) {
+			return _.chain(text.trim().split('\n')).map(function(item) {
 				var match = item.trim().match(/^([0-9.]+):([0-9]+)/);
 				if (!match || !match[1] || !match[2]) return null;
-				var ipAddress = match[1];
-				var port = parseInt(match[2]);
-				if (_.isNaN(port)) return null;
 				return {
-					ipAddress: ipAddress,
-					port: port,
+					ipAddress: match[1],
+					port: match[2],
 				};
-			}).filter(Boolean);
+			}).compact().value();
 		},
 	}],
 };
 
 module.exports = {
-	homeUrl: 'http://proxyserverlist-24.blogspot.com/',
+	homeUrl: 'http://www.proxyserverlist24.top/',
 	abstract: 'list-crawler',
 	defaultOptions: {
 		defaultTimeout: 5000,
@@ -41,7 +35,7 @@ module.exports = {
 	config: {
 		lists: [{
 			link: {
-				url: 'http://proxyserverlist-24.blogspot.com/',
+				url: 'http://www.proxyserverlist24.top/',
 			},
 			lists: _.map(linkSelectors, function(linkSelector) {
 				return _.extend({}, subListDefinition, {

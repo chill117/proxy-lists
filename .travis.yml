@@ -5,6 +5,7 @@ addons:
 
 language: node_js
 node_js:
+  - "13"
   - "12"
   - "10"
 
@@ -12,4 +13,4 @@ env:
   - TRAVIS_CI=1
 
 install: npm install
-script: skip
+script: npm test
