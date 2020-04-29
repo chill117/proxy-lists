@@ -240,6 +240,7 @@ describe('getProxies([options, ]cb)', function() {
 						sampleDataLimit: 200,
 						// browser: {
 						// 	headless: false,
+						// 	slowMo: 50,
 						// },
 					};
 
