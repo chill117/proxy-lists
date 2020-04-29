@@ -18,6 +18,7 @@ Missing a proxy list that you think should be supported? [Open an issue](https:/
   * [addSource](#addsource)
   * [listSources](#listsources)
     * [Options](#options-for-listsources-method)
+* [Usage with Proxy](#usage-with-proxy)
 * [Contributing](#contributing)
 	* [Configure Local Environment](#configure-local-environment)
 	* [Tests](#tests)
@@ -405,6 +406,33 @@ var options = {
 	sourcesBlackList: null
 };
 ```
+
+
+## Usage with Proxy
+
+It is possible to use a proxy while getting proxies, using the `"browser"` and `"defaultRequestOptions"` options. This module uses both request and puppeteer under-the-hood to scrape web pages. So you will have to configure both of those to use a proxy while getting proxies from every possible source.
+
+Here is an example using the API:
+```js
+var ProxyLists = require('proxy-lists');
+
+ProxyLists.getProxies({
+	browser: {
+		// arguments passed to puppeteer browser instance:
+		args: [ '--proxy-server=127.0.0.1:9876' /* your proxy */ ]
+	},
+	defaultRequestOptions: {
+		// Passed as default options to the request module.
+		// Read the following for details about proxy usage and request:
+		// https://github.com/request/request#proxies
+		proxy: 'http://127.0.0.1:9876',
+	}
+})
+	.on('data', function(proxies) {
+		console.log(proxies);
+	});
+```
+It is not currently possible to pass the above options via the CLI. But if you'd like to add this feature, pull requests are welcome ;)
 
 
 ## Contributing
