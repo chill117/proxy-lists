@@ -217,17 +217,19 @@ var ProxyLists = module.exports = {
 		return proxy;
 	},
 
-	lookupIpAddressCountry: function() {
+	lookupIpAddressCountry: function(ipAddress) {
+
+		if (!_.isString(ipAddress)) {
+			throw new Error('Invalid argument ("proxy"): String expected');
+		}
 
 		var country;
-
 		try {
-			var geo = geoip.lookup(proxy.ipAddress);
+			var geo = geoip.lookup(ipAddress);
 			country = geo.country && geo.country.toLowerCase();
 		} catch (error) {
 			debug.error(error);
 		}
-
 		return country || null;
 	},
 

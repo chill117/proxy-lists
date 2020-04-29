@@ -7,6 +7,7 @@ Node.js module for getting proxies from publicly available proxy lists. Support 
 Missing a proxy list that you think should be supported? [Open an issue](https://github.com/chill117/proxy-lists/issues) to suggest it be added as a source. Or you can [add a new source](#addsource) and [create a pull request](https://github.com/chill117/proxy-lists/pulls/new) to have it added to this module.
 
 * [Installation](#installation)
+  * [Update GeoIp Database](#update-geoip-database)
 * [Command-line interface](#command-line-interface)
 * [API](#api)
   * [getProxies](#getproxies)
@@ -37,6 +38,14 @@ Otherwise, you can add it to your existing node application like this:
 npm install proxy-lists --save
 ```
 This will install `proxy-lists` and add it to your application's `package.json` file.
+
+
+### Update GeoIp Database
+
+This module uses [geoip-lite](https://github.com/bluesmoon/node-geoip) to perform geoip-country lookups on IP addresses of proxies. The geoip-lite module ships with the free version of MaxMind's geoip database. This database stopped being directly in the module due to a change on MaxMind's side - specifically with their end-user licensing agreements. So it is necessary for each end-user (that's you!) to [create their own MaxMind account](https://www.maxmind.com/en/geolite2/signup) and then [generate a license key](https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/). Once you've got your own license key, you can update the geoip database for your local installation with the following command:
+```bash
+npm run update:geoip-database license_key=YOUR_LICENSE_KEY
+```
 
 
 ## Command-line interface
