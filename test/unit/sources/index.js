@@ -32,7 +32,7 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				this.timeout(60000);
 
-				var options = _.extend(options, {
+				var options = {
 					filterMode: 'loose',
 					countries: null,
 					anonymityLevels: null,
@@ -42,20 +42,18 @@ describe('source.getProxies([options, ]cb)', function() {
 					// browser: {
 					// 	headless: false,
 					// },
-				});
+				};
+
+				done = _.once(done);
 
 				var proxies = [];
-				var errorMessages = [];
 				ProxyLists.getProxiesFromSource(source.name, options)
 					.on('data', function(_proxies) {
 						proxies.push.apply(proxies, _proxies);
 					})
-					.on('error', function(error) {
-						errorMessages.push(error.message);
-					})
+					.on('error', done)
 					.once('end', function() {
 						try {
-							expect(errorMessages).to.deep.equal([]);
 							expect(proxies).to.be.an('array');
 							expect(proxies).to.not.have.length(0);
 							var invalidProxies = _.reject(proxies, function(proxy) {
