@@ -13,7 +13,7 @@ describe('isValidPort(port)', function() {
 
 	it('should return FALSE when port is not valid', function() {
 
-		var invalidPorts = [ '', 'usda7', '443a', '80' ];
+		var invalidPorts = [ '', 'usda7', '443a' ];
 
 		_.each(invalidPorts, function(invalidPort) {
 			try {
