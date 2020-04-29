@@ -32,22 +32,7 @@ describe('source.getProxies([options, ]cb)', function() {
 
 				this.timeout(60000);
 
-				// Don't validate IP addresses for some sources.
-				var validateIp = ['bitproxies'].indexOf(source.name) === -1;
-
-				function isValidProxy(proxy) {
-					return ProxyLists.isValidProxy(proxy, {
-						validateIp: validateIp
-					});
-				}
-
-				var options = { sourceOptions: {} };
-				switch (source.name) {
-					case 'bitproxies':
-						options.sourceOptions.bitproxies = { apiKey: 'TEST_API_KEY' };
-						break;
-				}
-				options = _.extend(options, {
+				var options = _.extend(options, {
 					filterMode: 'loose',
 					countries: null,
 					anonymityLevels: null,
@@ -74,7 +59,7 @@ describe('source.getProxies([options, ]cb)', function() {
 							expect(proxies).to.be.an('array');
 							expect(proxies).to.not.have.length(0);
 							var invalidProxies = _.reject(proxies, function(proxy) {
-								return isValidProxy(proxy);
+								return ProxyLists.isValidProxy(proxy);
 							});
 							var percentInvalid = (invalidProxies.length / proxies.length) * 100;
 							// Allow up to 40% of the proxies to be invalid.
