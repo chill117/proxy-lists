@@ -31,7 +31,6 @@ module.exports = {
 			return new Date(now - index * 86400 * 1000).toISOString().split('T')[0];
 		});
 		var method = options.series ? 'eachSeries' : 'each';
-		console.log({method, numDaysOfArchives, archiveDates})
 		async[method](archiveDates, function(archiveDate, next) {
 			options.request({
 				url: 'https://checkerproxy.net/api/archive/' + archiveDate,
@@ -44,7 +43,7 @@ module.exports = {
 					emitter.emit('error', error);
 				} else {
 					try {
-						const proxies = _.map(JSON.parse(data), function(value) {
+						var proxies = _.map(JSON.parse(data), function(value) {
 							value.addr = value.addr.split(':');
 							return {
 								ipAddress: value.addr[0],

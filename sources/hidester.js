@@ -19,9 +19,10 @@ module.exports = {
 		};
 		var numPages = options.sample ? 1 : options.sourceOptions.numPages;
 		var method = options.series ? 'timesSeries' : 'times';
-		async[method](numPages, (n, next) => {
+		var getProxyPageViaApi = this.getProxyPageViaApi.bind(this);
+		async[method](numPages, function(n, next) {
 			var page = n + 1;
-			this.getProxyPageViaApi(page, options, (error, proxies) => {
+			getProxyPageViaApi(page, options, function(error, proxies) {
 				if (error) {
 					emitter.emit('error', error);
 				} else {
@@ -35,7 +36,7 @@ module.exports = {
 	getProxyPageViaApi: function(page, options, done) {
 		var offset = page - 1;
 		options.request({
-			url: `https://hidester.com/proxydata/php/data.php?mykey=data&offset=${offset}&limit=10&orderBy=latest_check&sortOrder=DESC&country=&port=&type=undefined&anonymity=undefined&ping=undefined&gproxy=2`,
+			url: 'https://hidester.com/proxydata/php/data.php?mykey=data&offset=' + offset + '&limit=10&orderBy=latest_check&sortOrder=DESC&country=&port=&type=undefined&anonymity=undefined&ping=undefined&gproxy=2',
 			headers: {
 				'User-Agent': (new UserAgent()).toString(),
 				'Referer': 'https://hidester.com/proxylist/',
@@ -49,15 +50,14 @@ module.exports = {
 			}
 			var proxies;
 			try {
-				console.log(data);
 				data = JSON.parse(data);
 				proxies = _.map(data || [], function(value) {
-						return {
-							ipAddress: value.IP,
-							port: value.PORT,
-							anonymityLevel: value.anonymity.toLowerCase(),
-							protocols: [ value.type ],
-						};
+					return {
+						ipAddress: value.IP,
+						port: value.PORT,
+						anonymityLevel: value.anonymity.toLowerCase(),
+						protocols: [ value.type ],
+					};
 				});
 			} catch (error) {
 				return done(error);

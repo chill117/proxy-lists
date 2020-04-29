@@ -45,15 +45,16 @@ module.exports = {
 			}
 			emitter.emit('end');
 		};
-		this.getProxyPageViaApi(1, options, (error, proxies, pageCount) => {
+		var getProxyPageViaApi = this.getProxyPageViaApi.bind(this);
+		getProxyPageViaApi(1, options, function(error, proxies, pageCount) {
 			if (error) return done(error);
 			emitter.emit('data', proxies);
 			var numPages = options.sample ? 1 : Math.min(options.sourceOptions.numPages, pageCount)  - 1;
 			if (numPages <= 0) return done();
 			var method = options.series ? 'timesSeries' : 'times';
-			async[method](numPages, (n, next) => {
+			async[method](numPages, function(n, next) {
 				var page = n + 2;
-				this.getProxyPageViaApi(page, options, (error, proxies) => {
+				getProxyPageViaApi(page, options, function(error, proxies) {
 					if (error) {
 						emitter.emit('error', error);
 					} else {
