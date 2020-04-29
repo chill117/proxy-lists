@@ -40,15 +40,15 @@
   "dependencies": {
     "async": "3.2.0",
     "cheerio": "1.0.0-rc.3",
-    "commander": "5.0.0",
+    "commander": "5.1.0",
     "data-sourcer": "1.9.1",
     "debug": "4.1.1",
     "geoip-lite": "1.4.1",
-    "underscore": "1.9.2"
+    "underscore": "1.10.2"
   },
   "devDependencies": {
     "chai": "4.2.0",
     "eslint": "6.8.0",
-    "mocha": "7.1.1"
+    "mocha": "7.1.2"
   }
 }
