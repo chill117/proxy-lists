@@ -1,58 +1,56 @@
 'use strict';
 
-var _ = require('underscore');
+var anonymityLevels = {
+	'Transparent': 'transparent',
+	'Distorting': 'anonymous',
+	'Anonymous': 'elite',
+	'Socks4': 'anonymous',
+	'Socks5': 'anonymous',
+};
 
-var convert = {
-	anonymityLevels: {
-		'anonymous': 'anonymous',
-		'socks4': 'anonymous',
-		'socks5': 'anonymous',
-		'distorting': 'elite',
-		'transparent': 'transparent',
-	},
+var defineFeed = function(url) {
+	return {
+		url: url,
+		paths: {
+			group: 'rss/channel/0/item',
+			item: 'prx:proxy',
+			attributes: {
+				ipAddress: 'prx:ip/0',
+				port: 'prx:port/0',
+				anonymityLevel: 'prx:type/0',
+				protocols: 'prx:ssl/0',
+			},
+		},
+		parseAttributes: {
+			anonymityLevel: function(value) {
+				if (value) {
+					value = value.trim();
+					value = anonymityLevels[value] || null;
+				}
+				return value || null;
+			},
+			protocols: function(value) {
+				switch (this.anonymityLevel) {
+					case 'Transparent':
+					case 'Anonymous':
+					case 'Distorting':
+						return value === 'true' ? [ 'https' ] : [ 'http' ];
+					case 'Socks4':
+					case 'Socks5':
+						return [ value.toLowerCase() ];
+				}
+				return [];
+			},
+		},
+	};
 };
 
 module.exports = {
 	homeUrl: 'https://www.xroxy.com/',
-	defaultOptions: {
-		defaultTimeout: 5000,
-	},
-	abstract: 'list-crawler',
+	abstract: 'xml',
 	config: {
-		lists: [{
-			link: {
-				url: 'https://www.xroxy.com/free-proxy-lists/',
-			},
-			items: [{
-				selector: '#DataTables_Table_0 > tbody > tr',
-				attributes: [
-					{
-						name: 'ipAddress',
-						selector: 'td:nth-child(1)',
-					},
-					{
-						name: 'port',
-						selector: 'td:nth-child(2)',
-						parse: function(text) {
-							var port = parseInt(text);
-							if (_.isNaN(port)) return null;
-							return port;
-						},
-					},
-					{
-						name: 'anonymityLevel',
-						selector: 'td:nth-child(3)',
-						parse: function(text) {
-							return convert.anonymityLevels[text.trim().toLowerCase()] || null;
-						},
-					},
-				],
-			}],
-			pagination: {
-				next: {
-					selector: '#DataTables_Table_0_paginate > ul > li.paginate_button.active + li.paginate_button a',
-				},
-			},
-		}],
+		feeds: [
+			defineFeed('https://www.xroxy.com/proxyrss.xml'),
+		],
 	},
 };
