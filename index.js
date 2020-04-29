@@ -213,6 +213,7 @@ var ProxyLists = module.exports = {
 
 	processProxy: function(proxy) {
 
+		if (!this.isValidProxy(proxy)) return null;
 		proxy.country = this.lookupIpAddressCountry(proxy.ipAddress);
 		return proxy;
 	},
@@ -220,7 +221,7 @@ var ProxyLists = module.exports = {
 	lookupIpAddressCountry: function(ipAddress) {
 
 		if (!_.isString(ipAddress)) {
-			throw new Error('Invalid argument ("proxy"): String expected');
+			throw new Error('Invalid argument ("ipAddress"): String expected');
 		}
 
 		var country;

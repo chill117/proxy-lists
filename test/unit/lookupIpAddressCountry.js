@@ -11,7 +11,7 @@ describe('lookupIpAddressCountry(proxy)', function() {
 		expect(ProxyLists.lookupIpAddressCountry).to.be.a('function');
 	});
 
-	describe('throws error for invalid argument ("proxy")', function() {
+	describe('throws error for invalid argument ("ipAddress")', function() {
 		_.each([
 			null,
 			1,
@@ -24,7 +24,7 @@ describe('lookupIpAddressCountry(proxy)', function() {
 				} catch (error) {
 					thrownError = error.message;
 				}
-				expect(thrownError).to.equal('Invalid argument ("proxy"): String expected');
+				expect(thrownError).to.equal('Invalid argument ("ipAddress"): String expected');
 			})
 		});
 	});
