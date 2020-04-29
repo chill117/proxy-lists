@@ -1,44 +1,68 @@
 'use strict';
 
+var _ = require('underscore');
+var async = require('async');
+var UserAgent = require('user-agents');
+
 module.exports = {
-	homeUrl : 'https://hidester.com/',
-	getProxies : function( options ) {
+	homeUrl: 'https://hidester.com/',
+	defaultOptions: {
+		numPages: 5,
+	},
+	getProxies: function(options) {
 		var emitter = options.newEventEmitter();
-		( function request( offset ) {
-			options.request( {
-				url : 'https://hidester.com/proxydata/php/data.php?mykey=data&offset=' + offset + '&limit=5&orderBy=latest_check&sortOrder=DESC&country=&port=&type=11&anonymity=7&ping=7&gproxy=2',
-				headers : {
-					'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
-					'Referer' : 'https://hidester.com/proxylist/'
+		var done = function(error) {
+			if (error) {
+				emitter.emit('error', error);
+			}
+			emitter.emit('end');
+		};
+		var numPages = options.sample ? 1 : options.sourceOptions.numPages;
+		var method = options.series ? 'timesSeries' : 'times';
+		async[method](numPages, (n, next) => {
+			var page = n + 1;
+			this.getProxyPageViaApi(page, options, (error, proxies) => {
+				if (error) {
+					emitter.emit('error', error);
+				} else {
+					emitter.emit('data', proxies);
 				}
-			}, function( error, response, data ) {
-				if( error )
-					emitter.emit( 'error', error );
-				if( response.statusCode >= 300 ) {
-					error = new Error( data );
-					error.status = response.statusCode;
-					emitter.emit( 'error', error );
-				}
-				try {
-					data = JSON.parse( data );
-					if( data.length > 0 )
-						emitter.emit( 'data', data.map( function( currentValue, index, array ) {
-							return {
-								ipAddress : currentValue.IP,
-								port : currentValue.PORT,
-								anonymityLevel : currentValue.anonymity.toLowerCase(),
-								protocols : [ currentValue.type ]
-							};
-						} ) );
-				} catch( error ) {
-					emitter.emit( 'error', error );
-				}
-				if( data.length > 0 )
-					request( offset + 1 );
-				else
-					emitter.emit( 'end' );
-			} );
-		} )( 0 );
+				next();
+			});
+		}, done);
 		return emitter;
-	}
+	},
+	getProxyPageViaApi: function(page, options, done) {
+		var offset = page - 1;
+		options.request({
+			url: `https://hidester.com/proxydata/php/data.php?mykey=data&offset=${offset}&limit=10&orderBy=latest_check&sortOrder=DESC&country=&port=&type=undefined&anonymity=undefined&ping=undefined&gproxy=2`,
+			headers: {
+				'User-Agent': (new UserAgent()).toString(),
+				'Referer': 'https://hidester.com/proxylist/',
+			},
+		}, function(error, response, data) {
+			if (error) return done(error);
+			if (response.statusCode >= 300 ) {
+				error = new Error(data);
+				error.status = response.statusCode;
+				return done(error);
+			}
+			var proxies;
+			try {
+				console.log(data);
+				data = JSON.parse(data);
+				proxies = _.map(data || [], function(value) {
+						return {
+							ipAddress: value.IP,
+							port: value.PORT,
+							anonymityLevel: value.anonymity.toLowerCase(),
+							protocols: [ value.type ],
+						};
+				});
+			} catch (error) {
+				return done(error);
+			}
+			done(null, proxies || []);
+		});
+	},
 };
