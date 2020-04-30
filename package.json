@@ -11,7 +11,6 @@
   "main": "index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint --config .eslintrc.js *.js sources/*.js test/**/*.js",
-    "prepare": "npm run test",
     "pretest": "npm run lint",
     "test": "npm run test:unit",
     "test:unit": "./node_modules/.bin/mocha test/unit/ --recursive --reporter spec --ui bdd",
@@ -39,7 +38,6 @@
   },
   "dependencies": {
     "async": "3.2.0",
-    "cheerio": "1.0.0-rc.3",
     "commander": "5.1.0",
     "data-sourcer": "1.9.1",
     "debug": "4.1.1",
