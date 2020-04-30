@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.22.0:
+  * Added new sources
 * v1.21.0:
   * Added new sources
   * Removed sources that are broken or disappeared
