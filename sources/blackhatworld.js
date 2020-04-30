@@ -11,6 +11,10 @@ var startUrls = [
 	'https://www.blackhatworld.com/seo/ssl-proxies-occasional-update.927669/',
 	'https://www.blackhatworld.com/seo/anonymous-proxies.806981/',
 	'https://www.blackhatworld.com/seo/tunnel-connect-proxies.951125/',
+	'https://www.blackhatworld.com/seo/socks-4-5-split-lists.979230/',
+	'https://www.blackhatworld.com/seo/transparent-proxies-proxygo.890330/',
+	'https://www.blackhatworld.com/seo/proxy-dump-tested.1084114/',
+	'https://www.blackhatworld.com/seo/mixed-proxys-all-types.922566/',
 ];
 
 var listDefinition = {
@@ -29,17 +33,14 @@ var listDefinition = {
 				'li.message:nth-last-child(5) > div.messageInfo.primaryContent pre',
 			].join(','),
 			parse: function(text) {
-				return text.trim().split('\n').map(function(item) {
+				return _.chain(text.trim().split('\n')).map(function(item) {
 					var match = item.trim().match(/^([0-9.]+):([0-9]+)/);
 					if (!match || !match[1] || !match[2]) return null;
-					var ipAddress = match[1];
-					var port = parseInt(match[2]);
-					if (_.isNaN(port)) return null;
 					return {
-						ipAddress: ipAddress,
-						port: port,
+						ipAddress: match[1],
+						port: match[2],
 					};
-				}).filter(Boolean);
+				}).compact().value();
 			},
 		}],
 	}],
