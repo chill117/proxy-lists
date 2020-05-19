@@ -1,5 +1,9 @@
 # Changelog
 
+* TBD:
+  * New source (proxy-daily)
+  * New option added ("unique") that when TRUE filters the emitted proxies by their uniqueness (HOST:PORT). Default value is TRUE.
+  * Added CLI command for updating geoip data; see [Update GeoIp Database](https://github.com/chill117/proxy-lists#update-geoip-database) for more info.
 * v1.22.0:
   * Added new sources
 * v1.21.0:
