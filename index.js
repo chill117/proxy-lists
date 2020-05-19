@@ -25,6 +25,11 @@ var ProxyLists = module.exports = {
 		filterMode: 'strict',
 
 		/*
+			Whether or not to emit only unique proxies (HOST:PORT).
+		*/
+		unique: true,
+
+		/*
 			Get proxies for the specified countries.
 
 			To get all proxies, regardless of country, set this option to NULL.
@@ -49,15 +54,21 @@ var ProxyLists = module.exports = {
 			Get proxies that use the specified protocols.
 
 			To get all proxies, regardless of protocol, set this option to NULL.
+
+			To get proxies with specified protocols:
+			['socks4', 'socks5']
 		*/
-		protocols: ['http', 'https'],
+		protocols: null,
 
 		/*
 			Anonymity level.
 
 			To get all proxies, regardless of anonymity level, set this option to NULL.
+
+			To get proxies with specified anonymity-levels:
+			['elite', 'anonymous']
 		*/
-		anonymityLevels: ['anonymous', 'elite'],
+		anonymityLevels: null,
 
 		/*
 			Include proxy sources by name.
@@ -86,17 +97,12 @@ var ProxyLists = module.exports = {
 		series: false,
 
 		/*
-			Use a queue to limit the number of simultaneous HTTP requests.
+			Options to pass to puppeteer when creating a new browser instance.
 		*/
-		requestQueue: {
-			/*
-				The maximum number of simultaneous requests. Set to 0 for unlimited.
-			*/
-			concurrency: 0,
-			/*
-				The time (in milliseconds) between each request. Set to 0 for no delay.
-			*/
-			delay: 0,
+		browser: {
+			headless: true,
+			slowMo: 0,
+			timeout: 10000,
 		},
 
 		/*
@@ -105,7 +111,21 @@ var ProxyLists = module.exports = {
 			See for more info:
 			https://github.com/request/request#requestdefaultsoptions
 		*/
-		defaultRequestOptions: null
+		defaultRequestOptions: null,
+
+		/*
+			Use a queue to limit the number of simultaneous HTTP requests.
+		*/
+		requestQueue: {
+			/*
+				The maximum number of simultaneous requests.
+			*/
+			concurrency: 1,
+			/*
+				The time (in milliseconds) between each request. Set to 0 for no delay.
+			*/
+			delay: 0,
+		},
 	},
 
 	_protocols: ['http', 'https', 'socks4', 'socks5'],
@@ -118,6 +138,7 @@ var ProxyLists = module.exports = {
 	getProxies: function(options) {
 
 		options = options || {};
+		options = _.defaults(options || {}, this.defaultOptions);
 		var emitter = DataSourcer.prototype.prepareSafeEventEmitter();
 		var onData = emitter.emit.bind(emitter, 'data');
 		var onError = emitter.emit.bind(emitter, 'error');
@@ -125,11 +146,30 @@ var ProxyLists = module.exports = {
 		var sourcerOptions = this.toSourcerOptions(options);
 		var dataSourcer = this.prepareDataSourcer(options);
 		sourcerOptions.process = this.processProxy.bind(this);
+		var proxyMap = options.unique ? new Map() : null;
 		dataSourcer.getData(sourcerOptions)
-			.on('data', onData)
+			.on('data', function(proxies) {
+				if (proxyMap) {
+					var uniques = _.filter(proxies, function(proxy) {
+						var hostname = proxy.ipAddress + ':' + proxy.port;
+						if (proxyMap.has(hostname)) return false;
+						proxyMap.set(hostname, true);
+						return true;
+					});
+					if (uniques.length > 0) {
+						onData(uniques);
+					}
+				} else {
+					onData(proxies);
+				}
+			})
 			.on('error', onError)
 			.on('end', function() {
 				try {
+					if (proxyMap) {
+						proxyMap.clear();
+						proxyMap = null;
+					}
 					dataSourcer.close(function(error) {
 						if (error) onError(error);
 						onEnd();

@@ -85,6 +85,92 @@ describe('getProxies([options, ]cb)', function() {
 
 	describe('options', function() {
 
+		describe('unique', function() {
+
+			beforeEach(function() {
+				ProxyLists.addSource('duplicates1', {
+					getProxies: function(options) {
+						var emitter = options.newEventEmitter();
+						var onData = _.bind(emitter.emit, emitter, 'data');
+						var onEnd = _.bind(emitter.emit, emitter, 'end');
+						_.defer(onData, [{
+							ipAddress: '118.69.50.154',
+							port: 80,
+						}, {
+							ipAddress: '119.70.52.155',
+							port: 9000,
+						}, {
+							ipAddress: '125.65.54.122',
+							port: 8080,
+						}]);
+						_.defer(onEnd);
+						return emitter;
+					}
+				});
+				ProxyLists.addSource('duplicates2', {
+					getProxies: function(options) {
+						var emitter = options.newEventEmitter();
+						var onData = _.bind(emitter.emit, emitter, 'data');
+						var onEnd = _.bind(emitter.emit, emitter, 'end');
+						_.defer(onData, [{
+							ipAddress: '129.64.41.154',
+							port: 80,
+						}, {
+							ipAddress: '119.70.52.155',
+							port: 9000,
+						}, {
+							ipAddress: '125.65.54.122',
+							port: 8080,
+						}]);
+						_.defer(onEnd);
+						return emitter;
+					}
+				});
+			});
+
+			describe('TRUE', function() {
+
+				it('should provide only unique proxies', function(done) {
+
+					var proxies = [];
+					ProxyLists.getProxies({
+						sourcesDir: null,
+						unique: true,
+					}).on('data', function(_proxies) {
+						proxies.push.apply(proxies, _proxies);
+					}).on('end', function() {
+						try {
+							expect(proxies).to.have.length(4);
+						} catch (error) {
+							return done(error);
+						}
+						done();
+					});
+				});
+			});
+
+			describe('FALSE', function() {
+
+				it('should provide only unique proxies', function(done) {
+
+					var proxies = [];
+					ProxyLists.getProxies({
+						sourcesDir: null,
+						unique: false,
+					}).on('data', function(_proxies) {
+						proxies.push.apply(proxies, _proxies);
+					}).on('end', function() {
+						try {
+							expect(proxies).to.have.length(6);
+						} catch (error) {
+							return done(error);
+						}
+						done();
+					});
+				});
+			});
+		});
+
 		describe('series', function() {
 
 			describe('TRUE', function() {

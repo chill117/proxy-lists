@@ -183,13 +183,9 @@ var options = {
 	filterMode: 'strict',
 
 	/*
-		Options to pass to puppeteer when creating a new browser instance.
+		Whether or not to emit only unique proxies (HOST:PORT).
 	*/
-	browser: {
-		headless: true,
-		slowMo: 0,
-		timeout: 10000,
-	},
+	unique: true,
 
 	/*
 		Get proxies for the specified countries.
@@ -216,15 +212,21 @@ var options = {
 		Get proxies that use the specified protocols.
 
 		To get all proxies, regardless of protocol, set this option to NULL.
+
+		To get proxies with specified protocols:
+		['socks4', 'socks5']
 	*/
-	protocols: ['http', 'https'],
+	protocols: null,
 
 	/*
 		Anonymity level.
 
 		To get all proxies, regardless of anonymity level, set this option to NULL.
+
+		To get proxies with specified anonymity-levels:
+		['elite', 'anonymous']
 	*/
-	anonymityLevels: ['anonymous', 'elite'],
+	anonymityLevels: null,
 
 	/*
 		Include proxy sources by name.
@@ -243,9 +245,23 @@ var options = {
 	sourcesBlackList: null,
 
 	/*
+		Full path to the sources directory.
+	*/
+	sourcesDir: path.join(__dirname, 'sources'),
+
+	/*
 		Set to TRUE to have all asynchronous operations run in series.
 	*/
 	series: false,
+
+	/*
+		Options to pass to puppeteer when creating a new browser instance.
+	*/
+	browser: {
+		headless: true,
+		slowMo: 0,
+		timeout: 10000,
+	},
 
 	/*
 		Default request module options. For example you could pass the 'proxy' option in this way.
@@ -256,9 +272,18 @@ var options = {
 	defaultRequestOptions: null,
 
 	/*
-		Directory from which sources will be loaded.
+		Use a queue to limit the number of simultaneous HTTP requests.
 	*/
-	sourcesDir: null,
+	requestQueue: {
+		/*
+			The maximum number of simultaneous requests.
+		*/
+		concurrency: 1,
+		/*
+			The time (in milliseconds) between each request. Set to 0 for no delay.
+		*/
+		delay: 0,
+	},
 };
 ```
 
