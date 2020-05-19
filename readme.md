@@ -43,9 +43,16 @@ This will install `proxy-lists` and add it to your application's `package.json` 
 
 ### Update GeoIp Database
 
-This module uses [geoip-lite](https://github.com/bluesmoon/node-geoip) to perform geoip-country lookups on IP addresses of proxies. The geoip-lite module ships with the free version of MaxMind's geoip database. This database stopped being directly included in the module due to a change on MaxMind's side - specifically with their end-user licensing agreements. So it is necessary for each end-user (that's you!) to [create their own MaxMind account](https://www.maxmind.com/en/geolite2/signup) and then [generate a license key](https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/). Once you've got your own license key, you can update the geoip database for your local installation with the following command:
+This module uses [geoip-lite](https://github.com/bluesmoon/node-geoip) to perform geoip-country lookups on IP addresses of proxies. The geoip-lite module ships with the free version of MaxMind's geoip database. This database stopped being directly included in the module due to a change on MaxMind's side - specifically with their end-user licensing agreements. So it is necessary for each end-user (that's you!) to [create their own MaxMind account](https://www.maxmind.com/en/geolite2/signup) and then [generate a license key](https://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/).
+
+If you are using this module inside another project (via the API), use the following command to update the geoip database:
 ```bash
 npm run update:geoip-database license_key=YOUR_LICENSE_KEY
+```
+
+If you are using the CLI:
+```bash
+proxy-lists updateGeoIpData --license-key YOUR_LICENSE_KEY
 ```
 
 

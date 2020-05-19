@@ -285,4 +285,16 @@ program
 		startOutput();
 	});
 
+program
+	.command('updateGeoIpData')
+	.usage('--license-key <value>\n\nThis module uses geoip-lite to perform geoip-country lookups on IP addresses for\neach proxy. The geoip-lite module ships with the free version of MaxMind\'s geoip\ndatabase. This database stopped being directly included in the module due to\na change on MaxMind\'s side - specifically with their end-user licensing agreements.\nSo it is necessary for each end-user (that\'s you!) to create their own MaxMind\naccount and then generate a license key.\n\nTo sign-up for a MaxMind account:\nhttps://www.maxmind.com/en/geolite2/signup\n\nTo generate a new license key:\nhttps://support.maxmind.com/account-faq/license-keys/how-do-i-generate-a-license-key/')
+	.requiredOption(
+		'-l, --license-key <value>',
+		'Your MaxMind license key'
+	)
+	.action(function() {
+		process.argv.push('license_key=' + this.licenseKey);
+		require(path.join(__dirname, 'node_modules', 'geoip-lite', 'scripts', 'updatedb.js'));
+	});
+
 program.parse(process.argv);
