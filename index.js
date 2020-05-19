@@ -120,7 +120,7 @@ var ProxyLists = module.exports = {
 			/*
 				The maximum number of simultaneous requests.
 			*/
-			concurrency: 1,
+			concurrency: 7,
 			/*
 				The time (in milliseconds) between each request. Set to 0 for no delay.
 			*/
