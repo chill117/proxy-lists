@@ -41,7 +41,7 @@
     "commander": "5.1.0",
     "data-sourcer": "1.10.0",
     "debug": "4.1.1",
-    "geoip-lite": "1.4.1",
+    "geoip-lite": "1.4.2",
     "underscore": "1.10.2",
     "user-agents": "1.0.559"
   },
