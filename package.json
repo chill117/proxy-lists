@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "async": "3.2.0",
-    "commander": "5.1.0",
+    "commander": "6.0.0",
     "data-sourcer": "1.10.0",
     "debug": "4.1.1",
     "geoip-lite": "1.4.2",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "chai": "4.2.0",
-    "eslint": "6.8.0",
-    "mocha": "7.1.2"
+    "eslint": "7.5.0",
+    "mocha": "8.0.1"
   }
 }
