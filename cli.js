@@ -110,11 +110,11 @@ program
 		value,
 		'proxy-lists.log'
 	)
-	.action(function() {
+	.action(function(options) {
 
-		var outputFormat = this.outputFormat;
-		var stdout = this.stdout;
-		var outputFile = this.outputFile;
+		var outputFormat = options.outputFormat;
+		var stdout = options.stdout;
+		var outputFile = options.outputFile;
 
 		if (outputFile.indexOf('/') === -1) {
 			outputFile = path.join(process.cwd(), outputFile);
@@ -140,7 +140,7 @@ program
 			};
 		}
 
-		var logFile = this.logFile;
+		var logFile = options.logFile;
 
 		if (logFile.indexOf('/') === -1) {
 			logFile = path.join(process.cwd(), logFile);
@@ -249,7 +249,7 @@ program
 
 		log('Getting proxies...');
 
-		var options = _.pick(this, [
+		var listSourcesOptions = _.pick(options, [
 			'filterMode',
 			'anonymityLevels',
 			'countries',
@@ -262,8 +262,8 @@ program
 			'series',
 		]);
 
-		var sources = ProxyLists.listSources(options);
-		var sourceOptions = _.omit(options, 'sourcesWhiteList', 'sourcesBlackList');
+		var sources = ProxyLists.listSources(listSourcesOptions);
+		var sourceOptions = _.omit(listSourcesOptions, 'sourcesWhiteList', 'sourcesBlackList');
 		var sourcesDone = {};
 		_.each(sources, function(source) {
 			try {
@@ -292,8 +292,8 @@ program
 		'-l, --license-key <value>',
 		'Your MaxMind license key'
 	)
-	.action(function() {
-		process.argv.push('license_key=' + this.licenseKey);
+	.action(function(options) {
+		process.argv.push('license_key=' + options.licenseKey);
 		require(path.join(__dirname, 'node_modules', 'geoip-lite', 'scripts', 'updatedb.js'));
 	});
 
