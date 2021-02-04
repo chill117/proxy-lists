@@ -268,7 +268,7 @@ var ProxyLists = module.exports = {
 		var country;
 		try {
 			var geo = geoip.lookup(ipAddress);
-			country = geo.country && geo.country.toLowerCase();
+			country = geo && geo.country && geo.country.toLowerCase();
 		} catch (error) {
 			debug.error(error);
 		}
