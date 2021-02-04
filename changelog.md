@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.23.1:
+  * Upgraded dependencies
 * v1.23.0:
   * New source (proxy-daily)
   * New option added ("unique") that when TRUE filters the emitted proxies by their uniqueness (HOST:PORT). Default value is TRUE.
