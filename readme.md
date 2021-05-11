@@ -47,7 +47,7 @@ This module uses [geoip-lite](https://github.com/bluesmoon/node-geoip) to perfor
 
 If you are using this module inside another project (via the API), use the following command to update the geoip database:
 ```bash
-npm run update:geoip-database license_key=YOUR_LICENSE_KEY
+node ./node_modules/geoip-lite/scripts/updatedb.js license_key=YOUR_LICENSE_KEY
 ```
 
 If you are using the CLI:
