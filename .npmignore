@@ -1,7 +1,6 @@
-.eslintrc.js
+test/
 .gitignore
 .npmignore
 .travis.yml
-test/
 *.log
 *.txt
