@@ -292,6 +292,12 @@ describe('getProxies([options, ]cb)', function() {
 
 	describe('health checks', function() {
 
+		before(function() {
+			if (process.env.SKIP_HEALTH_CHECKS) {
+				return this.skip();
+			}
+		});
+
 		var sourcesWhiteList = (process.env.SOURCES && process.env.SOURCES.split(',')) || null;
 		var dataSourcer = ProxyLists.prepareDataSourcer();
 		var sources = dataSourcer.listSources({
@@ -309,11 +315,6 @@ describe('getProxies([options, ]cb)', function() {
 				});
 
 				it('should return valid proxies', function(done) {
-
-					if (process.env.TRAVIS_CI) {
-						console.log('Skipping this test because it doesn\'t run well on travis-ci platform.');
-						return this.skip();
-					}
 
 					this.timeout(60000);
 
